@@ -1,44 +1,42 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="lHr lpr lFr">
+    <q-header class="q-ma-sm rounded-borders">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
+        <PrimaryButton dense icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
+        <q-toolbar-title class="row flex-center">
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <div @click="logout">
+          <PrimaryButton icon="logout" dense>
+            <q-tooltip class="text-subtitle2">Sair</q-tooltip>
+          </PrimaryButton>
+        </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+    <q-drawer :breakpoint="100" :model-value="true" :mini="leftDrawerOpen" show-if-above bordered :width="150">
+      <div class="column justify-between fit no-wrap">
+        <q-tabs shrink indicator-color="secondary" class="text-primary" vertical switch-indicator
+        active-color="secondary">
+          <div class="row full-width flex-center q-ma-md">
+            <q-img fit="fill" width="50%" height="50%" :src="config.getConfig.logoUrl" class="logo__img"/>
+          </div>
+          <q-route-tab name="home" icon="query_stats" :label="leftDrawerOpen ? ' ' : 'Dashboard'" to="/home" />
+          <q-route-tab v-if="implementHierarchy('admin')" name="hub" icon="add_home" :label="leftDrawerOpen ? ' ' : 'Polos'" to="/polos" />
+          <q-route-tab v-if="implementHierarchy('hub')" name="store" icon="shop" :label="leftDrawerOpen ? ' ' : 'Lojas'" to="/lojas" />
+          <q-route-tab v-if="implementHierarchy('store')" name="users" icon="group" :label="leftDrawerOpen ? ' ' : 'Usuários'" to="/usuarios" />
+          <q-route-tab name="sale" icon="price_check" :label="leftDrawerOpen ? ' ' : 'Produtos'" to="/produtos" />
+          <q-route-tab name="salesHistory" icon="currency_exchange" :label="leftDrawerOpen ? ' ' : 'Movimentações'" to="/vendas" />
+          <q-route-tab name="reports" icon="description" :label="leftDrawerOpen ? ' ' : 'Relatórios'" to="/relatorios" />
+          <q-route-tab name="info" icon="info" :label="leftDrawerOpen ? ' ' : 'Conta'" to="/conta" />
+          <q-route-tab name="code" icon="settings" :label="leftDrawerOpen ? ' ' : 'Sistema'" to="/sistema" />
+        </q-tabs>
+          <PrimaryButton flat @click="openMessageSender" class="full-width gt-sm">
+            <div :class="!leftDrawerOpen ? 'column flex-center q-gutter-y-sm' : ''">
+              <q-icon name="message" color="primary" />
+              <span>{{ !leftDrawerOpen ? 'Convidar' : '' }}</span>
+            </div>
+          </PrimaryButton>
+        </div>
     </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -46,61 +44,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import api from 'src/lib/api'
+import { useConfigStore } from 'src/stores/useConfigStore'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import PrimaryButton from 'src/components/button/PrimaryButton.vue'
+import { implementHierarchy, ShowDialog } from 'src/utils/utils'
 
-defineOptions({
-  name: 'MainLayout'
-});
+const config = useConfigStore()
+const leftDrawerOpen = ref(false)
+const messageText = ref(config.getConfig.SmsMessage)
+const router = useRouter()
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+const logout = () => {
+	api.logout()
+	router.push('/')
+}
 
-const leftDrawerOpen = ref(false);
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+const openMessageSender = async () => {
+	await ShowDialog.showSendMessagePopUp('Convide!', 'Insira um número de celular e a mensagem para convidar alguém a conferir nossos produtos!', messageText.value)
 }
 </script>
