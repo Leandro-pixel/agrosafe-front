@@ -7,11 +7,8 @@
         <div class="text-h4">
           Seja bem-vindo à <div class="text-accent">{{ configStore.getConfig.tenantName }}!</div>
         </div>
-        <!--<div class="text-subtitle1 q-mt-md">
-          Estamos felizes em te ver por aqui! Faça login ou cadastre-se para continuar.
-        </div>-->
       </q-card-section>
-      <q-card-actions class="login__card flex-grow justify-center" style="padding: 2rem;">
+      <q-card-actions class="login__card flex-grow justify-center">
         <!--<q-img fit="fill" :src="configStore.getConfig.logoUrl" class="login__logo q-mb-md" />-->
         <q-form ref="myForm" @submit="submit" style="width: 60%">
           <div class="login__form">
