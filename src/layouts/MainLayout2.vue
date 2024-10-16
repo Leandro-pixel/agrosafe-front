@@ -8,11 +8,22 @@
         :width="250"
         :breakpoint="100"
         :model-value="true"
-        :mini="false"
+        :mini="leftDrawerOpen"
       >
         <div class="column fit no-wrap bg-primary" style="padding-top: 2rem">
+          <div style="width: 100%;" class="desktop-hide flex justify-end q-pr-md">
+            <PrimaryButton
+              dense
+              icon="menu"
+              @click="leftDrawerOpen = !leftDrawerOpen"
+              class="desktop-hide "
+            />
+          </div>
           <q-scroll-area style="flex: 1">
-            <div class="row full-width flex-center q-ma-md" style="padding-bottom: 1rem">
+            <div
+              class="row full-width flex-center q-ma-md"
+              style="padding-bottom: 1rem"
+            >
               <q-img
                 fit="fill"
                 width="80%"
@@ -190,21 +201,29 @@
           padding: 1rem;
         "
       >
-        <div class="q-ma-lg rounded-borders " style="width: 100%">
+        <div class="q-ma-lg rounded-borders" style="width: 100%">
           <q-toolbar class="row justify-space-between">
             <!-- Texto à esquerda -->
-            <q-toolbar-title class="row flex-start text-primary">
-              <span class=" text-primary" style="font-size: 26px">{{ pageName }}</span>
+            <q-toolbar-title class="row flex-start text-primary ">
+              <span class="text-primary text-h4" >{{
+                pageName
+              }}</span>
             </q-toolbar-title>
 
             <!-- Container à direita com texto e botões -->
             <div class="row items-center">
               <!-- Texto no container à direita -->
-              <div class="column" style="align-items: end;">
-                <span class="q-mr-md text-primary" style="font-size: 18px; line-height: 1;">
+              <div class="column mobile-hide" style="align-items: end">
+                <span
+                  class="q-mr-md text-primary text-subtitle1"
+                  style=" line-height: 1"
+                >
                   {{ user.name }}
                 </span>
-                <span class="q-mr-md text-accent" style="font-size: 14px; line-height: 1;">
+                <span
+                  class="q-mr-md text-accent text-subtitle2"
+                  style=" line-height: 1"
+                >
                   {{ user.userType }}
                 </span>
               </div>
@@ -247,7 +266,7 @@ import api from 'src/lib/api';
 import { useConfigStore } from 'src/stores/useConfigStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-//import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 //import { implementHierarchy, ShowDialog } from 'src/utils/utils';
 import { implementHierarchy } from 'src/utils/utils';
 import { UserData } from 'src/models/user';
@@ -255,7 +274,7 @@ import { UserData } from 'src/models/user';
 const user = ref(new UserData());
 const pageName = ref('Dashboard');
 const config = useConfigStore();
-//const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(false);
 //const messageText = ref(config.getConfig.SmsMessage);
 const router = useRouter();
 
@@ -281,7 +300,7 @@ const handleButtonClick = (route: string, name: string) => {
 };
 
 /*
-const openMessageSender = async () => {
+const openMessageSender = async () => { ❤😒👌
   await ShowDialog.showSendMessagePopUp(
     'Convide!',
     'Insira um número de celular e a mensagem para convidar alguém a conferir nossos produtos!',
