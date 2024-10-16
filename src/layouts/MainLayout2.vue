@@ -10,7 +10,7 @@
         :model-value="true"
         :mini="leftDrawerOpen"
       >
-        <div class="column fit no-wrap bg-primary" style="padding-top: 2rem">
+        <div class="column fit no-wrap bg-primary q-pt-md" >
           <div style="width: 100%;" class="desktop-hide flex justify-end q-pr-md">
             <PrimaryButton
               dense
@@ -21,14 +21,13 @@
           </div>
           <q-scroll-area style="flex: 1">
             <div
-              class="row full-width flex-center q-ma-md"
-              style="padding-bottom: 1rem"
+              class="row full-width flex-center q-ma-md q-pb-md"
             >
               <q-img
                 fit="fill"
                 width="80%"
                 height="auto"
-                :src="config.getConfig.logoUrl"
+                :src="leftDrawerOpen ? config.getConfig.secondaryLogoUrl: config.getConfig.logoUrl "
                 class="logo__img"
               />
             </div>
@@ -192,16 +191,10 @@
         </div>
       </q-drawer>
       <q-page-container
-        class="flex column"
-        style="
-          align-items: center;
-          justify-content: center;
-          padding-left: 0;
-          flex-wrap: nowrap;
-          padding: 1rem;
-        "
+        class="flex column q-pa-md items-center no-wrap"
+        style="padding-left: 12px; "
       >
-        <div class="q-ma-lg rounded-borders" style="width: 100%">
+        <div class="q-ma-md rounded-borders " style="width: 100%">
           <q-toolbar class="row justify-space-between">
             <!-- Texto à esquerda -->
             <q-toolbar-title class="row flex-start text-primary ">
@@ -213,7 +206,7 @@
             <!-- Container à direita com texto e botões -->
             <div class="row items-center">
               <!-- Texto no container à direita -->
-              <div class="column mobile-hide" style="align-items: end">
+              <div class="column mobile-hide items-end" >
                 <span
                   class="q-mr-md text-primary text-subtitle1"
                   style=" line-height: 1"
@@ -255,7 +248,7 @@
           </q-toolbar>
         </div>
 
-        <router-view />
+        <router-view  class="q-pa-md"/>
       </q-page-container>
     </q-page-container>
   </q-layout>

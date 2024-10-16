@@ -1,15 +1,11 @@
 <template>
   <q-layout>
-    <q-page class="column" style="width: 100%; height: 100%">
+    <q-page class="column">
       <!-- Campo de Busca -->
-      <div style="display: flex; padding-top: 0.4rem;">
-        <span  style="
-          padding-top: 2rem;
+      <div class="flex">
+        <span class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
+        style="
           border-top: 0.25rem solid #401A58;
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          font-size: 18px
         ">Estabelecimentos</span>
       </div>
 

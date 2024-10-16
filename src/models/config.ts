@@ -9,7 +9,7 @@ export default class Config {
     public secondary = '',
     public logoUrl = 'src/assets/logo_brands.png',
     public tenantName = 'Brands Card',
-    public secondaryLogoUrl = '',
+    public secondaryLogoUrl = 'src/assets/icone_brands.png',
     public SmsMessage = '',
     public paymentProcessors = [] as PaymentProcessor[],
     public recaptchaKey = ''
