@@ -19,7 +19,7 @@
           <div class="row full-width flex-center q-ma-md">
             <q-img fit="fill" width="50%" height="50%" :src="config.getConfig.logoUrl" class="logo__img"/>
           </div>
-          <q-route-tab name="home" icon="query_stats" :label="leftDrawerOpen ? ' ' : 'Dashboard'" to="/home" />
+          <q-route-tab name="home" icon=null :label="leftDrawerOpen ? ' ' : 'Dashboard'" to="/home" />
           <q-route-tab v-if="implementHierarchy('admin')" name="hub" icon="add_home" :label="leftDrawerOpen ? ' ' : 'Polos'" to="/polos" />
           <q-route-tab v-if="implementHierarchy('hub')" name="store" icon="shop" :label="leftDrawerOpen ? ' ' : 'Lojas'" to="/lojas" />
           <q-route-tab v-if="implementHierarchy('store')" name="users" icon="group" :label="leftDrawerOpen ? ' ' : 'Usuários'" to="/usuarios" />

@@ -36,7 +36,8 @@ module.exports = configure(function (/* ctx */) {
       'login.scss',
       'spacings.scss',
       'margins.scss',
-      'scrolls.scss'
+      'custom_sizes.scss',
+      'visibility.scss'
     ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras

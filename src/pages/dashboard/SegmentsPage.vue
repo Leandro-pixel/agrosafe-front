@@ -1,7 +1,7 @@
 <template>
   <q-layout>
 	<q-page class="column q-pa-md">
-		<div class="gt-sm row justify-evenly">
+		<div class=" row justify-evenly">
       Segmentos
 		</div>
 	</q-page>

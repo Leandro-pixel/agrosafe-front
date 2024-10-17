@@ -52,9 +52,9 @@ input:-webkit-autofill {
   height: 50%;
 }
 
-.logo__img {
-  width: 40px;
-  height: 40px;
+.logo__img{
+  width:80%;
+  height: auto
 }
 
 .right {
@@ -112,4 +112,10 @@ input:-webkit-autofill {
   @media (max-width: 800px) {
     flex-direction: column;
   }
+}
+
+.separators{
+  width: 80%;
+  background-color: white;
+  height: 0.1rem
 }
