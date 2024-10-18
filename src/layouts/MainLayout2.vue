@@ -10,191 +10,194 @@
         :model-value="true"
         :mini="leftDrawerOpen"
       >
-        <div class="column fit no-wrap bg-primary q-pt-md" >
+        <div class="column fit no-wrap bg-primary q-pt-md">
           <div class="desktop-hide flex justify-end q-pr-md width-full">
             <PrimaryButton
               dense
               icon="menu"
               @click="leftDrawerOpen = !leftDrawerOpen"
-              class="lt-md "
+              class="lt-md"
             />
           </div>
           <q-scroll-area style="flex: 1">
-            <div
-              class="row full-width flex-center q-ma-md q-pb-md"
-            >
+            <div class="row full-width flex-center q-ma-md q-pb-md">
               <q-img
                 fit="fill"
-                :src="leftDrawerOpen ? config.getConfig.secondaryLogoUrl: config.getConfig.logoUrl "
+                :src="
+                  leftDrawerOpen
+                    ? config.getConfig.secondaryLogoUrl
+                    : config.getConfig.logoUrl
+                "
                 class="logo__img"
               />
             </div>
             <div class="row full-width flex-center q-ma-md">
-              <q-separator class="separators"/>
+              <q-separator class="separators" />
             </div>
 
-              <!-- Botão de Dashboard com opções expansíveis -->
-              <q-expansion-item
-                icon="query_stats"
-                label="Dashboard"
-                indicator-color="secondary"
-                expand-icon="null"
-                :class="{ 'text-accent custom-icon-size': selectedItem === 'Dashboard', 'text-white custom-icon-size': selectedItem !== 'Dashboard' }"
-                style="padding-left: 5%"
-                v-if="implementHierarchy('sysAdmin')"
-              >
-                <q-list style="padding-left: 5%">
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="handleButtonClick('/dashboard/segmentos', 'Dashboard')"
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full">Segmentos</div>
-                    </q-btn>
-                  </q-item>
+            <!-- Botão de Dashboard com opções expansíveis -->
+            <q-expansion-item
+              icon="query_stats"
+              label="Dashboard"
+              indicator-color="secondary"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Dashboard',
+                'text-white custom-icon-size': selectedItem !== 'Dashboard',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/dashboard/segmentos', 'Dashboard')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Segmentos</div>
+                  </q-btn>
+                </q-item>
 
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="
-                        handleButtonClick('/dashboard/opcao2', 'Dashboard')
-                      "
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full">
-                        Saldo Geral
-                      </div>
-                    </q-btn>
-                  </q-item>
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="
-                        handleButtonClick('/dashboard/opcao3', 'Dashboard')
-                      "
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full">
-                        Movimentações
-                      </div>
-                    </q-btn>
-                  </q-item>
-                </q-list>
-              </q-expansion-item>
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/opcao2', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Saldo Geral</div>
+                  </q-btn>
+                </q-item>
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/opcao3', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Movimentações</div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
 
-              <div class="row full-width flex-center q-ma-md">
-                <q-separator class="separators"/>
-              </div>
+            <div class="row full-width flex-center q-ma-md">
+              <q-separator class="separators" />
+            </div>
 
-              <!-- Item de menu com opções expansíveis para Polos -->
-              <q-expansion-item
-                icon="store"
-                label="Lojas"
-                expand-icon="null"
-                :class="{ 'text-accent custom-icon-size': selectedItem === 'Lojas', 'text-white custom-icon-size': selectedItem !== 'Lojas' }"
-                style="padding-left: 5%"
-                v-if="implementHierarchy('sysAdmin')"
-              >
-                <q-list style="padding-left: 5%">
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="handleButtonClick('/lojas/estabelecimentos', 'Lojas')"
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full" >
-                        Estabelecimentos
-                      </div>
-                    </q-btn>
-                  </q-item>
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="handleButtonClick('/lojas/clientes', 'Lojas')"
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div style="text-align: left; width: 100%">Clientes</div>
-                    </q-btn>
-                  </q-item>
-                </q-list>
-              </q-expansion-item>
+            <!-- Item de menu com opções expansíveis para Polos -->
+            <q-expansion-item
+              icon="store"
+              label="Lojas"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Lojas',
+                'text-white custom-icon-size': selectedItem !== 'Lojas',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/lojas/estabelecimentos', 'Lojas')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Estabelecimentos
+                    </div>
+                  </q-btn>
+                </q-item>
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/lojas/clientes', 'Lojas')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div style="text-align: left; width: 100%">Clientes</div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
 
-              <div class="row full-width flex-center q-ma-md">
-                <q-separator class="separators"/>
-              </div>
+            <div class="row full-width flex-center q-ma-md">
+              <q-separator class="separators" />
+            </div>
 
-              <!-- Item de menu com opções expansíveis para Lojas -->
-              <q-expansion-item
-                icon="person"
-                label="Conta"
-                expand-icon="null"
-                :class="{ 'text-accent custom-icon-size': selectedItem === 'Conta', 'text-white custom-icon-size': selectedItem !== 'Conta' }"
-                style="padding-left: 5%"
-                v-if="implementHierarchy('sysAdmin')"
-              >
-                <q-list style="padding-left: 5%">
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="handleButtonClick('/conta/perfil', 'Conta')"
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full" >Perfil</div>
-                    </q-btn>
-                  </q-item>
-                  <q-item class="q-pl-xs" >
-                    <q-btn
-                      flat
-                      @click="handleButtonClick('/conta/configuracoes', 'Conta')"
-                      class="full-width text-white no-wrap"
-                      style="text-transform: none"
-                    >
-                      <div class="items-start flex width-full">
-                        Configurações
-                      </div>
-                    </q-btn>
-                  </q-item>
-                </q-list>
-              </q-expansion-item>
-              <div class="row full-width flex-center q-ma-md">
-                <q-separator class="separators"/>
-              </div>
+            <!-- Item de menu com opções expansíveis para Lojas -->
+            <q-expansion-item
+              icon="person"
+              label="Conta"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Conta',
+                'text-white custom-icon-size': selectedItem !== 'Conta',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/conta/perfil', 'Conta')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Perfil</div>
+                  </q-btn>
+                </q-item>
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/conta/configuracoes', 'Conta')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Configurações</div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+            <div class="row full-width flex-center q-ma-md">
+              <q-separator class="separators" />
+            </div>
           </q-scroll-area>
         </div>
       </q-drawer>
       <q-page-container
         class="flex column q-pa-md items-center no-wrap q-pl-md"
-        style="padding-left: 12px; "
+        style="padding-left: 12px"
       >
         <div class="q-ma-md rounded-borders width-full">
           <q-toolbar class="row justify-space-between">
             <!-- Texto à esquerda -->
-            <q-toolbar-title class="row flex-start text-primary ">
-              <span class="text-primary text-h4" >{{
-                pageName
-              }}</span>
+            <q-toolbar-title class="row flex-start text-primary">
+              <span class="text-primary text-h4">{{ pageName }}</span>
             </q-toolbar-title>
 
             <!-- Container à direita com texto e botões -->
             <div class="row items-center">
               <!-- Texto no container à direita -->
-              <div class="column gt-xs items-end" >
+              <div class="column gt-xs items-end">
                 <span
                   class="q-mr-md text-primary text-subtitle1"
-                  style=" line-height: 1"
+                  style="line-height: 1"
                 >
                   {{ user.name }}
                 </span>
                 <span
                   class="q-mr-md text-accent text-subtitle2"
-                  style=" line-height: 1"
+                  style="line-height: 1"
                 >
                   {{ user.userType }}
                 </span>
@@ -205,10 +208,12 @@
                 flat
                 round
                 dense
+                size="1.2rem"
                 icon="notifications"
                 @click="openNotifications"
                 class="text-primary"
               >
+                <q-badge color="secondary" rounded floating>9+</q-badge>
                 <q-tooltip class="text-subtitle2">Notificações</q-tooltip>
               </q-btn>
 
@@ -217,6 +222,7 @@
                 flat
                 round
                 dense
+                size="1.2rem"
                 icon="logout"
                 @click="logout"
                 class="text-primary"
@@ -227,7 +233,7 @@
           </q-toolbar>
         </div>
 
-        <router-view  class="q-pa-md"/>
+        <router-view class="q-pa-md" />
       </q-page-container>
     </q-page-container>
   </q-layout>
@@ -272,7 +278,6 @@ const handleButtonClick = (route: string, name: string) => {
   updatePageName(name); // Call the function to update the page name
   selectedItem.value = name; // Atualiza o item selecionado
 };
-
 
 /*
 const openMessageSender = async () => { ❤😒👌
