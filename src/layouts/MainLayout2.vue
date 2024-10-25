@@ -69,7 +69,7 @@
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Saldo Geral</div>
+                    <div class="items-start flex width-full">Sacar Saldo</div>
                   </q-btn>
                 </q-item>
                 <q-item class="q-pl-xs">
@@ -82,6 +82,39 @@
                     <div class="items-start flex width-full">Movimentações</div>
                   </q-btn>
                 </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <div class="row full-width flex-center q-ma-md">
+              <q-separator class="separators" />
+            </div>
+
+            <q-expansion-item
+              icon="work"
+              label="Polos"
+              indicator-color="secondary"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Polos',
+                'text-white custom-icon-size': selectedItem !== 'Polos',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/polos/ativar', 'Polos')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Ativação / Desativação</div>
+                  </q-btn>
+                </q-item>
+
               </q-list>
             </q-expansion-item>
 
@@ -213,7 +246,7 @@
                 @click="openNotifications"
                 class="text-primary"
               >
-                <q-badge color="secondary" rounded floating>9+</q-badge>
+                <q-badge class="q-mt-sm" color="red" rounded floating>9+</q-badge>
                 <q-tooltip class="text-subtitle2">Notificações</q-tooltip>
               </q-btn>
 

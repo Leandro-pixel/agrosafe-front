@@ -2,7 +2,7 @@
   "name": "bakcoffice-brands",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Brands card backoffice",
+  "productName": "Brands Card",
   "author": "leandro soares <leandro20002004@hotmail.com>",
   "private": true,
   "scripts": {
