@@ -119,3 +119,30 @@ input:-webkit-autofill {
   background-color: white;
   height: 0.1rem
 }
+
+.hoverable {
+  transition: color 0.3s; /* Efeito suave na mudança */
+}
+
+.hoverable:hover {
+  cursor: pointer;
+  color: $accent !important; /* Troque pela cor desejada */
+}
+
+.isActive{
+    color: $primary;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-top: solid 3px $primary;
+    background-color: rgba(0, 0, 0, 0.2); // Preto com 10% de opacidade
+    cursor: pointer;
+  }
+
+
+.isNotActive{
+  color: $primary;
+  border-top: solid 1px $primary;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  cursor: pointer;
+}

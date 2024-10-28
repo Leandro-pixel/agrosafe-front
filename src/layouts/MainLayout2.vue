@@ -65,7 +65,7 @@
                 <q-item class="q-pl-xs">
                   <q-btn
                     flat
-                    @click="handleButtonClick('/dashboard/opcao2', 'Dashboard')"
+                    @click="handleButtonClick('/dashboard/saldo', 'Dashboard')"
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
@@ -75,7 +75,7 @@
                 <q-item class="q-pl-xs">
                   <q-btn
                     flat
-                    @click="handleButtonClick('/dashboard/opcao3', 'Dashboard')"
+                    @click="handleButtonClick('/dashboard/movimentacoes', 'Dashboard')"
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
@@ -106,7 +106,7 @@
                   <q-btn
                     flat
                     @click="
-                      handleButtonClick('/polos/ativar', 'Polos')
+                      handleButtonClick('/polos/ativacao', 'Polos')
                     "
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
@@ -197,6 +197,16 @@
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">Configurações</div>
+                  </q-btn>
+                </q-item>
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/conta/suporte', 'Conta')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Suporte</div>
                   </q-btn>
                 </q-item>
               </q-list>
@@ -307,6 +317,7 @@ const updatePageName = (name: string) => {
 
 // Update button click handlers
 const handleButtonClick = (route: string, name: string) => {
+  console.log('polo');
   router.push(route);
   updatePageName(name); // Call the function to update the page name
   selectedItem.value = name; // Atualiza o item selecionado

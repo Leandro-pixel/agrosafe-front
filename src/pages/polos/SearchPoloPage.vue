@@ -1,22 +1,7 @@
 <template>
   <q-layout>
     <q-page class="column">
-      <!-- Campo de Busca -->
-      <div class="flex justify-between">
-        <span
-          class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
-          style="border-top: 0.25rem solid #401A58;"
-        >
-          Estabelecimentos
-        </span>
-        <q-btn
-          flat
-          class="q-pt-sm q-pr-xl text-h6 text-primary"
-          style="margin-top: 0.25rem; text-transform: none;"
-        >
-          +Cadastrar EC
-        </q-btn>
-      </div>
+
 
       <div class="flex column q-pa-md q-pt-lg">
         <q-input
@@ -37,6 +22,17 @@
           row-key="id"
           class="q-mt-md justify-between width-full"
         >
+          <template v-slot:body-cell-name="props">
+            <q-td :props="props">
+              <span
+                class="text-primary hoverable"
+                @click="onNameClick( props.row.id, props.row.name)"
+              >
+                {{ props.row.name }}
+              </span>
+            </q-td>
+          </template>
+
           <template v-slot:body-cell-actions="props">
             <q-td :props="props" class="q-pa-xs">
               <q-btn
@@ -48,16 +44,9 @@
               />
               <q-btn
                 color="primary"
-                icon="person"
-                label="Clientes"
-                @click="onFundingClick(props.row)"
-                class="q-mr-sm"
-              />
-              <q-btn
-                color="green"
-                icon="payments"
-                label="Funding"
-                @click="onFundingClick(props.row)"
+                icon="store"
+                label="Estabelecimentos"
+                @click="onInfoClick(props.row)"
                 class="q-mr-sm"
               />
               <q-btn
@@ -66,7 +55,6 @@
                 :label="props.row.active ? 'Desativar' : 'Ativar'"
                 @click="onToggleActive(props.row)"
               />
-
             </q-td>
           </template>
         </q-table>
@@ -77,13 +65,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 // Dados da tabela (mock)
 const items = ref([
-  { id: 1, name: 'bueaty life', userType: '12345678000199', active: true },
-  { id: 2, name: 'fashion hair', userType: '98765432000188', active: false },
-  { id: 3, name: 'natura', userType: '13579246000144', active: true },
-  { id: 4, name: 'body care', userType: '86420973000133', active: false },
+  { id: 1, name: 'Leandro Soares', CPF: '47481542848', active: true },
+  { id: 2, name: 'Murilo', CPF: '47481542848', active: false },
+  { id: 3, name: 'Isabela', CPF: '47481542848', active: true },
+  { id: 4, name: 'Gabriel', CPF: '47481542848', active: false },
 ]);
 
 // Configuração das colunas da tabela
@@ -91,15 +81,15 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'Nome Fantasia',
+    label: 'Nome',
     align: 'left' as const,
     field: (row: any) => row.name,
   },
   {
-    name: 'userType',
-    label: 'CNPJ',
+    name: 'CPF',
+    label: 'CPF',
     align: 'left' as const,
-    field: (row: any) => row.userType,
+    field: (row: any) => row.CPF,
   },
   {
     name: 'actions',
@@ -114,8 +104,10 @@ const onInfoClick = (row: any) => {
   console.log('Info:', row);
 };
 
-const onFundingClick = (row: any) => {
-  console.log('Funding para:', row);
+const onNameClick = (id: any, name: any) => {
+  console.log('name:', id + name);
+  router.push({ path: `/polos/ativacao/${id}`, query: {name}});
+
 };
 
 const onToggleActive = (row: any) => {
@@ -127,8 +119,6 @@ const onToggleActive = (row: any) => {
 const searchTerm = ref('');
 const filteredItems = computed(() => {
   const term = searchTerm.value.toLowerCase();
-  return items.value.filter((item) =>
-    item.name.toLowerCase().includes(term)
-  );
+  return items.value.filter((item) => item.name.toLowerCase().includes(term));
 });
 </script>

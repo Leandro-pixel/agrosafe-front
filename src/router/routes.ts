@@ -12,8 +12,47 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/SegmentsPage.vue'),
       },
       {
+        path: '/dashboard/saldo',
+        component: () => import('pages/dashboard/BalancePage.vue'),
+      },
+      {
+        path: '/dashboard/movimentacoes',
+        component: () => import('pages/dashboard/CashFlowPage.vue'),
+      },
+      {
         path: '/lojas/estabelecimentos',
         component: () => import('pages/stores/ECPage.vue'),
+      },
+      {
+        path: '/lojas/clientes',
+        component: () => import('pages/stores/ClientsPage.vue'),
+      },
+      {
+        path: '/polos',
+        component: () => import('pages/polos/PoloPage.vue'),
+        children:[
+          {
+            path: 'ativacao',
+            component: () => import('pages/polos/SearchPoloPage.vue'),
+          },
+          {
+            path: 'ativacao/:id', // Rota com parâmetro de ID
+            component: () => import('pages/polos/PoloInfoPage.vue'),
+            props: true, // Passar o ID como propriedade para o componente
+          },
+        ]
+      },
+      {
+        path: '/conta/perfil',
+        component: () => import('pages/account/ProfilePage.vue'),
+      },
+      {
+        path: '/conta/configuracoes',
+        component: () => import('pages/account/ConfigPage.vue'),
+      },
+      {
+        path: '/conta/suporte',
+        component: () => import('pages/account/SuportPage.vue'),
       },
       {
         path: '/polos',
