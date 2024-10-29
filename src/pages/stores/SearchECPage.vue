@@ -57,10 +57,10 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 // Dados da tabela (mock)
 const items = ref([
-  { id: 1, name: 'Leandro Soares', CPF: '47481542848', active: true },
-  { id: 2, name: 'Murilo', CPF: '47481542848', active: false },
-  { id: 3, name: 'Isabela', CPF: '47481542848', active: true },
-  { id: 4, name: 'Gabriel', CPF: '47481542848', active: false },
+  { id: 1, name: 'bueaty life', userType: '12345678000199', active: true },
+  { id: 2, name: 'fashion hair', userType: '98765432000188', active: false },
+  { id: 3, name: 'natura', userType: '13579246000144', active: true },
+  { id: 4, name: 'body care', userType: '86420973000133', active: false },
 ]);
 
 // Configuração das colunas da tabela
@@ -68,15 +68,15 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'Nome',
+    label: 'Nome Fantasia',
     align: 'left' as const,
     field: (row: any) => row.name,
   },
   {
-    name: 'CPF',
-    label: 'CPF',
+    name: 'userType',
+    label: 'CNPJ',
     align: 'left' as const,
-    field: (row: any) => row.CPF,
+    field: (row: any) => row.userType,
   },
   {
     name: 'actions',
@@ -86,10 +86,10 @@ const columns = [
   },
 ];
 
-
+// Funções de evento para os botões
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/polos/ativacao/${id}`, query: {name}});
+  router.push({ path: `/lojas/estabelecimentos/${id}`, query: {name}});
 
 };
 
@@ -102,6 +102,8 @@ const onToggleActive = (row: any) => {
 const searchTerm = ref('');
 const filteredItems = computed(() => {
   const term = searchTerm.value.toLowerCase();
-  return items.value.filter((item) => item.name.toLowerCase().includes(term));
+  return items.value.filter((item) =>
+    item.name.toLowerCase().includes(term)
+  );
 });
 </script>

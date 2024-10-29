@@ -20,17 +20,55 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/CashFlowPage.vue'),
       },
       {
-        path: '/lojas/estabelecimentos',
+        path: '/lojas',
         component: () => import('pages/stores/ECPage.vue'),
+        children: [
+          {
+            path: 'estabelecimentos',
+            component: () => import('pages/stores/SearchECPage.vue'),
+          },
+          {
+            path: 'estabelecimentos/:id',
+            component: () => import('pages/stores/ECInfoPage.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: '/lojas/clientes',
-        component: () => import('pages/stores/ClientsPage.vue'),
+        component: () => import('pages/stores/client/ClientsPage.vue'),
+        children: [
+          {
+            path: '',
+            component: () =>
+              import('pages/stores/client/SearchECLientPage.vue'),
+          },
+          {
+            path: ':id',
+            component: () => import('pages/stores/client/ClientInfoPage.vue'),
+            props: true,
+          },
+        ]
+      },
+      {
+        path: '/lojas/estabelecimentos',
+        component: () => import('pages/stores/ECPage.vue'),
+        children: [
+          {
+            path: '',
+            component: () => import('pages/stores/SearchECPage.vue'),
+          },
+          {
+            path: ':id',
+            component: () => import('pages/stores/ECInfoPage.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: '/polos',
         component: () => import('pages/polos/PoloPage.vue'),
-        children:[
+        children: [
           {
             path: 'ativacao',
             component: () => import('pages/polos/SearchPoloPage.vue'),
@@ -40,7 +78,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/polos/PoloInfoPage.vue'),
             props: true, // Passar o ID como propriedade para o componente
           },
-        ]
+        ],
       },
       {
         path: '/conta/perfil',

@@ -12,14 +12,14 @@
           class="flex items-center text-h6 q-mr-md"
           :class="{
             isActive: activeIndex === index,
-            isNotActive: activeIndex !== index,
+            isNotActive: activeIndex !== index
           }"
           @click="setActive(index)"
         >
           {{ item }}
         </span>
       </div>
-      <infor v-if="activeIndex === 0" :info-array="infoList"></infor>
+      <infor v-if="activeIndex === 0" :info-array="infoList" ></infor>
       <searchableTable
         :items="items"
         :columns="columns"
@@ -39,17 +39,16 @@ import SearchableTable from 'src/components/list/Searchable-table.vue';
 
 // Recebe o ID da rota como propriedade
 defineProps<{ id: string }>();
+const searchableTable = SearchableTable;
 
 const infor = InfoList;
-const searchableTable = SearchableTable;
+
 // Acessando o nome via query string
 const route = useRoute();
-const router = useRouter();
-
-const name = route.query.name || 'Nome não disponível';
+const router = useRouter();const name = route.query.name || 'Nome não disponível';
 
 // Dados dos spans
-const items1 = ['Credenciais', 'Estabelecimentos'];
+const items1 = ['Credenciais', 'Clientes', 'Funding'];
 
 // Índice do span ativo
 const activeIndex = ref<number>(0);
@@ -60,20 +59,18 @@ const setActive = (index: number) => {
 };
 
 const infoList = [
-  { icon: 'home', label: 'Polo', value: 'CEDIBRA PROMOTORA DE CREDITO LTDA' },
-  { icon: 'badge', label: 'Nome fantasia', value: 'CEDIBRA PROMOTORA DE CREDITO LTDA' },
-  { icon: 'description', label: 'Documento', value: '14.163.708/0001-78' },
+  { icon: 'badge', label: 'Nome fantasia', value: 'PG DISTRIBUIDORA LTDA' },
+  { icon: 'description', label: 'CNPJ', value: '14.163.708/0001-78' },
   { icon: 'place', label: 'Endereço', value: 'Belo Horizonte, MG, Centro, Rua Rio de Janeiro, 30160-911' },
   { icon: 'check_circle', label: 'Status', value: 'Ativo' },
   { icon: 'schedule', label: 'Criado em', value: '01/10/2024, 16:12:13' },
 ];
 
-
 const items = ref([
-  { id: 1, name: 'bueaty life', CNPJ: '12345678000199', active: true },
-  { id: 2, name: 'fashion hair', CNPJ: '98765432000188', active: false },
-  { id: 3, name: 'natura', CNPJ: '13579246000144', active: true },
-  { id: 4, name: 'body care', CNPJ: '86420973000133', active: false },
+  { id: 1, name: 'nome cliente 1', CNPJ: '12345678000199', active: true },
+  { id: 2, name: 'nome cliente 2', CNPJ: '98765432000188', active: false },
+  { id: 3, name: 'nome cliente 3', CNPJ: '13579246000144', active: true },
+  { id: 4, name: 'nome cliente 4', CNPJ: '86420973000133', active: false },
 ]);
 
 const columns = [
@@ -86,7 +83,7 @@ const columns = [
   },
   {
     name: 'CNPJ',
-    label: 'CNPJ',
+    label: 'CPF',
     align: 'left' as const,
     field: (row: any) => row.CNPJ,
   },
@@ -100,11 +97,12 @@ const columns = [
 
 const onNameClick = (id: number, name: string) => {
   console.log('name:', id + name);
-  router.push({ path: `/lojas/estabelecimentos/${id}`, query: { name } });
+  router.push({ path: `/lojas/clientes/${id}`, query: { name } });
 };
 
 const onToggleActive = (row: any) => {
   row.active = !row.active;
   console.log(`${row.name} agora está ${row.active ? 'Ativo' : 'Inativo'}`);
 };
+
 </script>
