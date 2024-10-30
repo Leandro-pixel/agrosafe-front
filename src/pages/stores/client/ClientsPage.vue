@@ -9,13 +9,13 @@
         >
           Clientes
         </span>
-        <q-btn
-          flat
-          class="q-pt-sm q-pr-xl text-h6 text-primary"
-          style="margin-top: 0.25rem; text-transform: none;"
-        >
-          +Convidar clientes
-        </q-btn>
+        <PrimaryButton flat @click="openMessageSender" class=" gt-sm">
+            <div class="column flex-center q-gutter-y-sm">
+              <q-icon name="message" color="primary" />
+              <span>+Convidar Cliente</span>
+            </div>
+          </PrimaryButton>
+
       </div>
       <q-page-container>
       <router-view class="q-pa-md" />
@@ -26,5 +26,16 @@
 </template>
 
 <script setup lang="ts">
+import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { useConfigStore } from 'src/stores/useConfigStore';
+import { ShowDialog } from 'src/utils/utils';
+import { ref } from 'vue';
 
+const config = useConfigStore()
+
+const messageText = ref(config.getConfig.SmsMessage)
+
+const openMessageSender = async () => {
+	await ShowDialog.showSendMessagePopUp('Convide!', 'Insira um número de celular e o link de convite do seu estabelecimento!', messageText.value)
+}
 </script>

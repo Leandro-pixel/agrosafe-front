@@ -65,21 +65,11 @@
                 <q-item class="q-pl-xs">
                   <q-btn
                     flat
-                    @click="handleButtonClick('/dashboard/saldo', 'Dashboard')"
+                    @click="handleButtonClick('/dashboard/saque', 'Dashboard')"
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">Sacar Saldo</div>
-                  </q-btn>
-                </q-item>
-                <q-item class="q-pl-xs">
-                  <q-btn
-                    flat
-                    @click="handleButtonClick('/dashboard/movimentacoes', 'Dashboard')"
-                    class="full-width text-white no-wrap"
-                    style="text-transform: none"
-                  >
-                    <div class="items-start flex width-full">Movimentações</div>
                   </q-btn>
                 </q-item>
               </q-list>

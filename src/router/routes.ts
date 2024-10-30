@@ -12,12 +12,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/SegmentsPage.vue'),
       },
       {
-        path: '/dashboard/saldo',
-        component: () => import('pages/dashboard/BalancePage.vue'),
-      },
-      {
-        path: '/dashboard/movimentacoes',
-        component: () => import('pages/dashboard/CashFlowPage.vue'),
+        path: '/dashboard/saque',
+        component: () => import('pages/dashboard/WithdrawPage.vue'),
       },
       {
         path: '/lojas',
