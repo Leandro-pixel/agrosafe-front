@@ -27,7 +27,7 @@
       <SearchableTransactionTable
         :items="transactions"
         :columns="columns"
-        @onNameClick="onNameClick"
+        :onNameClick="handleNameClick"
         v-if="activeIndex === 2"
       />
 
@@ -60,6 +60,7 @@
 
 <script setup lang="ts">
 import InfoList from 'src/components/list/InfoList.vue'; // Correção no import
+import SearchableTransactionTable from 'src/components/list/Searchable-transaction-table.vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -89,11 +90,11 @@ const onToggle = (value: boolean) => {
 
 // Mock de transações
 const transactions = [
-  { id: 1, loja: 'Loja A', quantidade: 5, data: '2024-10-29', cartao: 'Visa' },
+  { id: 1, loja: 'Loja A', quantidade: 50.0, data: '2024-10-29', cartao: 'Visa' },
   {
     id: 2,
     loja: 'Loja B',
-    quantidade: 2,
+    quantidade: 25.59,
     data: '2024-10-28',
     cartao: 'Mastercard',
   },
@@ -130,20 +131,15 @@ const fundingList = [
 
 // Definição das colunas da tabela
 const columns = [
-  { name: 'loja', label: 'Loja', align: 'left', field: 'loja' },
-  {
-    name: 'quantidade',
-    label: 'Quantidade',
-    align: 'right',
-    field: 'quantidade',
-  },
-  { name: 'data', label: 'Data', align: 'center', field: 'data' },
-  { name: 'cartao', label: 'Cartão', align: 'center', field: 'cartao' },
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
+  { name: 'loja', label: 'Loja', align: 'left' as const, field: (row: any) => row.loja },
+  { name: 'quantidade', label: 'Quantidade', align: 'right' as const, field: (row: any) => row.quantidade },
+  { name: 'data', label: 'Data', align: 'center' as const, field: (row: any) => row.data },
+  { name: 'cartao', label: 'Cartão', align: 'center' as const, field: (row: any) => row.cartao },
+  { name: 'actions', label: 'Ações', align: 'center' as const,field: (row: any) => row.actions},
 ];
 
-// Funções de eventos
-const onNameClick = (id: number, loja: string) => {
+// Função para lidar com o clique no nome da loja
+const handleNameClick = (id: number, loja: string) => {
   console.log(`Loja clicada: ${loja} (ID: ${id})`);
 };
 </script>

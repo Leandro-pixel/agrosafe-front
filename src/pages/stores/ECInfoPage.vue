@@ -27,6 +27,31 @@
         :onToggleActive="onToggleActive"
         v-if="activeIndex === 1"
       />
+      <InfoList v-if="activeIndex === 2" :info-array="fundingList"></InfoList>
+
+       <!-- Botão Editar para a aba Funding -->
+       <div v-if="activeIndex === 2" class="flex column">
+        <q-btn
+          flat
+          icon="edit"
+          @click="onToggle(edit)"
+          label="Editar"
+          class="bg-primary text-white items-center"
+          style="width: 8rem"
+        ></q-btn>
+
+        <!-- Edição Habilitada -->
+        <div v-if="edit">
+          <span>Habilitou para editar valores</span>
+          <q-btn
+            flat
+            @click="onToggle(edit)"
+            label="Alterar valor"
+            class="bg-primary text-white items-center"
+            style="width: 8rem"
+          ></q-btn>
+        </div>
+      </div>
     </q-page>
   </q-layout>
 </template>
@@ -47,6 +72,7 @@ const infor = InfoList;
 const route = useRoute();
 const router = useRouter();const name = route.query.name || 'Nome não disponível';
 
+const edit = ref(false);
 // Dados dos spans
 const items1 = ['Credenciais', 'Clientes', 'Funding'];
 
@@ -57,6 +83,21 @@ const activeIndex = ref<number>(0);
 const setActive = (index: number) => {
   activeIndex.value = index;
 };
+
+// Função para alternar estado de edição
+const onToggle = (value: boolean) => {
+  edit.value = !value; // Inverte o valor de edição
+};
+
+const fundingList = [
+  { icon: 'monetization_on', label: 'Saldo disponível', value: 'R$2.000,00' },
+  { icon: 'money_off', label: 'Saldo usado', value: 'R$3.000,00' },
+  {
+    icon: 'schedule',
+    label: 'Última atualização',
+    value: '01/10/2024, 16:12:13',
+  },
+];
 
 const infoList = [
   { icon: 'badge', label: 'Nome fantasia', value: 'PG DISTRIBUIDORA LTDA' },
