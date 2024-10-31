@@ -22,7 +22,7 @@
         <q-td :props="props">
           <span
             class="text-primary hoverable"
-            @click="onNameClick(props.row.id, props.row.name)"
+            @click="onNameClick && onNameClick(props.row.id, props.row.name)"
           >
             {{ props.row.name }}
           </span>
@@ -55,7 +55,7 @@ const props = defineProps<{
         align?: 'left' | 'right' | 'center';
         field: (row: any) => any
       }>;
-  onNameClick: (id: number, name: string) => void;
+  onNameClick?: (id: number, name: string) => void;
   onToggleActive: (row: any) => void;
 }>();
 

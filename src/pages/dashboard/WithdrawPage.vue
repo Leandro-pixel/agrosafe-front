@@ -1,6 +1,15 @@
 <template>
+    <q-layout>
   <q-page class="q-pa-md">
-    <div class="row q-gutter-md justify-between full-width bg-red">
+    <div class="flex justify-between q-mb-lg">
+        <span
+          class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
+          style="border-top: 0.25rem solid #401a58"
+        >
+          Saques
+        </span>
+        </div>
+    <div class="flex row q-gutter-md justify-between full-width ">
       <!-- Coluna 1 -->
       <div class="col">
         <q-card flat bordered class="bg-primary text-white">
@@ -47,11 +56,11 @@
       </div>
 
       <!-- Coluna 2 -->
-      <div class="col">
+      <div class="flex column">
         <q-card flat bordered>
-          <q-card-section class="row justify-between items-center q-gutter-md">
+          <q-card-section class="flex justify-between items-center q-gutter-md">
             <div>
-              <div class="text-subtitle1">Cartão: Leandro</div>
+              <div class="text-subtitle1">Cartão: nome do cartão</div>
               <div class="text-body2 text-grey">Informações aqui</div>
               <div class="text-body2 text-grey">Informações aqui</div>
             </div>
@@ -84,6 +93,7 @@
       </div>
     </div>
   </q-page>
+    </q-layout>
 </template>
 
 <script setup lang="ts">
@@ -109,10 +119,6 @@ const onToggle = (value: boolean) => {
 </script>
 
 <style scoped>
-.q-page {
-  max-width: 900px; /* Aumente a largura se necessário */
-  margin: 0 auto;
-}
 
 .q-btn {
   min-width: 150px;

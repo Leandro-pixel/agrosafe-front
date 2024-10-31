@@ -94,7 +94,7 @@ const submit = async () => { //função do login
 				invalidCredentials.value = true
 				NotifyError.error(error.message)
 			} else {
-        router.push('/home')// autorizando entrar para testes
+        router.push('/dashboard/segmentos')// autorizando entrar para testes
 
 				ShowDialog.show('Erro', error.message)
 			}

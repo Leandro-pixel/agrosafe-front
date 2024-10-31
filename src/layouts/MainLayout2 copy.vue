@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFr">
-    <q-page-container class="flex" style="justify-content: space-evenly">
+    <q-page-container class="flex" style="justify-content: space-evenly; ">
      <!-- Drawer sempre fixo e aberto -->
      <q-drawer show-if-above bordered :width="250" mini-to-overlay>
       <div class="column fit no-wrap bg-primary" style="padding-top: 2rem">
