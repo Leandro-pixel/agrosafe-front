@@ -31,6 +31,10 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: '/lojas/cadastroEC',
+        component: () => import('pages/stores/CreateEC.vue'),
+      },
+      {
         path: '/lojas/clientes',
         component: () => import('pages/stores/client/ClientsPage.vue'),
         children: [

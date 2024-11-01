@@ -4,12 +4,12 @@ import ConfirmPopUp from 'src/components/popup/ConfirmPopUp.vue'
 import CopyPopUp from 'src/components/popup/CopyPopUp.vue'
 import PopUp from 'src/components/popup/PopUp.vue'
 import SendMessagePopUp from 'src/components/popup/SendMessagePopUp.vue'
-//import { Address } from 'src/models/address'
-//import ZipCode from 'src/models/valueObjects/zipCode'
-//import { useAddressStore } from 'src/stores/useAddressStore'
+import { Address } from 'src/models/address'
+import ZipCode from 'src/models/valueObjects/zipCode'
+import { useAddressStore } from 'src/stores/useAddressStore'
 
 const implementHierarchy = (necessaryPermission:string): boolean => {
- 
+
 	switch (necessaryPermission) {
 	case 'sysAdmin':
 		return ['sysAdmin'].includes(atob(localStorage.getItem('userType') || ''))
@@ -135,7 +135,7 @@ class ShowDialog {
 		})
 	}
 }
-/*
+
 class AddressUtils {
 	private static mixAddresses = (addressReceiver: Address, searchedAddress: Address): void => {
 		addressReceiver.city = searchedAddress.city
@@ -160,13 +160,13 @@ class AddressUtils {
 			await ShowLoading.hide(error.message)
 		}
 	}
-}*/
+}
 
 class HashIds { //hashids para codificar e decodificar números (ou IDs) em strings curtas
 	public static hash = new Hashids('', 20)
 	static encryptId = (value: string): string => this.hash.encode(parseInt(value, 20))
 	static decryptId = (value: string): string => this.hash.decode(value)[0].toString(20)
 }
-//export { implementHierarchy, NotifyError, ShowLoading, ShowDialog, AddressUtils, HashIds }
+export { implementHierarchy, NotifyError, ShowLoading, ShowDialog, AddressUtils, HashIds }
 
-export { implementHierarchy, NotifyError, ShowLoading, ShowDialog, HashIds }
+//export { implementHierarchy, NotifyError, ShowLoading, ShowDialog, HashIds }
