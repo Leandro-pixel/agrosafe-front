@@ -1,4 +1,4 @@
-import { Store } from 'src/models/store'
+import { EC, Store } from 'src/models/store'
 import { StoreRepository } from 'src/repositories/storeRepository'
 
 class CreateStoreUseCase {
@@ -9,6 +9,9 @@ class CreateStoreUseCase {
 
 	async execute (store: Store) {
 		return await this.storeRepository.createStore(store)
+	}
+  async executeEC (store: EC) {
+		return await this.storeRepository.createEC(store)
 	}
 }
 

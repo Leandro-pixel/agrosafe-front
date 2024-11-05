@@ -40,3 +40,36 @@ export class Hub {
 		}
 	}
 }
+
+export class Polo {
+	constructor (
+		public name = '',
+		public email = '',
+		public phone = '',
+		public employeeType = '',
+	) {}
+
+	public static fromJson (json: any): Polo | undefined {
+		if (!json) return
+		return new Polo(
+			json.name,
+			json.email,
+			json.phone,
+			json.employeeType,
+		)
+	}
+
+	public toString (): string {
+		return `${this.name}, ${this.email}, ${this.phone}, ${this.employeeType}`
+	}
+
+	public toJson () {
+		return {
+			name: this.name,
+			email: this.email,
+			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
+			employeeType: this.employeeType,
+		}
+	}
+}
+

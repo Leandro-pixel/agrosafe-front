@@ -12,6 +12,7 @@
         <q-btn
           flat
           class="q-pt-sm q-pr-xl text-h6 text-primary"
+          :onclick="onClick"
           style="margin-top: 0.25rem; text-transform: none"
         >
           +Criar polo
@@ -25,5 +26,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const onClick = () => {
+  //console.log('name:', id + name);
+  router.push( {path: '/polos/cadastroPolo' });
+};
 </script>

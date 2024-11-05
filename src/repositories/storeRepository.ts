@@ -1,13 +1,24 @@
 import api, { PaginatedResponse } from 'src/lib/api'
-import { Store } from 'src/models/store'
+import { EC, Store } from 'src/models/store'
 
 export class StoreRepository {
 	async createStore (store: Store): Promise<Store> {
 		try {
-			const response = await api.requestPost('/store', store.toJson())
+			const response = await api.requestPost('/establishment', store.toJson())
 			return Store.fromJson(response) as Store
 		} catch (error) {
 			throw new Error('Erro ao salvar loja')
+		}
+	}
+
+  async createEC (ec: EC): Promise<EC> {
+    console.log('Dados enviados para a API:', JSON.stringify(ec.toJson(), null, 2))
+		try {
+			const response = await api.requestPost('/establishment', ec.toJson())
+			return EC.fromJson(response) as EC
+		} catch (error) {
+      console.log('EC:' + ec.toJson)
+			throw new Error('Erro ao salvar loja2')
 		}
 	}
 
@@ -18,12 +29,16 @@ export class StoreRepository {
 			filter
 		}).filter(([, value]) => value !== undefined))
 		try {
-			const data = await api.requestGet('/store', params)
+			const data = await api.requestGet('/establishment', params)
+      console.log('aaaaaaaaaaaa', data)
+      /*
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => Store.fromJson(item)),
 				totalItems: data.totalItems
-			}
-			return json
+			}*/
+      console.log('não ta jaisão')
+			//return json
+      return data
 		} catch (error) {
 			throw new Error('Erro ao buscar lojas')
 		}

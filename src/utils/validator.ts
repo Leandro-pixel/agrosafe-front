@@ -27,6 +27,7 @@ export class Validator {
 	static isValidCNPJ = (value: string): boolean => {
 		return cnpj.isValid(value)
 	}
+  
 
 	static isValidName = (name: string): boolean => {
 		return /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(name)

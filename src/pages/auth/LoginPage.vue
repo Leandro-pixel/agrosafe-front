@@ -86,7 +86,7 @@ const submit = async () => { //função do login
 			rememberMe.value
 				? localStorage.setItem('email', btoa(email.value))
 				: localStorage.removeItem('email')
-			router.push('/home')
+        router.push('/dashboard/segmentos')
 		})
 		.catch((error: any) => {
       console.log(error.message)
@@ -94,7 +94,7 @@ const submit = async () => { //função do login
 				invalidCredentials.value = true
 				NotifyError.error(error.message)
 			} else {
-        router.push('/dashboard/segmentos')// autorizando entrar para testes
+        //router.push('/dashboard/segmentos')// autorizando entrar para testes
 
 				ShowDialog.show('Erro', error.message)
 			}

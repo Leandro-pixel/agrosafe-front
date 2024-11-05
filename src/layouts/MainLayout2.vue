@@ -46,7 +46,7 @@
                 'text-white custom-icon-size': selectedItem !== 'Dashboard',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('sysAdmin')"
+              v-if="implementHierarchy('polo')"
             >
               <q-list style="padding-left: 5%">
                 <q-item class="q-pl-xs">
@@ -75,7 +75,7 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md">
+            <div class="row full-width flex-center q-ma-md" v-if="implementHierarchy('sysAdmin')" >
               <q-separator class="separators" />
             </div>
 
@@ -122,7 +122,7 @@
                 'text-white custom-icon-size': selectedItem !== 'Lojas',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('sysAdmin')"
+              v-if="implementHierarchy('polo')"
             >
               <q-list style="padding-left: 5%">
                 <q-item class="q-pl-xs">
@@ -152,7 +152,7 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md">
+            <div class="row full-width flex-center q-ma-md" >
               <q-separator class="separators" />
             </div>
 
@@ -166,7 +166,7 @@
                 'text-white custom-icon-size': selectedItem !== 'Conta',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('sysAdmin')"
+              v-if="implementHierarchy('polo')"
             >
               <q-list style="padding-left: 5%">
                 <q-item class="q-pl-xs">

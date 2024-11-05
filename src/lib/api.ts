@@ -44,6 +44,9 @@ const refreshToken = async (): Promise<SuccessResponse> => {
 
 const requestPost = async function (path: string, body: any | null, headers?: any, retried = 0): Promise<DataResponse['data']> {
 	const token = localStorage.getItem('accessToken')
+  console.log('path:' + path)
+  console.log('body:' + body)
+  console.log('token:' + token )
 	headers = {
 		...headers,
 		Authorization: `Bearer ${token}`
@@ -114,11 +117,13 @@ const requestGet = async function (path: string, params?: any, headers?: any, re
 	params = new URLSearchParams(params)
 	try {
 		const response = await axios.get(
-			`${BASE_URL}${path}?${params.toString()}`,
+			//`${BASE_URL}${path}?${params.toString()}`,
+      `${BASE_URL}${path}`,
 			{
 				headers
 			}
 		)
+    console.log('aquii', response.data)
 		return response.data
 	} catch (error: any) {
 		if (error.response && error.response.status === 401) {
@@ -236,21 +241,25 @@ const requestPut = async function (path: string, body: any | null, headers?: any
 }
 
 const login = async (email: string, password: string): Promise<void> => {
-  const deviceId = '123457'
   console.log(BASE_URL)
 	try {
-    const basicAuth = btoa(`${deviceId}:${password}`)
+    console.log(`${email}:${password}`)
+    const basicAuth = btoa(`${email}:${password}`)
     console.log(basicAuth)
-		const response = await axios.post(`${BASE_URL}/signin`, {deviceId}, { //como a chave e o valor do deviceId são os mesmos ei posso simplificar
-			headers: {
-				Authorization: `Basic ${basicAuth}`,
-				//'api-key': API_KEY
-			}
-		})
-    console.log(response.status + 'aquiii')
+    const response = await axios.post(
+      `${BASE_URL}/signin/employee`,
+      {}, // Corpo da requisição vazio, caso não seja necessário enviar dados
+      {
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+          //'api-key': API_KEY // Descomente se precisar da api-key
+        }
+      }
+    )
+    console.log(response.data.accessToken)
 		localStorage.setItem('accessToken', response.data.accessToken)
 		localStorage.setItem('refreshToken', response.data.refreshToken)
-		localStorage.setItem('userType', btoa(response.data.userType))
+		localStorage.setItem('userType', btoa(response.data.employeeType))
 	} catch (error: any) {
 		if (error.response && error.response.status === 401) {
 			throw new UnauthorizedError('Seu e-mail ou senha estão incorretos.')

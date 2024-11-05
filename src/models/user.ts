@@ -69,7 +69,7 @@ class UserData {
 		public phone: string = '',
 		public email: string = '',
 		public address: Address = new Address(),
-		public userType: string = 'sysAdmin') {}
+		public userType: string = '') {}
 
 	static fromJson (json: any) {
 		return new UserData(
