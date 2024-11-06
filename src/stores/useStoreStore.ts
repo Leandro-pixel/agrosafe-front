@@ -26,8 +26,14 @@ export const useStoreStore = defineStore('store', {
     async activateStore(storeId: string) {
       return await activateStoreUseCase.execute(storeId);
     },
+    async activateEC(ecId: string) {
+      return await activateStoreUseCase.execute(ecId);
+    },
     async disableStore(storeId: string) {
       return await disableStoreUseCase.execute(storeId);
+    },
+    async disableEC(ecId: string) {
+      return await disableStoreUseCase.execute(ecId);
     },
     async fetchStores(limit: number, offset: number, filter: string) {
       console.log('veio aqui')

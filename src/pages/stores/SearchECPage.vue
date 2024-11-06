@@ -9,7 +9,7 @@
   >
     <template #top-left> </template>
     <template #body-cell-status="props">
-      <q-td style="align-items: center">
+      <q-td >
         <q-chip
           :class="
             'non-selectable bg-' +
@@ -22,63 +22,31 @@
         </q-chip>
       </q-td>
     </template>
-    <template v-slot:body-cell-name="props">
-            <q-td :props="props">
+    <template v-slot:body-cell-businessName="props">
+            <q-td >
               <span
                 class="text-primary hoverable"
-                @click="onNameClick( props.props.row.id, props.props.row.name)"
+                @click="onNameClick( props.props.row.id, props.props.row.businessName)"
               >
-                {{ props.props.row.name }}
+                {{ props.props.row.businessName }}
               </span>
             </q-td>
           </template>
           <!--aqui são as ações-->
     <template v-slot:body-cell-actions="props">
-      <q-td>
+      <q-td class=" flex justify-center items-center">
         <PrimaryButton
-          icon="visibility"
-          flat
-          @click="viewFunction(props.props.row.id)"
-        >
-          <q-tooltip class="bg-primary text-subtitle2">Visualizar</q-tooltip>
-        </PrimaryButton>
-        <PrimaryButton icon="man" flat @click="viewUsers(props.props.row.id)">
-          <q-tooltip class="bg-primary text-subtitle2">Ver usuários</q-tooltip>
-        </PrimaryButton>
-        <q-btn-dropdown flat color="primary" dropdown-icon="settings">
-          <q-list>
-            <q-item
-              ><PrimaryButton
-                icon="person_add"
-                flat
-                @click="addFunction(props.props.row.id)"
-                label="Adicionar usuário"
-            /></q-item>
-            <q-item
-              ><PrimaryButton
-                icon="support_agent"
-                flat
-                @click="inviteSeller(props.props.row.id)"
-                label="Adicionar vendedor"
-            /></q-item>
-            <q-item
-              v-if="!props.props.row.active && implementHierarchy('sysAdmin')"
-              ><PrimaryButton
                 icon="add_business"
                 flat
                 @click="activateStore(props.props.row)"
                 label="Ativar loja"
-            /></q-item>
-            <q-item
-              v-if="props.props.row.active && implementHierarchy('sysAdmin')"
-              ><PrimaryButton
+            />
+            <PrimaryButton
                 icon="key_off"
                 flat
                 @click="disableStore(props.props.row)"
                 label="Desativar loja"
-            /></q-item>
-          </q-list>
-        </q-btn-dropdown>
+            />
       </q-td>
     </template>
   </PrimaryTable>
@@ -89,10 +57,8 @@ import { ref } from 'vue';
 import { EC, Store } from '../../models/store';
 import { useStoreStore } from '../../stores/useStoreStore';
 import {
-  HashIds,
   NotifyError,
   ShowDialog,
-  implementHierarchy,
 } from 'src/utils/utils';
 import { Formatter } from 'src/utils/formatter';
 import { QTableColumn } from 'quasar';
@@ -104,7 +70,7 @@ import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 
 const columns: QTableColumn[] = [ //configura oque cada coluna mostra
   //{ name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
-  {name: 'fullName',label: 'Nome completo',align: 'left',field: (row: EC) => row.businessName,},
+  {name: 'businessName',label: 'Nome completo',align: 'left',field: (row: EC) => row.businessName,},
   //{name: 'fantasyName',label: 'Nome Fantasia',align: 'left',field: 'fantasyName',},
   {name: 'document',label: 'Documento',align: 'left',
   field:
@@ -114,7 +80,7 @@ const columns: QTableColumn[] = [ //configura oque cada coluna mostra
     : (row.cpf ? Formatter.strToCpf(row.cpf) : ''),},
   //{name: 'address',label: 'Endereço',align: 'left',field: (row: Store) => row.address.toString(),},
   {name: 'status',label: 'Status',field: (row: Store) => (row.active ? 'Ativo' : 'Inativo'),align: 'left',},
-  //{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
+  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];
 const pagination = ref(new Pagination());
 const filter = ref('');
@@ -130,14 +96,6 @@ const onNameClick = (id: any, name: any) => {
 
 };
 
-const viewFunction = (id: string) => //funções executadas de acordo com o id dos botões
-  router.push(`/lojas/${HashIds.encryptId(id)}`);
-const viewUsers = (id: string) =>
-  router.push(`usuarios/store/${HashIds.encryptId(id)}`);
-const addFunction = (id: string) =>
-  router.push(`usuarios/criar/store/${HashIds.encryptId(id)}`);
-const inviteSeller = (id: string) =>
-  router.push(`usuarios/criar/seller/${HashIds.encryptId(id)}`);
 const onRequest = async (props: any) => {
   loading.value = true;
   const { page, rowsPerPage } = props.pagination;
@@ -160,18 +118,18 @@ const onRequest = async (props: any) => {
       loading.value = false;
     });
 };
-const activateStore = async (store: Store) => {
+const activateStore = async (ec: EC) => {
   if (
     !(await ShowDialog.showConfirm(
       'Ativar loja',
-      `Deseja realmente ATIVAR a loja ${store.fantasyName}?`,
-      'warning'
+      `Deseja realmente ATIVAR a loja ${ec.businessName}?`,
+      'primary'
     ))
   )
     return;
   loading.value = true;
   await storeStore
-    .activateStore(store.id)
+    .activateStore(ec.cpf)
     .then(() => {
       refresh.value = !refresh.value;
     })
@@ -180,18 +138,18 @@ const activateStore = async (store: Store) => {
       loading.value = false;
     });
 };
-const disableStore = async (store: Store) => {
+const disableStore = async (ec: EC) => {
   if (
     !(await ShowDialog.showConfirm(
       'Desativar loja',
-      `Deseja realmente DESATIVAR a loja ${store.fantasyName}?`,
+      `Deseja realmente DESATIVAR a loja ${ec.businessName}?`,
       'negative'
     ))
   )
     return;
   loading.value = true;
   await storeStore
-    .disableStore(store.id)
+    .disableStore(ec.cpf)
     .then(() => {
       refresh.value = !refresh.value;
     })

@@ -11,7 +11,7 @@
         </div>
       </q-step>
 
-      <q-step :name="2" title="Criar Loja" icon="check">
+      <q-step :name="2" title="Criar Polo" icon="check">
         <p class="text-h6 text-bold q-mb-md">Conclusão</p>
         <div class="q-pa-md">
           <p ><strong>Nome do polo:</strong> {{ name }}</p>

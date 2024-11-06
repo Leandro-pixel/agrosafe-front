@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/stores/client/ClientInfoPage.vue'),
             props: true,
           },
-        ]
+        ],
       },
       {
         path: '/lojas/estabelecimentos',
