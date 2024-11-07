@@ -257,6 +257,8 @@ const login = async (email: string, password: string): Promise<void> => {
       }
     )
     console.log(response.data.accessToken)
+    console.log(response.data.employeeType)
+
 		localStorage.setItem('accessToken', response.data.accessToken)
 		localStorage.setItem('refreshToken', response.data.refreshToken)
 		localStorage.setItem('userType', btoa(response.data.employeeType))

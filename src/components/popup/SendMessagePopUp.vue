@@ -45,7 +45,7 @@ const { dialogRef, onDialogHide } = useDialogPluginComponent()
 
 const customerStore = useCustomerStore()
 
-async function onOKClick () {
+async function onOKClick () { //aqui convida o user
 loading.value = true
 Formatter.clearSymbols(phone.value)
 try {

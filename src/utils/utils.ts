@@ -23,11 +23,11 @@ const implementHierarchy = (necessaryPermission: string): boolean => {
         atob(localStorage.getItem('userType') || '')
       );
     case 'store':
-      return ['support', 'admin', 'polo', 'store'].includes(
+      return ['support', 'admin', 'polo', 'establishment_owner'].includes(
         atob(localStorage.getItem('userType') || '')
       );
     case 'seller':
-      return ['support', 'admin', 'polo', 'store', 'seller'].includes(
+      return ['support', 'admin', 'polo', 'establishment_owner', 'seller'].includes(
         atob(localStorage.getItem('userType') || '')
       );
     default:

@@ -46,10 +46,10 @@
                 'text-white custom-icon-size': selectedItem !== 'Dashboard',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('polo')"
+              v-if="implementHierarchy('store')"
             >
               <q-list style="padding-left: 5%">
-                <q-item class="q-pl-xs">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('polo')">
                   <q-btn
                     flat
                     @click="
@@ -62,7 +62,20 @@
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/dashboard/segmentos', 'Dashboard')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Movimentações</div>
+                  </q-btn>
+                </q-item>
+
+                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
                   <q-btn
                     flat
                     @click="handleButtonClick('/dashboard/saque', 'Dashboard')"
@@ -122,10 +135,10 @@
                 'text-white custom-icon-size': selectedItem !== 'Lojas',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('polo')"
+              v-if="implementHierarchy('store')"
             >
               <q-list style="padding-left: 5%">
-                <q-item class="q-pl-xs">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('polo')">
                   <q-btn
                     flat
                     @click="
@@ -139,7 +152,7 @@
                     </div>
                   </q-btn>
                 </q-item>
-                <q-item class="q-pl-xs">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
                   <q-btn
                     flat
                     @click="handleButtonClick('/lojas/clientes', 'Lojas')"
@@ -166,7 +179,7 @@
                 'text-white custom-icon-size': selectedItem !== 'Conta',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('polo')"
+              v-if="implementHierarchy('store')"
             >
               <q-list style="padding-left: 5%">
                 <q-item class="q-pl-xs">
