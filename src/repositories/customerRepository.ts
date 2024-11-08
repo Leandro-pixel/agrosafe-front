@@ -1,10 +1,12 @@
 import api from 'src/lib/api';
 import { Limit } from 'src/models/interfaces/limit';
+import { Formatter } from 'src/utils/formatter';
 
 export class CustomerRepository {
-  async inviteCustomer(phone: string, message: string) {
+  async inviteCustomer(oldPhone: string, establishmentId: string) {
+    const phone = Formatter.clearSymbolsAndLetters(oldPhone)
     try {
-      return await api.requestPost('/helpers/send-sms', { phone, message });
+      return await api.requestPost('/sms/invitation', null,{ phone, establishmentId });
     } catch (error) {
       throw new Error('Erro ao enviar mensagem');
     }

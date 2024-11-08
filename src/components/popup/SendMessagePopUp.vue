@@ -13,10 +13,10 @@
       <q-card-section class="full-width">
           <q-input bg-color="white" outlined dense v-model="phone" label="Número de telefone"
               :rules="[(val:string) => Validator.isValidPhoneNumber(val)]" mask="(##) #####-####" lazy-rules="ondemand" />
-          <q-input bg-color="white" label="Insira o link" outlined v-model="messageText" autogrow/>
+          <q-input bg-color="white" label="Insira o ID da loja" outlined lazy-rules="ondemand" v-model="messageText" />
       </q-card-section>
       <q-card-actions>
-        <PrimaryButton :loading="loading" rounded size="md" label="Enviar link" @click="onOKClick" />
+        <PrimaryButton :loading="loading" rounded size="md" label="Enviar convite" @click="onOKClick" />
       </q-card-actions>
     </q-card>
   </q-dialog>

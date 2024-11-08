@@ -42,39 +42,90 @@ const refreshToken = async (): Promise<SuccessResponse> => {
 	return { success: false }
 }
 
-const requestPost = async function (path: string, body: any | null, headers?: any, retried = 0): Promise<DataResponse['data']> {
-	const token = localStorage.getItem('accessToken')
+const requestPost = async function (
+  path: string,
+  body?: any | null,
+  params?: any | null,
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken')
   console.log('path:' + path)
-  console.log('body:' + body)
-  console.log('token:' + token )
-	headers = {
-		...headers,
-		Authorization: `Bearer ${token}`
-	}
+  console.log('body:' + JSON.stringify(body)) // Adicionando JSON.stringify para visualizar o conteúdo do body
+  console.log('params:' + JSON.stringify(params)) // Para verificar os parâmetros no console
+  console.log('token:' + token)
 
-	try {
-		const response = await axios.post(`${BASE_URL}${path}`, body, {
-			headers
-		})
-		return response.data
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestPost(path, body, headers, retried + 1)
-			} else {
-				throw new UnauthorizedError()
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}${path}`, body, {
+      headers,
+      params
+    })
+    return response.data
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken()
+      if (result.success && retried < MAX_RETRIES) {
+        return requestPost(path, body, params, headers, retried + 1) // Passando todos os parâmetros corretamente
+      } else {
+        throw new UnauthorizedError()
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError()
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError()
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError()
+    }
+    throw new InternalError()
+  }
 }
+
+const requestPostWithParams = async function (
+  path: string,
+  params: any | null,
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken')
+  console.log('path:' + path)
+  console.log('params:' + params)
+  console.log('token:' + token )
+
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}${path}`, null, { // Passa 'null' para o body
+      headers,
+      params // Envia os dados em params em vez de body
+    })
+    return response.data
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken()
+      if (result.success && retried < MAX_RETRIES) {
+        return requestPost(path, params, headers, retried + 1)
+      } else {
+        throw new UnauthorizedError()
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError()
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError()
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError()
+    }
+    throw new InternalError()
+  }
+}
+
 
 const requestPostWithApiKey = async function (path: string, body: any | null, headers?: any, retried = 0): Promise<void> {
 	const token = localStorage.getItem('accessToken')
@@ -279,4 +330,4 @@ const logout = () => {
 	localStorage.removeItem('userType')
 }
 
-export default { requestGet, requestGetWithApiKey, requestPost, requestPostWithApiKey, requestDelete, requestPut, login, logout }
+export default { requestGet, requestGetWithApiKey, requestPost, requestPostWithParams, requestPostWithApiKey, requestDelete, requestPut, login, logout }
