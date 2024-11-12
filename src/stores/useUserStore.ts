@@ -29,6 +29,12 @@ export const useUserStore = defineStore('user', {
 			const response = await fetchUsersUseCase.execute(limit, offset, email, hubId, storeId)
 			this.users = response.data
 			this.totalItemsInDB = response.totalItems
+		},
+
+    async fetchBrandsUsers (limit: number, offset: number,ecId: number, email?: string, hubId?: string, storeId?: string) {
+			const response = await fetchUsersUseCase.executeBrands(limit, offset,ecId, email, hubId, storeId)
+			this.users = response.data
+			this.totalItemsInDB = response.totalItems
 		}
 	}
 })

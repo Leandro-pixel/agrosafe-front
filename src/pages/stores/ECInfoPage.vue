@@ -20,13 +20,25 @@
         </span>
       </div>
       <infor v-if="activeIndex === 0" :info-array="infoList" ></infor>
-      <searchableTable
-        :items="items"
-        :columns="columns"
-        :onNameClick="onNameClick"
-        :onToggleActive="onToggleActive"
-        v-if="activeIndex === 1"
-      />
+      <template v-if="activeIndex === 1">
+  <PrimaryTable
+  @request="onRequest"
+  v-model:pagination="pagination"
+  :rows="rows"
+  :loading="loading"
+  :columns="columns"
+  :refresh="refresh"
+  >
+    <template #body-cell-status="props">
+      <q-td style="align-items: center;" >
+        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.status)" size="md" flat>
+          {{props.props.row.status}}
+        </q-chip>
+      </q-td>
+    </template>
+
+  </PrimaryTable>
+</template>
       <InfoList v-if="activeIndex === 2" :info-array="fundingList"></InfoList>
 
        <!-- Botão Editar para a aba Funding -->
@@ -59,19 +71,24 @@
 <script setup lang="ts">
 import InfoList from 'src/components/list/InfoList.vue';
 import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import SearchableTable from 'src/components/list/Searchable-table.vue';
-
+import { useRoute } from 'vue-router';
+import { User } from 'src/models/user'
+import { useUserStore } from 'src/stores/useUserStore'
+import { QTableColumn } from 'quasar'
+import { NotifyError} from 'src/utils/utils'
+import PrimaryTable from 'src/components/list/PrimaryTable.vue'
+import { Pagination } from 'src/models/pagination'
+import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
 // Recebe o ID da rota como propriedade
 defineProps<{ id: string }>();
-const searchableTable = SearchableTable;
 
 const infor = InfoList;
 
 // Acessando o nome via query string
 const route = useRoute();
-const router = useRouter();const name = route.query.name || 'Nome não disponível';
-
+const name = route.query.name || 'Nome não disponível';
+const idEC = route.params.id;
+ console.log(idEC)
 const edit = ref(false);
 // Dados dos spans
 const items1 = ['Credenciais', 'Clientes', 'Funding'];
@@ -107,43 +124,38 @@ const infoList = [
   { icon: 'schedule', label: 'Criado em', value: '01/10/2024, 16:12:13' },
 ];
 
-const items = ref([
-  { id: 1, name: 'nome cliente 1', CNPJ: '12345678000199', active: true },
-  { id: 2, name: 'nome cliente 2', CNPJ: '98765432000188', active: false },
-  { id: 3, name: 'nome cliente 3', CNPJ: '13579246000144', active: true },
-  { id: 4, name: 'nome cliente 4', CNPJ: '86420973000133', active: false },
-]);
+const columns: QTableColumn[] = [
+{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
+{ name: 'email', required: true, label: 'E-mail', field: (row:User) => row.email, align: 'left' },
+{ name: 'userType', label: 'Tipo de usuário', field: (row:User) => row.userType, align: 'left' },
+{ name: 'status', label: 'Status', field: (row:User) => row.status, align: 'center' },
+{ name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
+]
 
-const columns = [
-  {
-    name: 'name',
-    required: true,
-    label: 'Nome',
-    align: 'left' as const,
-    field: (row: any) => row.name,
-  },
-  {
-    name: 'CNPJ',
-    label: 'CPF',
-    align: 'left' as const,
-    field: (row: any) => row.CNPJ,
-  },
-  {
-    name: 'actions',
-    label: 'Ações',
-    align: 'left' as const,
-    field: () => '', // Campo obrigatório para evitar erro de tipagem
-  },
-];
+const pagination = ref(new Pagination())
+const rows = ref([] as Array<User>)
+const loading = ref(false)
+const userStore = useUserStore()
+const refresh = ref(false)
 
-const onNameClick = (id: number, name: string) => {
-  console.log('name:', id + name);
-  router.push({ path: `/lojas/clientes/${id}`, query: { name } });
-};
 
-const onToggleActive = (row: any) => {
-  row.active = !row.active;
-  console.log(`${row.name} agora está ${row.active ? 'Ativo' : 'Inativo'}`);
-};
+const onRequest = async (props:any) => {
+loading.value = true
+const { page, rowsPerPage } = props.pagination
+
+const offset = page - 1
+const limit = rowsPerPage
+
+await userStore.fetchBrandsUsers(limit, offset,1, props.filter)
+  .then(() => {
+    rows.value = userStore.getUsers
+    pagination.value.rowsNumber = userStore.totalItemsInDB
+
+    pagination.value.page = page
+    pagination.value.rowsPerPage = rowsPerPage
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
+}
 
 </script>

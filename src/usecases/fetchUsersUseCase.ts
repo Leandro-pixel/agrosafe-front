@@ -9,6 +9,9 @@ class FetchUsersUseCase {
 	async execute (limit: number, offset: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		return await this.repository.fetchUsers(limit, offset, email, hubId, storeId)
 	}
+  async executeBrands (limit: number, offset: number,ecId: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+		return await this.repository.fetchBrandsUsers(limit, offset,ecId, email, hubId, storeId)
+	}
 }
 
 export default FetchUsersUseCase

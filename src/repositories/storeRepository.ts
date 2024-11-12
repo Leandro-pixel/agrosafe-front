@@ -23,12 +23,14 @@ export class StoreRepository {
 	}
 
 	async fetchStores (limit?:number, offset?:number, filter?:string): Promise<PaginatedResponse> {
+    console.log('chegou aqui')
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
 			filter
 		}).filter(([, value]) => value !== undefined))
 		try {
+      console.log('agora veio aqui')
 			const data = await api.requestGet('/establishment', params)
       console.log('aaaaaaaaaaaa', data)
       /*

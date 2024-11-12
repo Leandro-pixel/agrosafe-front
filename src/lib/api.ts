@@ -1,46 +1,45 @@
-import axios from 'axios'
-import { UnauthorizedError } from './errors/unauthorizedError'
-import { InternalError } from './errors/internalError'
-import { BadRequestError } from './errors/badRequestError'
-import { NotFoundError } from './errors/notFoundError'
-import { NotAcceptableError } from './errors/notAcceptableError'
+import axios from 'axios';
+import { UnauthorizedError } from './errors/unauthorizedError';
+import { InternalError } from './errors/internalError';
+import { BadRequestError } from './errors/badRequestError';
+import { NotFoundError } from './errors/notFoundError';
+import { NotAcceptableError } from './errors/notAcceptableError';
 
-const BASE_URL = process.env.BASE_API_URL
-const API_KEY = process.env.API_KEY
-const MAX_RETRIES = 3
+const BASE_URL = process.env.BASE_API_URL;
+const API_KEY = process.env.API_KEY;
+const MAX_RETRIES = 3;
 
 interface DataResponse {
-	data?: any
+  data?: any;
 }
 
 export interface SuccessResponse {
-	success: boolean
+  success: boolean;
 }
 
 export interface PaginatedResponse {
-	data: any[]
-	totalItems: number
+  data: any[];
+  totalItems: number;
 }
 
 const refreshToken = async (): Promise<SuccessResponse> => {
-	for (let i = 0; i < 3; i++) {
-		try {
-			const refreshToken = localStorage.getItem('refreshToken')
-			const response = await axios.post(`${BASE_URL}/refresh-token`, null, {
-				headers: {
-					Authorization: `Bearer ${refreshToken}`
-				}
-			})
+  for (let i = 0; i < 3; i++) {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      const response = await axios.post(`${BASE_URL}/refresh-token`, null, {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      });
 
-			localStorage.setItem('accessToken', response.data.accessToken)
-			localStorage.setItem('refreshToken', response.data.refreshToken)
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
 
-			return { success: true }
-		} catch (error) {
-		}
-	}
-	return { success: false }
-}
+      return { success: true };
+    } catch (error) {}
+  }
+  return { success: false };
+};
 
 const requestPost = async function (
   path: string,
@@ -49,41 +48,41 @@ const requestPost = async function (
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
-  const token = localStorage.getItem('accessToken')
-  console.log('path:' + path)
-  console.log('body:' + JSON.stringify(body)) // Adicionando JSON.stringify para visualizar o conteúdo do body
-  console.log('params:' + JSON.stringify(params)) // Para verificar os parâmetros no console
-  console.log('token:' + token)
+  const token = localStorage.getItem('accessToken');
+  console.log('path:' + path);
+  console.log('body:' + JSON.stringify(body)); // Adicionando JSON.stringify para visualizar o conteúdo do body
+  console.log('params:' + JSON.stringify(params)); // Para verificar os parâmetros no console
+  console.log('token:' + token);
 
   headers = {
     ...headers,
-    Authorization: `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  };
 
   try {
     const response = await axios.post(`${BASE_URL}${path}`, body, {
       headers,
-      params
-    })
-    return response.data
+      params,
+    });
+    return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
-      const result = await refreshToken()
+      const result = await refreshToken();
       if (result.success && retried < MAX_RETRIES) {
-        return requestPost(path, body, params, headers, retried + 1) // Passando todos os parâmetros corretamente
+        return requestPost(path, body, params, headers, retried + 1); // Passando todos os parâmetros corretamente
       } else {
-        throw new UnauthorizedError()
+        throw new UnauthorizedError();
       }
     } else if (error.response && error.response.status === 400) {
-      throw new BadRequestError()
+      throw new BadRequestError();
     } else if (error.response && error.response.status === 404) {
-      throw new NotFoundError()
+      throw new NotFoundError();
     } else if (error.response && error.response.status === 406) {
-      throw new NotAcceptableError()
+      throw new NotAcceptableError();
     }
-    throw new InternalError()
+    throw new InternalError();
   }
-}
+};
 
 const requestPostWithParams = async function (
   path: string,
@@ -91,212 +90,237 @@ const requestPostWithParams = async function (
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
-  const token = localStorage.getItem('accessToken')
-  console.log('path:' + path)
-  console.log('params:' + params)
-  console.log('token:' + token )
+  const token = localStorage.getItem('accessToken');
+  console.log('path:' + path);
+  console.log('params:' + params);
+  console.log('token:' + token);
 
   headers = {
     ...headers,
-    Authorization: `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  };
 
   try {
-    const response = await axios.post(`${BASE_URL}${path}`, null, { // Passa 'null' para o body
+    const response = await axios.post(`${BASE_URL}${path}`, null, {
+      // Passa 'null' para o body
       headers,
-      params // Envia os dados em params em vez de body
-    })
-    return response.data
+      params, // Envia os dados em params em vez de body
+    });
+    return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
-      const result = await refreshToken()
+      const result = await refreshToken();
       if (result.success && retried < MAX_RETRIES) {
-        return requestPost(path, params, headers, retried + 1)
+        return requestPost(path, params, headers, retried + 1);
       } else {
-        throw new UnauthorizedError()
+        throw new UnauthorizedError();
       }
     } else if (error.response && error.response.status === 400) {
-      throw new BadRequestError()
+      throw new BadRequestError();
     } else if (error.response && error.response.status === 404) {
-      throw new NotFoundError()
+      throw new NotFoundError();
     } else if (error.response && error.response.status === 406) {
-      throw new NotAcceptableError()
+      throw new NotAcceptableError();
     }
-    throw new InternalError()
+    throw new InternalError();
   }
-}
+};
 
+const requestPostWithApiKey = async function (
+  path: string,
+  body: any | null,
+  headers?: any,
+  retried = 0
+): Promise<void> {
+  const token = localStorage.getItem('accessToken');
 
-const requestPostWithApiKey = async function (path: string, body: any | null, headers?: any, retried = 0): Promise<void> {
-	const token = localStorage.getItem('accessToken')
+  headers = {
+    ...headers,
+    'api-key': API_KEY,
+    Authorization: `Bearer ${token}`,
+  };
 
-	headers = {
-		...headers,
-		'api-key': API_KEY,
-		Authorization: `Bearer ${token}`
-	}
+  try {
+    await axios.post(`${BASE_URL}${path}`, body, {
+      headers,
+    });
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestPostWithApiKey(path, body, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    throw new InternalError();
+  }
+};
 
-	try {
-		await axios.post(`${BASE_URL}${path}`, body, {
-			headers
-		})
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestPostWithApiKey(path, body, headers, retried + 1)
-			} else {
-				throw new UnauthorizedError()
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
-}
-
-const requestGet = async function (path: string, params?: any, headers?: any, retried = 0): Promise<DataResponse['data']> {
-	const token = localStorage.getItem('accessToken')
-	headers = {
-		...headers,
-		Authorization: `Bearer ${token}`
-	}
-	params = new URLSearchParams(params)
-	try {
-		const response = await axios.get(
-			//`${BASE_URL}${path}?${params.toString()}`,
+const requestGet = async function (
+  path: string,
+  params?: any,
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  console.log('veio para o request' + params());
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+  params = new URLSearchParams(params);
+  try {
+    const response = await axios.get(
+      //`${BASE_URL}${path}?${params.toString()}`,
       `${BASE_URL}${path}`,
-			{
-				headers
-			}
-		)
-    console.log('aquii', response.data)
-		return response.data
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestGet(path, params, headers, retried + 1)
-			} else {
-				throw new UnauthorizedError()
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
-}
+      {
+        headers,
+      }
+    );
+    console.log('aquii', response.data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestGet(path, params, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    console.log('veio para o request' + params());
+    throw new InternalError();
+  }
+};
 
-const requestGetWithApiKey = async function (path: string, params?: any, headers?: any, retried = 0): Promise<DataResponse['data']> {
-	const token = localStorage.getItem('accessToken')
-	headers = {
-		...headers,
-		'api-key': API_KEY,
-		Authorization: `Bearer ${token}`
-	}
-	params = new URLSearchParams(params)
-	try {
-		const response = await axios.get(
-			`${BASE_URL}${path}?${params.toString()}`,
-			{
-				headers
-			}
-		)
-		return response.data
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestGet(path, params, headers, retried + 1)
-			} else {
-				throw new UnauthorizedError()
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
-}
+const requestGetWithApiKey = async function (
+  path: string,
+  params?: any,
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  headers = {
+    ...headers,
+    'api-key': API_KEY,
+    Authorization: `Bearer ${token}`,
+  };
+  params = new URLSearchParams(params);
+  try {
+    const response = await axios.get(
+      `${BASE_URL}${path}?${params.toString()}`,
+      {
+        headers,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestGet(path, params, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    throw new InternalError();
+  }
+};
 
-const requestDelete = async (path: string, params?: any, headers?: any, retried = 0): Promise<void> => {
-	const token = localStorage.getItem('accessToken')
-	params = new URLSearchParams(params)
-	headers = {
-		...headers,
-		Authorization: `Bearer ${token}`
-	}
-	try {
-		await axios.delete(`${BASE_URL}${path}${params.toString()}`,
-			{
-				headers
-			}
-		)
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestDelete(path, retried + 1)
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
-}
+const requestDelete = async (
+  path: string,
+  params?: any,
+  headers?: any,
+  retried = 0
+): Promise<void> => {
+  const token = localStorage.getItem('accessToken');
+  params = new URLSearchParams(params);
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    await axios.delete(`${BASE_URL}${path}${params.toString()}`, {
+      headers,
+    });
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestDelete(path, retried + 1);
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    throw new InternalError();
+  }
+};
 
-const requestPut = async function (path: string, body: any | null, headers?: any, retried = 0): Promise<DataResponse['data']> {
-	const token = localStorage.getItem('accessToken')
-	headers = {
-		...headers,
-		Authorization: `Bearer ${token}`
-	}
+const requestPut = async function (
+  path: string,
+  body: any | null,
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
 
-	try {
-		const response = await axios.put(`${BASE_URL}${path}`, body, {
-			headers
-		})
-		return response.data
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			const result = await refreshToken()
-			if (result.success && retried < MAX_RETRIES) {
-				return requestPut(path, body, headers, retried + 1)
-			} else {
-				throw new UnauthorizedError()
-			}
-		} else if (error.response && error.response.status === 400) {
-			throw new BadRequestError()
-		} else if (error.response && error.response.status === 404) {
-			throw new NotFoundError()
-		} else if (error.response && error.response.status === 406) {
-			throw new NotAcceptableError()
-		}
-		throw new InternalError()
-	}
-}
+  try {
+    const response = await axios.put(`${BASE_URL}${path}`, body, {
+      headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestPut(path, body, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    throw new InternalError();
+  }
+};
 
 const login = async (email: string, password: string): Promise<void> => {
-  console.log(BASE_URL)
-	try {
-    console.log(`${email}:${password}`)
-    const basicAuth = btoa(`${email}:${password}`)
-    console.log(basicAuth)
+  console.log(BASE_URL);
+  try {
+    console.log(`${email}:${password}`);
+    const basicAuth = btoa(`${email}:${password}`);
+    console.log(basicAuth);
     const response = await axios.post(
       `${BASE_URL}/signin/employee`,
       {}, // Corpo da requisição vazio, caso não seja necessário enviar dados
@@ -304,30 +328,40 @@ const login = async (email: string, password: string): Promise<void> => {
         headers: {
           Authorization: `Basic ${basicAuth}`,
           //'api-key': API_KEY // Descomente se precisar da api-key
-        }
+        },
       }
-    )
-    console.log(response.data.accessToken)
-    console.log(response.data.employeeType)
+    );
+    console.log(response.data.accessToken);
+    console.log(response.data.employeeType);
 
-		localStorage.setItem('accessToken', response.data.accessToken)
-		localStorage.setItem('refreshToken', response.data.refreshToken)
-		localStorage.setItem('userType', btoa(response.data.employeeType))
-	} catch (error: any) {
-		if (error.response && error.response.status === 401) {
-			throw new UnauthorizedError('Seu e-mail ou senha estão incorretos.')
-		} else {
-      localStorage.setItem('userType', btoa('sysAdmin'))
+    localStorage.setItem('accessToken', response.data.accessToken);
+    localStorage.setItem('refreshToken', response.data.refreshToken);
+    localStorage.setItem('userType', btoa(response.data.employeeType));
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      throw new UnauthorizedError('Seu e-mail ou senha estão incorretos.');
+    } else {
+      localStorage.setItem('userType', btoa('sysAdmin'));
       console.log('Valor definido: ' + localStorage.getItem('userType'));
-			throw new InternalError()
-		}
-	}
-}
+      throw new InternalError();
+    }
+  }
+};
 
 const logout = () => {
-	localStorage.removeItem('accessToken')
-	localStorage.removeItem('refreshToken')
-	localStorage.removeItem('userType')
-}
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('userType');
+};
 
-export default { requestGet, requestGetWithApiKey, requestPost, requestPostWithParams, requestPostWithApiKey, requestDelete, requestPut, login, logout }
+export default {
+  requestGet,
+  requestGetWithApiKey,
+  requestPost,
+  requestPostWithParams,
+  requestPostWithApiKey,
+  requestDelete,
+  requestPut,
+  login,
+  logout,
+};

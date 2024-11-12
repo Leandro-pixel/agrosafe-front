@@ -12,7 +12,7 @@ export class UserRepository {
 		}
 	}
 
-	async fetchUsers (limit?: number, offset?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+  async fetchUsers (limit?: number, offset?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
@@ -22,6 +22,29 @@ export class UserRepository {
 		}).filter(([, value]) => value !== undefined))
 		try {
 			const data = await api.requestGet('/user', params)
+
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => User.fromJson(item)),
+				totalItems: data.totalItems
+			}
+			return json
+		} catch (error) {
+			throw new Error('Erro ao buscar usuários')
+		}
+	}
+
+	async fetchBrandsUsers (limit?: number, offset?: number, ecId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+		const params = Object.fromEntries(Object.entries({
+			limit,
+			offset,
+      ecId,
+			email,
+			hubId,
+			storeId
+		}).filter(([, value]) => value !== undefined))
+    console.log(params)
+		try {
+			const data = await api.requestGet('/establishment/customers', ecId)
 
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => User.fromJson(item)),

@@ -1,107 +1,116 @@
 <template>
-  <q-layout>
-    <q-page class="column">
+  <PrimaryTable
+  @request="onRequest"
+  v-model:pagination="pagination"
+  :rows="rows"
+  :loading="loading"
+  :columns="columns"
+  :refresh="refresh"
+  >
+    <template #body-cell-status="props">
+      <q-td style="align-items: center;" >
+        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.status)" size="md" flat>
+          {{props.props.row.status}}
+        </q-chip>
+      </q-td>
+    </template>
+    <template #body-cell-actions="props">
+      <q-td style="align-items: center;">
+        <PrimaryButton v-if="showVisualization(props.props.row.userType)" icon="visibility" flat @click="viewFunction(props.props.row.detail.id, props.props.row.userType)">
+          <q-tooltip class="bg-primary text-subtitle2">Visualizar</q-tooltip>
+        </PrimaryButton>
+        <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+          <q-list>
+            <PrimaryButton label="Ativar usuário" v-if="props.props.row.status !== 'Ativo'" :loading="activationLoading" icon="key" flat />
+          <!--  <PrimaryButton label="Ativar usuário" v-if="props.props.row.status !== 'Ativo'" :loading="activationLoading" icon="key" flat @click="activateUser(props.props.row.id)"/> -->
+          <PrimaryButton label="Desativar usuário" v-if="props.props.row.status === 'Ativo' && implementHierarchy('admin')" :loading="inactivationLoading" icon="person_off" flat />
 
-
-      <div class="flex column q-pa-md q-pt-lg">
-        <q-input
-          outlined
-          v-model="searchTerm"
-          placeholder="Digite para buscar..."
-          clearable
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-
-        <!-- Tabela Filtrada -->
-        <q-table
-          :rows="filteredItems"
-          :columns="columns"
-          row-key="id"
-          class="q-mt-md justify-between width-full"
-        >
-          <template v-slot:body-cell-name="props">
-            <q-td :props="props">
-              <span
-                class="text-primary hoverable"
-                @click="onNameClick( props.row.id, props.row.name)"
-              >
-                {{ props.row.name }}
-              </span>
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props" class="q-pa-xs">
-
-              <q-btn
-                color="red"
-                icon="toggle_off"
-                :label="props.row.active ? 'Desativar' : 'Ativar'"
-                @click="onToggleActive(props.row)"
-              />
-            </q-td>
-          </template>
-        </q-table>
-      </div>
-    </q-page>
-  </q-layout>
+         <!--<PrimaryButton label="Desativar usuário" v-if="props.props.row.status === 'Ativo' && implementHierarchy('admin')" :loading="inactivationLoading" icon="person_off" flat @click="disableUser(props.props.row.id)"/>-->
+          </q-list>
+        </q-btn-dropdown>
+      </q-td>
+    </template>
+    <!--
+    <template #top-right v-if="showInviteSellerAsStore() || implementHierarchy('sysAdmin')">
+      <PrimaryButton icon="add" v-if="showInviteSellerAsStore()" @click="inviteSellerAsStore()">Adicionar vendedor</PrimaryButton>
+      <PrimaryButton icon="add" v-if="implementHierarchy('sysAdmin')" @click="inviteAdmin()">Adicionar administrador</PrimaryButton>
+    </template> -->
+  </PrimaryTable>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { User } from 'src/models/user'
+import { useUserStore } from 'src/stores/useUserStore'
+import { ref } from 'vue'
+import { QTableColumn } from 'quasar'
+import { HashIds, NotifyError, implementHierarchy } from 'src/utils/utils'
+//import { useAuthStore } from 'src/stores/useAuthStore'
+import { useRouter } from 'vue-router'
+import PrimaryButton from 'src/components/button/PrimaryButton.vue'
+import PrimaryTable from 'src/components/list/PrimaryTable.vue'
+import { Pagination } from 'src/models/pagination'
+import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
 
-const router = useRouter();
-// Dados da tabela (mock)
-const items = ref([
-  { id: 1, name: 'Cliente nome 1', CPF: '47481542848', active: true },
-  { id: 2, name: 'Cliente nome 2', CPF: '47481542848', active: false },
-  { id: 3, name: 'Cliente nome 3', CPF: '47481542848', active: true },
-  { id: 4, name: 'Cliente nome 4', CPF: '47481542848', active: false },
-]);
+const columns: QTableColumn[] = [
+{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
+{ name: 'email', required: true, label: 'E-mail', field: (row:User) => row.email, align: 'left' },
+{ name: 'userType', label: 'Tipo de usuário', field: (row:User) => row.userType, align: 'left' },
+{ name: 'status', label: 'Status', field: (row:User) => row.status, align: 'center' },
+{ name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
+]
 
-// Configuração das colunas da tabela
-const columns = [
-  {
-    name: 'name',
-    required: true,
-    label: 'Nome',
-    align: 'left' as const,
-    field: (row: any) => row.name,
-  },
-  {
-    name: 'CPF',
-    label: 'CPF',
-    align: 'left' as const,
-    field: (row: any) => row.CPF,
-  },
-  {
-    name: 'actions',
-    label: 'Ações',
-    align: 'left' as const,
-    field: () => '', // Campo obrigatório para evitar erro de tipagem
-  },
-];
+const pagination = ref(new Pagination())
+const rows = ref([] as Array<User>)
+const loading = ref(false)
+const userStore = useUserStore()
+//const authenticationStore = useAuthStore()
+const router = useRouter()
+const activationLoading = ref(false)
+const inactivationLoading = ref(false)
+const refresh = ref(false)
 
+const viewFunction = (id:string, userType: string) => router.push(`${userType}/${HashIds.encryptId(id)}`)
+//const showInviteSellerAsStore = () => atob(localStorage.getItem('userType') as string) === 'store'
+const showVisualization = (userType:string) => String(userType).toLowerCase() === 'vendedor'
+//const inviteAdmin = () => router.push('usuarios/criar/admin/0')
+/*const activateUser = async (userId:string) => {
+activationLoading.value = true
+await authenticationStore.activateUser(userId)
+  .then(() => { refresh.value = !refresh.value })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { activationLoading.value = false })
+}*/
+/*
+const inviteSellerAsStore = async () =>
+await userStore.fetchUserData()
+  .then((response: any) => router.push(`usuarios/criar/seller/${HashIds.encryptId(response.detailId)}`))
+  .catch((error:any) => NotifyError.error(error.message))
+*/
+const onRequest = async (props:any) => {
+loading.value = true
+const { page, rowsPerPage } = props.pagination
 
-const onNameClick = (id: any, name: any) => {
-  console.log('name:', id + name);
-  router.push({ path: `/lojas/clientes/${id}`, query: {name}});
+const offset = page - 1
+const limit = rowsPerPage
 
-};
+await userStore.fetchUsers(limit, offset, props.filter)
+  .then(() => {
+    rows.value = userStore.getUsers
+    pagination.value.rowsNumber = userStore.totalItemsInDB
 
-const onToggleActive = (row: any) => {
-  row.active = !row.active;
-  console.log(`${row.name} agora está ${row.active ? 'Ativo' : 'Inativo'}`);
-};
-
-// Termo de busca e filtro dinâmico
-const searchTerm = ref('');
-const filteredItems = computed(() => {
-  const term = searchTerm.value.toLowerCase();
-  return items.value.filter((item) => item.name.toLowerCase().includes(term));
-});
+    pagination.value.page = page
+    pagination.value.rowsPerPage = rowsPerPage
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
+}
+/*
+const disableUser = async (userId:string) => {
+if (!await ShowDialog.showConfirm('Desativar usuário', 'Deseja realmente DESATIVAR este usuário?', 'negative')) return
+inactivationLoading.value = true
+await authenticationStore.disableUser(userId)
+  .then(() => { refresh.value = !refresh.value })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { inactivationLoading.value = false })
+}*/
 </script>
