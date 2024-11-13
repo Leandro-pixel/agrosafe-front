@@ -1,4 +1,5 @@
-import api from 'src/lib/api';
+import api, { PaginatedResponse } from 'src/lib/api';
+import { CustomerBrands } from 'src/models/customer';
 import { Limit } from 'src/models/interfaces/limit';
 import { Formatter } from 'src/utils/formatter';
 
@@ -11,6 +12,29 @@ export class CustomerRepository {
       throw new Error('Erro ao enviar mensagem');
     }
   }
+
+  async fetchBrandsUsers (limit?: number, offset?: number, establishmentId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+		const params = Object.fromEntries(Object.entries({
+			limit,
+			offset,
+      establishmentId,
+			email,
+			hubId,
+			storeId
+		}).filter(([, value]) => value !== undefined))
+    console.log(params)
+		try {
+			const data = await api.requestGet('/establishment/customers', params)
+
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
+				totalItems: data.totalItems
+			}
+			return json
+		} catch (error) {
+			throw new Error('Erro ao buscar usuários')
+		}
+	}
 
   async fetchLimit(cpf: string): Promise<Limit[]> {
     try {

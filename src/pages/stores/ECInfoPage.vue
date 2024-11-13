@@ -31,8 +31,8 @@
   >
     <template #body-cell-status="props">
       <q-td style="align-items: center;" >
-        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.status)" size="md" flat>
-          {{props.props.row.status}}
+        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.userType)" size="md" flat>
+          {{props.props.row.userType}}
         </q-chip>
       </q-td>
     </template>
@@ -72,13 +72,14 @@
 import InfoList from 'src/components/list/InfoList.vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { User } from 'src/models/user'
-import { useUserStore } from 'src/stores/useUserStore'
+//import { User } from 'src/models/user'
 import { QTableColumn } from 'quasar'
 import { NotifyError} from 'src/utils/utils'
 import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination'
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
+import { CustomerBrands } from 'src/models/customer';
+import { useCustomerStore } from 'src/stores/useCustomerStore';
 // Recebe o ID da rota como propriedade
 defineProps<{ id: string }>();
 
@@ -87,7 +88,7 @@ const infor = InfoList;
 // Acessando o nome via query string
 const route = useRoute();
 const name = route.query.name || 'Nome não disponível';
-const idEC = route.params.id;
+const idEC = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
  console.log(idEC)
 const edit = ref(false);
 // Dados dos spans
@@ -125,17 +126,18 @@ const infoList = [
 ];
 
 const columns: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
-{ name: 'email', required: true, label: 'E-mail', field: (row:User) => row.email, align: 'left' },
-{ name: 'userType', label: 'Tipo de usuário', field: (row:User) => row.userType, align: 'left' },
-{ name: 'status', label: 'Status', field: (row:User) => row.status, align: 'center' },
+//{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
+{ name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
+//{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
+//{ name: 'userType', label: 'Status', field: (row:User) => row.userType, align: 'left' },
+{ name: 'userType', label: 'Status', field: (row:CustomerBrands) => row.userType, align: 'center' },
 { name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
 ]
 
 const pagination = ref(new Pagination())
-const rows = ref([] as Array<User>)
+const rows = ref([] as Array<CustomerBrands>)
 const loading = ref(false)
-const userStore = useUserStore()
+const userStore = useCustomerStore()
 const refresh = ref(false)
 
 
@@ -146,7 +148,7 @@ const { page, rowsPerPage } = props.pagination
 const offset = page - 1
 const limit = rowsPerPage
 
-await userStore.fetchBrandsUsers(limit, offset,1, props.filter)
+await userStore.fetchBrandsUsers(limit, offset,idEC, props.filter)
   .then(() => {
     rows.value = userStore.getUsers
     pagination.value.rowsNumber = userStore.totalItemsInDB

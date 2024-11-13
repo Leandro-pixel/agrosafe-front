@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
 	}),
 	getters: {
 		getUser: (state) => state.user,
-		getUsers: (state) => state.users
+		getUsers: (state) => state.users,
 	},
 	actions: {
 		async fetchUserData () {

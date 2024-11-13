@@ -1,14 +1,27 @@
 import { defineStore } from 'pinia'
+import { CustomerBrands } from 'src/models/customer'
 import { Limit } from 'src/models/interfaces/limit'
 import { CustomerRepository } from 'src/repositories/customerRepository'
 import CheckLimitUseCase from 'src/usecases/checkLimitUseCase'
 import SendMessageUseCase from 'src/usecases/sendMessageUseCase'
+import FetchBUsersUseCase from 'src/usecases/fetchBUsersUseCase'
+import { ref } from 'vue'
 
 const repository = new CustomerRepository()
 const sendMessageUseCase = new SendMessageUseCase(repository)
 const checkLimitUseCase = new CheckLimitUseCase(repository)
+const fetchUsersUseCase = new FetchBUsersUseCase(repository)
 
 export const useCustomerStore = defineStore('customer', {
+  state: () => ({
+		user: ref(new CustomerBrands()),
+		users: [] as Array<CustomerBrands>,
+		totalItemsInDB: 0
+	}),
+	getters: {
+		getUser: (state) => state.user,
+		getUsers: (state) => state.users
+	},
 	actions: {
 
 		async inviteCustomer (phone: string, message: string): Promise<boolean>{
@@ -16,6 +29,11 @@ export const useCustomerStore = defineStore('customer', {
 		},
 		async checkLimit (cpf: string): Promise<Limit[]> {
 			return await checkLimitUseCase.execute(cpf)
+		},
+    async fetchBrandsUsers (limit: number, offset: number,ecId: string, email?: string, hubId?: string, storeId?: string) {
+			const response = await fetchUsersUseCase.executeBrands(limit, offset,ecId, email, hubId, storeId)
+			this.users = response.data
+			this.totalItemsInDB = response.totalItems
 		}
 	}
 })

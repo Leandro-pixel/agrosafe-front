@@ -33,18 +33,18 @@ export class UserRepository {
 		}
 	}
 
-	async fetchBrandsUsers (limit?: number, offset?: number, ecId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+	async fetchBrandsUsers (limit?: number, offset?: number, establishmentId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
-      ecId,
+      establishmentId,
 			email,
 			hubId,
 			storeId
 		}).filter(([, value]) => value !== undefined))
     console.log(params)
 		try {
-			const data = await api.requestGet('/establishment/customers', ecId)
+			const data = await api.requestGet('/establishment/customers', params)
 
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => User.fromJson(item)),
