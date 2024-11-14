@@ -21,7 +21,7 @@ export class CustomerRepository {
 			email,
 			hubId,
 			storeId
-		}).filter(([, value]) => value !== undefined))
+		}).filter(([, value]) => value !== undefined && value !== ''))
     console.log(params)
 		try {
 			const data = await api.requestGet('/establishment/customers', params)

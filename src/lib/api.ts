@@ -170,13 +170,12 @@ const requestGet = async function (
   retried = 0
 ): Promise<DataResponse['data']> {
   const token = localStorage.getItem('accessToken');
-  //console.log('veio para o request' + params);
   headers = {
     ...headers,
     Authorization: `Bearer ${token}`,
   };
   params = new URLSearchParams(params);
-  console.log(params)
+  console.log('veio para o request' + path);
   try {
     const response = await axios.get(
       //`${BASE_URL}${path}?${params.toString()}`,

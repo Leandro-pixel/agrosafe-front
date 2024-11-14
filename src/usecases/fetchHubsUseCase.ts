@@ -10,6 +10,10 @@ class FetchHubsUseCase {
 	async execute (limit: number, offset: number, filter: string): Promise<PaginatedResponse> {
 		return await this.hubRepository.fetchHubs(limit, offset, filter)
 	}
+
+  async executeBrands (limit: number, offset: number, filter: string): Promise<PaginatedResponse> {
+		return await this.hubRepository.fetchHubsBrands(limit, offset, filter)
+	}
 }
 
 export default FetchHubsUseCase

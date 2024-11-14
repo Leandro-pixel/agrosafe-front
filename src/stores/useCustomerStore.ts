@@ -30,7 +30,8 @@ export const useCustomerStore = defineStore('customer', {
 		async checkLimit (cpf: string): Promise<Limit[]> {
 			return await checkLimitUseCase.execute(cpf)
 		},
-    async fetchBrandsUsers (limit: number, offset: number,ecId: string, email?: string, hubId?: string, storeId?: string) {
+    async fetchBrandsUsers (limit: number, offset: number,ecId?: string, email?: string, hubId?: string, storeId?: string) {
+      console.log('chegou aqui')
 			const response = await fetchUsersUseCase.executeBrands(limit, offset,ecId, email, hubId, storeId)
 			this.users = response.data
 			this.totalItemsInDB = response.totalItems

@@ -6,7 +6,7 @@ class FetchBUsersUseCase {
 		this.repository = repository
 	}
 
-  async executeBrands (limit: number, offset: number,ecId: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+  async executeBrands (limit: number, offset: number,ecId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		return await this.repository.fetchBrandsUsers(limit, offset,ecId, email, hubId, storeId)
 	}
 }

@@ -1,5 +1,5 @@
 import api, { PaginatedResponse } from 'src/lib/api'
-import { Hub, Polo } from 'src/models/hub'
+import { Hub, HubBrands, Polo } from 'src/models/hub'
 
 export class HubRepository {
 	async createHub (hub: Hub): Promise<Hub> {
@@ -31,6 +31,27 @@ export class HubRepository {
 			const data = await api.requestGet('/hub', params)
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => Hub.fromJson(item)),
+				totalItems: data.totalItems
+			}
+			return json
+		} catch (error) {
+			throw new Error('Erro ao buscar polos')
+		}
+	}
+
+  async fetchHubsBrands (limit?: number, offset?: number, filter?: string): Promise<PaginatedResponse> {
+    const type = 'polo'
+		const params = Object.fromEntries(Object.entries({
+			limit,
+			offset,
+      type,
+			filter
+		}).filter(([, value]) => value !== undefined))
+
+		try {
+			const data = await api.requestGet('/employee', params)
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => HubBrands.fromJson(item)),
 				totalItems: data.totalItems
 			}
 			return json

@@ -32,6 +32,11 @@ export const useHubStore = defineStore('hub', {
 			this.hubs = response.data
 			this.totalItemsInDB = response.totalItems
 		},
+    async fetchHubsBrands (limit: number, offset: number, filter: string) {
+			const response = await fetchHubsUseCase.executeBrands(limit, offset, filter)
+			this.hubs = response.data
+			this.totalItemsInDB = response.totalItems
+		},
 		async createHub (hub: Hub) {
 			return await createHubUseCase.execute(hub)
 		},
