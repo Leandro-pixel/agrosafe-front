@@ -6,8 +6,13 @@ import { Formatter } from 'src/utils/formatter';
 export class CustomerRepository {
   async inviteCustomer(oldPhone: string, establishmentId: string) {
     const phone = Formatter.clearSymbolsAndLetters(oldPhone)
+
+    const params = Object.fromEntries(Object.entries({
+			phone,
+      establishmentId,
+		}).filter(([, value]) => value !== undefined && value !== ''))
     try {
-      return await api.requestPost('/sms/invitation', null,{ phone, establishmentId });
+      return await api.requestPost('/sms/invitation', null,params);
     } catch (error) {
       throw new Error('Erro ao enviar mensagem');
     }
@@ -25,11 +30,11 @@ export class CustomerRepository {
     console.log(params)
 		try {
 			const data = await api.requestGet('/establishment/customers', params)
-
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
 				totalItems: data.totalItems
 			}
+      console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
 			return json
 		} catch (error) {
 			throw new Error('Erro ao buscar usuários')

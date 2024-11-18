@@ -66,7 +66,7 @@
                   <q-btn
                     flat
                     @click="
-                      handleButtonClick('/dashboard/segmentos', 'Dashboard')
+                      handleButtonClick('/dashboard/movimentacoes', 'Dashboard')
                     "
                     class="full-width text-white no-wrap"
                     style="text-transform: none"

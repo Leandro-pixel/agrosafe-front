@@ -43,6 +43,42 @@ export class Formatter {
 		return new Date(year, month, day).getTime() / 1000
 	}
 
+  static dateToTimestampBR = (dateString: string): number => {
+    const parts = dateString.split(/[- :]/); // Divide ano, mês, dia, hora, minutos e segundos
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Meses em JavaScript começam em 0
+    const day = parseInt(parts[2], 10);
+    const hours = parseInt(parts[3], 10);
+    const minutes = parseInt(parts[4], 10);
+    const seconds = parseInt(parts[5], 10);
+
+    return new Date(year, month, day, hours, minutes, seconds).getTime() / 1000; // Converte para timestamp
+  };
+
+  static formatIsoDateToBR = (isoDate: string): string => {
+    const date = new Date(isoDate.replace(' ', 'T')); // Converte para formato ISO
+    return date.toLocaleString('pt-BR'); // Formato brasileiro
+};
+
+static formatDateToBR = (dateString: string): string => {
+  // Separa a data e hora
+  const [datePart, timePart] = dateString.split(' '); // Divide em data e hora
+
+  // Divide a data em ano, mês e dia
+  const [year, month, day] = datePart.split('-');
+
+  // Formata o ano para 2 dígitos
+  const shortYear = year.slice(2); // Pega apenas os 2 últimos dígitos do ano
+
+  // Divide a hora e minuto
+  const [hours, minutes] = timePart.split(':');
+
+  // Retorna a data e hora no formato DD/MM/YY HH:mm
+  return `${day}/${month}/${shortYear} às ${hours}:${minutes}`;
+};
+
+
+
 	static phoneToBR = (value: string): string => {
 		Formatter.clearSymbols(value)
 		if (value.length === 13) {

@@ -85,8 +85,8 @@ const onNameClick = (id: any, name: any) => {
 const columns: QTableColumn[] = [
 	//{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
 	{ name: 'name', label: 'Nome completo', align: 'left', field: (row:HubBrands) => row.name },
-	//{ name: 'fantasyName', label: 'Nome Fantasia', align: 'left', field: 'fantasyName' },
-	{ name: 'document', label: 'Documento', align: 'left', field: (row:HubBrands) => Formatter.strToCnpj(row.email) },
+	{ name: 'email', label: 'E-mail', align: 'left', field: 'email' },
+	{ name: 'telefone', label: 'Telefone', align: 'left', field: (row:HubBrands) => row.phone },
 	//{ name: 'address', label: 'Endereço', align: 'left', field: (row:HubBrands) => row.address.toString() },
 	{ name: 'status', label: 'Status', field: (row:HubBrands) => row.status ? 'Ativo' : 'Inativo', align: 'center' },
 	{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }

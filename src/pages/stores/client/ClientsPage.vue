@@ -36,6 +36,6 @@ const config = useConfigStore()
 const messageText = ref(config.getConfig.SmsMessage)
 
 const openMessageSender = async () => {
-	await ShowDialog.showSendMessagePopUp('Convide!', 'Insira um número de celular e o link de convite do seu estabelecimento!', messageText.value)
+	await ShowDialog.showSendMessagePopUp('Convide agora!', 'Insira o número de celular para quem deseja convidar', messageText.value)
 }
 </script>

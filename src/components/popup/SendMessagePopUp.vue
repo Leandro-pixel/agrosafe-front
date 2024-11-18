@@ -27,6 +27,7 @@
           outlined
           lazy-rules="ondemand"
           v-model="messageText"
+          v-if="implementHierarchy('polo')"
         />
       </q-card-section>
       <q-card-actions>
@@ -45,6 +46,7 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import PrimaryButton from '../button/PrimaryButton.vue';
+import { implementHierarchy } from 'src/utils/utils';
 import { ref } from 'vue';
 import { useCustomerStore } from 'src/stores/useCustomerStore';
 import { Validator } from 'src/utils/validator';
@@ -54,7 +56,7 @@ import { NotifyError } from 'src/utils/utils';
 const props = defineProps({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  message: { type: String, required: true },
+  message: { type: String, required: false },
 });
 
 const phone = ref('');
@@ -81,6 +83,7 @@ async function onOKClick() {
   } finally {
     loading.value = false;
     if (dialogRef && dialogRef.value) dialogRef.value.hide();
+
   }
 }
 </script>
