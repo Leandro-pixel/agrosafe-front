@@ -94,7 +94,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/conta/configuracoes',
-        component: () => import('pages/account/ConfigPage.vue'),
+        component: () => import('pages/auth/ChangePasswordPage.vue'),
       },
       {
         path: '/conta/suporte',
