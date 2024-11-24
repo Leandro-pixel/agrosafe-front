@@ -11,9 +11,7 @@ import { useAddressStore } from 'src/stores/useAddressStore';
 const implementHierarchy = (necessaryPermission: string): boolean => {
   switch (necessaryPermission) {
     case 'sysAdmin':
-      return ['support'].includes(
-        atob(localStorage.getItem('userType') || '')
-      );
+      return ['support'].includes(atob(localStorage.getItem('userType') || ''));
     case 'admin':
       return ['support', 'admin'].includes(
         atob(localStorage.getItem('userType') || '')
@@ -23,13 +21,17 @@ const implementHierarchy = (necessaryPermission: string): boolean => {
         atob(localStorage.getItem('userType') || '')
       );
     case 'store':
-      return ['support', 'admin', 'polo', 'establishment_owner'].includes(
+      return ['support', 'admin', 'polo', 'establishmentOwner'].includes(
         atob(localStorage.getItem('userType') || '')
       );
     case 'seller':
-      return ['support', 'admin', 'polo', 'establishment_owner', 'seller'].includes(
-        atob(localStorage.getItem('userType') || '')
-      );
+      return [
+        'support',
+        'admin',
+        'polo',
+        'establishmentOwner',
+        'seller',
+      ].includes(atob(localStorage.getItem('userType') || ''));
     default:
       return false;
   }

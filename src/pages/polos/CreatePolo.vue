@@ -6,7 +6,7 @@
         <p class="text-h6 text-bold">Documentos</p>
         <div>
           <q-input dense outlined v-model.trim="name" label="Nome do polo" lazy-rules class="half-width" :rules="[(val:string) => Validator.hasMultipleWords(val) || 'Campo obrigatório']"  />
-          <q-input dense outlined v-model.trim="phone" label="Telefone do polo" mask="(##)####-#####" lazy-rules class="half-width" :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"/>
+          <q-input dense outlined v-model.trim="phone" label="Telefone do polo" mask="(##)#####-####" lazy-rules class="half-width" :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"/>
           <q-input dense outlined v-model.trim="email" label="E-mail do polo" lazy-rules class="half-width" :rules="[(val:string) => Validator.isValidEmail(val) || 'E-mail inválido']"/>
         </div>
       </q-step>

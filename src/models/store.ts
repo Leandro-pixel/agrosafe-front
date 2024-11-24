@@ -40,18 +40,21 @@ export class Store {
 		}
 	}
 }
-
 export class EC {
 	constructor (
 		public businessName: string = '',
 		public tradeName: string = '',
 		public cpf: string = '',
-		public cnpj: string = '',
+    public cnpj: string = '',
 		public establishmentEmail: string = '',
 		public establishmentPhone: string = '',
 		public employeeEmail: string = '',
 		public employeePhone: string = '',
-		public employeeName: string = ''
+		public employeeName: string = '',
+		public amount: number = 0,
+		public initialLimit: number = 0,
+		public maximumLimit: number = 0,
+		public poloId: number = 0
 	) {}
 
 	static fromJson (json: any): EC | undefined {
@@ -60,12 +63,16 @@ export class EC {
 			json.businessName,
 			json.tradeName,
 			json.cpf,
-			json.cnpj,
-      json.establishmentEmail,
+      json.cnpj,
+			json.establishmentEmail,
 			json.establishmentPhone,
 			json.employeeEmail,
 			json.employeePhone,
 			json.employeeName,
+			json.amount,
+			json.initialLimit,
+			json.maximumLimit,
+			json.poloId
 		)
 	}
 
@@ -73,13 +80,18 @@ export class EC {
 		return {
 			businessName: this.businessName,
 			tradeName: this.tradeName,
-			cpf:  Formatter.clearSymbolsAndLetters(this.cpf),
-			cnpj:  Formatter.clearSymbolsAndLetters(this.cnpj),
-      establishmentEmail: this.establishmentEmail,
-      establishmentPhone:  Formatter.clearSymbolsAndLetters(this.establishmentPhone),
-      employeeEmail: this.employeeEmail,
-      employeePhone:  Formatter.clearSymbolsAndLetters(this.employeePhone),
-      employeeName: this.employeeName,
+			cpf: Formatter.clearSymbolsAndLetters(this.cpf),
+      cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
+			establishmentEmail: this.establishmentEmail,
+			establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
+			employeeEmail: this.employeeEmail,
+			employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
+			employeeName: this.employeeName,
+			amount: this.amount,
+			initialLimit: this.initialLimit,
+			maximumLimit: this.maximumLimit,
+			poloId: this.poloId
 		}
 	}
 }
+

@@ -27,7 +27,7 @@ export class CustomerRepository {
 			hubId,
 			storeId
 		}).filter(([, value]) => value !== undefined && value !== ''))
-    console.log(params)
+    console.log('parametros' + params)
 		try {
 			const data = await api.requestGet('/establishment/customers', params)
 			const json: PaginatedResponse = {
