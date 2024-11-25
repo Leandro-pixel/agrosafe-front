@@ -62,7 +62,7 @@
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('justEC')">
                   <q-btn
                     flat
                     @click="

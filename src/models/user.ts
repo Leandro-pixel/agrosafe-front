@@ -64,7 +64,7 @@ class UserData {
 	constructor (
 		public id: string = '',
 		public detailId: string = '',
-		public name: string = 'Leandro Soares',
+		public name: string = "Brand's Card",
 		public document: string = '',
 		public phone: string = '',
 		public email: string = '',

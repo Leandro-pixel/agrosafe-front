@@ -24,6 +24,10 @@ const implementHierarchy = (necessaryPermission: string): boolean => {
       return ['support', 'admin', 'polo', 'establishmentOwner'].includes(
         atob(localStorage.getItem('userType') || '')
       );
+      case 'justEC':
+      return ['establishmentOwner'].includes(
+        atob(localStorage.getItem('userType') || '')
+      );
     case 'seller':
       return [
         'support',
