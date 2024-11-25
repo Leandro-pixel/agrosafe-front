@@ -76,22 +76,29 @@ export class EC {
 		)
 	}
 
-	public toJson () {
-		return {
-			businessName: this.businessName,
-			tradeName: this.tradeName,
-			cpf: Formatter.clearSymbolsAndLetters(this.cpf),
+	public toJson() {
+    const json: any = {
+      businessName: this.businessName,
+      tradeName: this.tradeName,
+      cpf: Formatter.clearSymbolsAndLetters(this.cpf),
       cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
-			establishmentEmail: this.establishmentEmail,
-			establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
-			employeeEmail: this.employeeEmail,
-			employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
-			employeeName: this.employeeName,
-			amount: this.amount,
-			initialLimit: this.initialLimit,
-			maximumLimit: this.maximumLimit,
-			poloId: this.poloId
-		}
-	}
+      establishmentEmail: this.establishmentEmail,
+      establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
+      employeeEmail: this.employeeEmail,
+      employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
+      employeeName: this.employeeName,
+      amount: this.amount,
+      initialLimit: this.initialLimit,
+      maximumLimit: this.maximumLimit
+    };
+
+    // Condicional para incluir `poloId` apenas se for diferente de 0
+    if (this.poloId !== 0) {
+      json.poloId = this.poloId;
+    }
+
+    return json;
+  }
+
 }
 

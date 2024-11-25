@@ -123,6 +123,7 @@
               label="Montante do crédito"
               lazy-rules
               class="half-width"
+              @update:model-value="formatCurrency('amount')"
               :rules="[(val:number) => !!val || 'Campo obrigatório']"
             />
             <q-input
@@ -198,7 +199,7 @@
             <p><strong>Montante do crédito:</strong> {{ amount }}</p>
             <p><strong>Limite inicial:</strong> {{ initialLimit }}</p>
             <p><strong>Limite máximo:</strong> {{ maximumLimit }}</p>
-            <p><strong>ID do polo</strong> {{ poloId }}</p>
+            <p v-if="implementHierarchy('sysAdmin')" ><strong>ID do polo</strong> {{ poloId }}</p>
           </div>
           <div class="text-h6 text-center">
             Você confirma que todos os dados fornecidos estão corretos?
@@ -228,6 +229,7 @@ import { useStoreStore } from 'src/stores/useStoreStore';
 //import {  useRouter } from 'vue-router'
 import { ref } from 'vue';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { Formatter } from 'src/utils/formatter';
 
 const step = ref(1);
 const businessName = ref('');
@@ -239,10 +241,13 @@ const establishmentPhone = ref('');
 const employeeEmail = ref('');
 const employeePhone = ref('');
 const employeeName = ref('');
-const amount = ref(0);
-const initialLimit = ref(0);
-const maximumLimit = ref(0);
-const poloId = ref(2);
+const amount = ref('');
+const initialLimit = ref('');
+const maximumLimit = ref('');
+const poloId = ref(0);
+const intAmount = ref(0);
+const intInitialLimit = ref(0);
+const intMaximumLimit = ref(0);
 
 const storeStore = useStoreStore();
 //const route = useRoute()
@@ -256,6 +261,40 @@ const updateAddressNumber = () => {
 	}
 }*/
 
+// Função para limpar e converter o valor formatado para inteiro
+const cleanCurrency = (value: string): number => {
+  if (!value) return 0;
+  const cleanedValue = value.replace(/[^\d,.-]/g, '').replace(',', '.');
+  const numericValue = parseFloat(cleanedValue) || 0;
+  return Math.round(numericValue); // Converte para inteiro
+};
+
+// Função para formatar e atualizar o campo, enquanto armazena o valor limpo como inteiro
+const formatCurrency = (field: 'amount' | 'initialLimit' | 'maximumLimit') => {
+  let value = ref[field].value;
+  if (value !== undefined && value !== null) {
+    // Limpa o valor e converte para inteiro
+    const cleanedValue = cleanCurrency(value);
+
+    // Armazena o valor limpo como inteiro nas variáveis correspondentes
+    if (field === 'amount') {
+      intAmount.value = cleanedValue;
+    } else if (field === 'initialLimit') {
+      intInitialLimit.value = cleanedValue;
+    } else if (field === 'maximumLimit') {
+      intMaximumLimit.value = cleanedValue;
+    }
+
+    // Formata o valor como moeda brasileira
+    const formattedValue = Formatter.formatNumberToBRCurrency(cleanedValue);
+
+    // Atualiza o valor formatado no campo
+    ref[field].value = formattedValue;
+  }
+};
+
+
+
 const submit = async () => {
   try {
     const store = new EC(
@@ -268,9 +307,9 @@ const submit = async () => {
       employeeEmail.value,
       employeePhone.value,
       employeeName.value,
-      amount.value,
-      initialLimit.value,
-      maximumLimit.value,
+      intAmount.value,
+      intInitialLimit.value,
+      intMaximumLimit.value,
       poloId.value
     );
 

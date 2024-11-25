@@ -7,6 +7,7 @@ import { AuthRepository } from 'src/repositories/authRepository'
 //import ActivateUserUseCase from 'src/usecases/activateUserUseCase'
 //import { AdminSignUpUseCase } from 'src/usecases/adminSignUpUseCase'
 import ChangePasswordUseCase from 'src/usecases/changePasswordUseCase'
+import SendForgotPasswordCodeUseCase from 'src/usecases/sendForgotPasswordCodeUseCase'
 //import CreateUserUseCase from 'src/usecases/createUserUseCase'
 //import DisableUserUseCase from 'src/usecases/disableUserUseCase'
 //import { FetchInvitesUseCase } from 'src/usecases/fetchInvitesUseCase'
@@ -27,6 +28,7 @@ const createUserUseCase = new CreateUserUseCase(repository)
 const sendForgotPasswordCodeUseCase = new SendForgotPasswordCodeUseCase(repository)
 const sendNewPasswordUseCase = new SendNewPasswordUseCase(repository)
 */
+const sendForgotPasswordCodeUseCase = new SendForgotPasswordCodeUseCase(repository)
 const changePasswordUseCase = new ChangePasswordUseCase(repository)
 /*
 const verifyInviteCodeUseCase = new VerifyInviteCodeUseCase(repository)
@@ -65,6 +67,10 @@ export const useAuthStore = defineStore('auth', {
 			return await sendNewPasswordUseCase.execute(email, password, code)
 		},
     */
+    async sendForgotPassword (email: string, document: string, phone:string) {
+			return await sendForgotPasswordCodeUseCase.execute2(email, document, phone)
+		},
+
 		async changePassword (currentPassword: string, newPassword: string) {
 			return await changePasswordUseCase.execute(currentPassword, newPassword)
 		},

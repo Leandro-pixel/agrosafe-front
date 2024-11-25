@@ -5,6 +5,7 @@ import { Seller } from 'src/models/seller'
 import { CreateUser } from 'src/models/user'
 import AuthRepositoryContract from './contracts/authRepositoryContracts'
 import api from 'src/lib/api'
+import { forgotPasswordDTOcnpj, forgotPasswordDTOcpf } from 'src/models/interfaces/forgotPassword'
 //import { SignupInvite } from 'src/models/interfaces/signupInvite'
 
 export class AuthRepository implements AuthRepositoryContract {
@@ -55,6 +56,34 @@ export class AuthRepository implements AuthRepositoryContract {
 			throw new Error('Erro ao enviar código')
 		}
 	}
+
+  async sendForgotPassword (email: string, document: string, phone: string) {
+    try {
+      console.log('chegou aqui: ' + document)
+      // Limpa os caracteres não numéricos
+      const cleanedDocument = document.replace(/\D/g, '');
+
+      let passwordDTO;
+
+      // Valida CPF ou CNPJ e cria o DTO correspondente
+      if (cleanedDocument.length === 11) {
+        passwordDTO = new forgotPasswordDTOcpf(email, document, phone, 'false');
+      } else if (cleanedDocument.length === 14) {
+        passwordDTO = new forgotPasswordDTOcnpj(email, document, phone, 'false');
+      } else {
+        throw new Error('Documento inválido');
+      }
+
+      console.log(passwordDTO.toJson())
+      // Envia o DTO para a API
+      return await api.requestPost('/sms/reset-password', passwordDTO.toJson());
+
+    } catch (error) {
+      // Em caso de erro, lança uma mensagem apropriada
+      throw new Error('Erro ao enviar código');
+    }
+  }
+
 
 	async sendNewPassword (email: string, password: string, code: string) {
 		try {

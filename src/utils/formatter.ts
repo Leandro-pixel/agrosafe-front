@@ -22,6 +22,7 @@ export class Formatter {
 	}
 
 	static formatNumberToBRCurrency = (value: number): string => {
+    console.log('chegou aqui' + Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100))
 		return Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100)
 	}
 

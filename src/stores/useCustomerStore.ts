@@ -27,6 +27,11 @@ export const useCustomerStore = defineStore('customer', {
 		async inviteCustomer (phone: string, message: string): Promise<boolean>{
 			return await sendMessageUseCase.execute(phone, message)
 		},
+
+    async sendTransaction (phone: string, desc: string, amount: number){
+			return await sendMessageUseCase.executeTransaction(phone, desc, amount)
+		},
+
 		async checkLimit (cpf: string): Promise<Limit[]> {
 			return await checkLimitUseCase.execute(cpf)
 		},

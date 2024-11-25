@@ -66,6 +66,19 @@
                   <q-btn
                     flat
                     @click="
+                      handleButtonClick('/dashboard/cobrancas', 'Dashboard')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Cobranças</div>
+                  </q-btn>
+                </q-item>
+
+                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                  <q-btn
+                    flat
+                    @click="
                       handleButtonClick('/dashboard/movimentacoes', 'Dashboard')
                     "
                     class="full-width text-white no-wrap"

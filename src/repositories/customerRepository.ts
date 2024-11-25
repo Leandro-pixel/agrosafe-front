@@ -18,6 +18,20 @@ export class CustomerRepository {
     }
   }
 
+  async sendTransactions(phone: string, description: string, amount: number) {
+
+    const payload = Object.fromEntries(Object.entries({
+			phone,
+      description,
+      amount
+		}).filter(([, value]) => value !== undefined && value !== ''))
+    try {
+      return await api.requestPost('/sms/transaction', payload);
+    } catch (error) {
+      throw new Error('Erro ao enviar mensagem');
+    }
+  }
+
   async fetchBrandsUsers (limit?: number, offset?: number, establishmentId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({
 			limit,
