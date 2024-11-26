@@ -45,6 +45,9 @@ export const useStoreStore = defineStore('store', {
     async createStore(store: Store) {
       return await createStoreUseCase.execute(store);
     },
+    async fetchNotifications(store: Store) {
+      return await createStoreUseCase.execute(store);
+    },
     async createEC(store: EC) {
       return await createStoreUseCase.executeEC(store);
     },

@@ -29,8 +29,9 @@
       </q-card-section>
       <q-card-section>
         <q-form ref="myForm" @submit="submit">
-          <q-input dense class="col-grow" no-error-icon v-model="amount" label="Valor a ser cobrado" @update:model-value="formatCurrency" lazy-rules :rules="[(val:number) => !!val || 'Campo obrigatório']"/>
-            <q-input dense class="col-grow" no-error-icon v-model.trim="phone" label="Celular" mask="(##)#####-####" lazy-rules :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"/>
+        <q-input dense class="col-grow" no-error-icon v-model="amount" label="Valor a ser cobrado" @update:model-value="formatCurrency" lazy-rules :rules="[(val:number) => !!val || 'Campo obrigatório']"/>
+        <q-input dense class="col-grow" no-error-icon v-model.trim="phone" label="Celular" mask="(##)#####-####" lazy-rules :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"/>
+        <q-input dense class="col-grow" outlined v-model.trim="description" label="Descrição"  :rules="[ (val: string) => !!val ]" lazy-rules/>
                     <PrimaryButton type="submit" label="Enviar" :loading="loading"/>
                 </q-form>
       </q-card-section>
@@ -49,7 +50,7 @@ import { Formatter } from 'src/utils/formatter'
 import { useCustomerStore } from 'src/stores/useCustomerStore'
 
 const phone = ref('')
-const description = ref('você esta recebendo uma cobrança, verifique seu app')
+const description = ref('')
 const loading = ref(false)
 const amount = ref('');
 const customerStore = useCustomerStore();

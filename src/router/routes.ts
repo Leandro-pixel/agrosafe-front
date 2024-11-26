@@ -8,6 +8,10 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', component: () => import('pages/IndexPage2.vue') },
       {
+        path: '/notifications',
+        component: () => import('pages/account/NotificationsPage.vue'),
+      },
+      {
         path: '/dashboard/segmentos',
         component: () => import('pages/dashboard/SegmentsPage.vue'),
       },
