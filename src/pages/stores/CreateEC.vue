@@ -133,6 +133,7 @@
               label="Limite inicial"
               lazy-rules
               class="half-width"
+              @update:model-value="formatCurrency('initialLimit')"
               :rules="[(val:number) => !!val || 'Campo obrigatório']"
             />
             <q-input
@@ -142,6 +143,7 @@
               label="Limite máximo"
               lazy-rules
               class="half-width"
+              @update:model-value="formatCurrency('maximumLimit')"
               :rules="[(val:number) => !!val || 'Campo obrigatório']"
             />
             <q-input
@@ -261,38 +263,40 @@ const updateAddressNumber = () => {
 	}
 }*/
 
-// Função para limpar e converter o valor formatado para inteiro
-const cleanCurrency = (value: string): number => {
-  if (!value) return 0;
-  const cleanedValue = value.replace(/[^\d,.-]/g, '').replace(',', '.');
-  const numericValue = parseFloat(cleanedValue) || 0;
-  return Math.round(numericValue); // Converte para inteiro
-};
 
-// Função para formatar e atualizar o campo, enquanto armazena o valor limpo como inteiro
-const formatCurrency = (field: 'amount' | 'initialLimit' | 'maximumLimit') => {
-  let value = ref[field].value;
-  if (value !== undefined && value !== null) {
-    // Limpa o valor e converte para inteiro
-    const cleanedValue = cleanCurrency(value);
 
-    // Armazena o valor limpo como inteiro nas variáveis correspondentes
-    if (field === 'amount') {
-      intAmount.value = cleanedValue;
-    } else if (field === 'initialLimit') {
-      intInitialLimit.value = cleanedValue;
-    } else if (field === 'maximumLimit') {
-      intMaximumLimit.value = cleanedValue;
-    }
+const formatCurrency = (witchField: string): void => {
 
-    // Formata o valor como moeda brasileira
-    const formattedValue = Formatter.formatNumberToBRCurrency(cleanedValue);
+  if (witchField == 'amount'){
+    const cleanedValue = Formatter.clearSymbolsAndLetters(amount.value);
+    intAmount.value = parseFloat(cleanedValue);
+    if (!isNaN(intAmount.value)) {
+      amount.value = Formatter.formatNumberToBRCurrency(intAmount.value);
+  } else {
+    console.error('Valor inválido');
+    amount.value = '';
+  }
 
-    // Atualiza o valor formatado no campo
-    ref[field].value = formattedValue;
+  } else if(witchField == 'initialLimit'){
+    const cleanedValue = Formatter.clearSymbolsAndLetters(initialLimit.value);
+    intInitialLimit.value = parseFloat(cleanedValue);
+    if (!isNaN(intInitialLimit.value)) {
+      initialLimit.value = Formatter.formatNumberToBRCurrency(intInitialLimit.value);
+  } else {
+    console.error('Valor inválido');
+    initialLimit.value = '';
+  }
+  } else {
+    const cleanedValue = Formatter.clearSymbolsAndLetters(maximumLimit.value);
+    intMaximumLimit.value = parseFloat(cleanedValue);
+    if (!isNaN(intMaximumLimit.value)) {
+      maximumLimit.value = Formatter.formatNumberToBRCurrency(intMaximumLimit.value);
+  } else {
+    console.error('Valor inválido');
+    maximumLimit.value = '';
+  }
   }
 };
-
 
 
 const submit = async () => {
@@ -312,7 +316,7 @@ const submit = async () => {
       intMaximumLimit.value,
       poloId.value
     );
-
+    console.log(store)
     const response = await storeStore.createEC(store);
 
     ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
