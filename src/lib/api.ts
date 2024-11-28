@@ -4,6 +4,9 @@ import { InternalError } from './errors/internalError';
 import { BadRequestError } from './errors/badRequestError';
 import { NotFoundError } from './errors/notFoundError';
 import { NotAcceptableError } from './errors/notAcceptableError';
+import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
+import { PoloDataStore } from 'src/models/poloUserData';
+import { SupStore } from 'src/models/supUserData';
 
 const BASE_URL = process.env.BASE_API_URL;
 const API_KEY = process.env.API_KEY;
@@ -400,6 +403,15 @@ const login = async (email: string, password: string): Promise<void> => {
 };
 
 const logout = () => {
+  const employeeEstablishmentStore = new EmployeeEstablishmentStore()
+  employeeEstablishmentStore.clearData()
+
+  const poloStore = new PoloDataStore()
+  poloStore.clearData()
+
+  const supStore = new SupStore()
+  supStore.clearData()
+
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('userType');
