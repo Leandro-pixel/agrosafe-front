@@ -1,75 +1,57 @@
 <template>
-  <PrimaryTable
-    @request="onRequest"
-    v-model:pagination="pagination"
-    :rows="rows"
-    :loading="loading"
-    :columns="columns"
-    :refresh="refresh"
-  >
-    <template #top-left> </template>
-    <template #body-cell-status="props">
-      <q-td >
-        <q-chip
-          :class="
-            'non-selectable bg-' +
-            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
-          "
-          size="md"
-          flat
-        >
-          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
-        </q-chip>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-businessName="props">
-            <q-td >
-              <span
-                class="text-primary hoverable"
-                @click="onNameClick( props.props.row.id, props.props.row.businessName)"
-              >
-                {{ props.props.row.businessName }}
-              </span>
-            </q-td>
-          </template>
-          <!--aqui são as ações-->
+  <q-layout :loading="loading">
+    <q-page >
+  <div>
+          <PrimaryButton flat @click="refreshData" label="Atualizar" :loading="loading" />
 
-  </PrimaryTable>
+        </div>
+      <div class="flex row q-gutter-md justify-between full-width">
+  <q-list bordered>
+          <q-item v-for="(notifications, index) in notifications" :key="index" class="transaction-item">
+            <q-item-section>
+              <q-item-label>{{
+              notifications.createdAt
+}}</q-item-label>
+              <div class="flex row justify-between">
+                <q-item-label class="q-item-label--break-word" caption>{{
+                  notifications.description}}</q-item-label>
+              </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        </div>
+      </q-page>
+      </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import {
-  NotifyError,
-} from 'src/utils/utils';
+import { onMounted, ref } from 'vue';
+import { NotifyError } from 'src/utils/utils';
 import { Formatter } from 'src/utils/formatter';
-import { QTableColumn } from 'quasar';
-import { useRouter } from 'vue-router';
-import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
+//import { useRouter } from 'vue-router';
 import { Pagination } from 'src/models/pagination'; //usa como propriedade para configurar a paginação
-import PrimaryTable from 'src/components/list/PrimaryTable.vue';
-import { useNotificationStore } from 'src/notifications/useNotificationStore';
+import { useNotificationStore } from 'src/stores/useNotificationStore';
 import { Notifications } from 'src/models/notifications';
+import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
-const columns: QTableColumn[] = [ //configura oque cada coluna mostra
-  { name: 'id', label: 'ID', align: 'center', field: (row: Notifications) => row.id },
-  {name: 'description',label: 'Descrição',align: 'left',field: (row: Notifications) => row.description,},
-  { name: 'createdAt', label: 'data', align: 'center', field: (row: Notifications) => row.createdAt },
-  //{name: 'address',label: 'Endereço',align: 'left',field: (row: Store) => row.address.toString(),},
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
-];
+
 const pagination = ref(new Pagination());
 const filter = ref('');
-const rows = ref([] as Array<Notifications>);
+const notifications = ref([] as Array<Notifications>);
 const notificationStore = useNotificationStore();
 const loading = ref(false);
-const refresh = ref(false);
-const router = useRouter();
+//const refresh = ref(false);
+//const router = useRouter();
 
-const onNameClick = (id: any, name: any) => {
-  console.log('name:', id + name);
-  router.push({ path: `/lojas/estabelecimentos/${id}`, query: {name}});
+onMounted(() => {
+  console.log('foi montado')
+  loading.value = true;
+  onRequest({ pagination: pagination.value });
+});
 
+const refreshData = () => {
+  loading.value = true;
+  onRequest({ pagination: pagination.value });
 };
 
 const onRequest = async (props: any) => {
@@ -79,12 +61,15 @@ const onRequest = async (props: any) => {
   const offset = page - 1;
   const limit = rowsPerPage;
   const filterWithoutSymbols = Formatter.clearSymbols(filter.value);
-  console.log('veio aquiaqui')
-  await notificationStore.fetchNotifications(limit, offset, filterWithoutSymbols)
+  console.log('veio aquiaqui');
+  await notificationStore
+    .fetchNotifications(limit, offset, filterWithoutSymbols)
     .then(() => {
-      console.log('veio aquiaqui2' + notificationStore.getNotifications.toString() )
+      console.log(
+        'veio aquiaqui2' + notificationStore.getNotifications
+      );
 
-      rows.value = notificationStore.getNotifications;
+      notifications.value = notificationStore.getNotifications;
       pagination.value.rowsNumber = notificationStore.totalItemsInDB;
 
       pagination.value.page = page;
@@ -96,3 +81,19 @@ const onRequest = async (props: any) => {
     });
 };
 </script>
+<style scoped>
+.q-btn {
+  min-width: 150px;
+}
+.transaction-item {
+  border-bottom: 4px solid #ccc; /* Cor e espessura da linha de separação */
+  padding-bottom: 10px; /* Espaço entre a transação e a linha de separação */
+}
+
+.transaction-item:last-child {
+  border-bottom: none; /* Remove a linha de separação do último item */
+}
+.row {
+  align-items: flex-start; /* Alinha os itens no topo */
+}
+</style>

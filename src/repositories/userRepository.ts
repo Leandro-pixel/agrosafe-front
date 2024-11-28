@@ -4,7 +4,7 @@ import api, { PaginatedResponse } from '../lib/api'
 export class UserRepository {
 	async fetchUserData () {
 		try {
-			const data = await api.requestGet('/user/me')
+			const data = await api.requestGet('/profile')
 
 			return UserData.fromJson(data)
 		} catch (error) {

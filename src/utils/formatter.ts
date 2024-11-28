@@ -58,7 +58,9 @@ export class Formatter {
 
   static formatIsoDateToBR = (isoDate: string): string => {
     const date = new Date(isoDate.replace(' ', 'T')); // Converte para formato ISO
-    return date.toLocaleString('pt-BR'); // Formato brasileiro
+  const formattedDate = date.toLocaleDateString('pt-BR'); // Formato da data no padrão brasileiro
+  const formattedTime = date.toLocaleTimeString('pt-BR'); // Formato da hora no padrão brasileiro
+  return `${formattedDate} às ${formattedTime}`; // Junta a data e hora
 };
 
 static formatDateToBR = (dateString: string): string => {

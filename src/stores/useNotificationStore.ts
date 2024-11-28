@@ -6,7 +6,7 @@ import FetchNotificationUseCase from 'src/usecases/fetchNotificationUseCase';
 const repository = new NotificationRepository();
 const fetchNotificationUseCase = new FetchNotificationUseCase(repository);
 
-export const useNotificationStore = defineStore('notification', {
+export const useNotificationStore = defineStore('notifications', {
   state: () => ({
     notifications: [] as Notifications[],
     totalItemsInDB: 0,

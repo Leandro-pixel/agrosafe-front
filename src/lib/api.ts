@@ -165,9 +165,10 @@ const requestPostWithApiKey = async function (
   }
 };
 
-const requestGet = async function (
+const requestGetWithBody = async function (
   path: string,
   params?: any,
+  body?: any,
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
@@ -177,7 +178,54 @@ const requestGet = async function (
     Authorization: `Bearer ${token}`,
   };
   params = new URLSearchParams(params);
-  console.log('veio para o request' + path);
+  console.log('veio para o request' + params);
+
+  try {
+    const response = await axios({
+      method: 'get',
+      url: `${BASE_URL}${path}`,
+      headers,
+      params,
+      data: body, // Incluindo o body no campo `data`
+    });
+
+    console.log('aquii', response.data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestGetWithBody(path, params, body, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    console.log('veio para o request' + params());
+    throw new InternalError();
+  }
+};
+
+
+const requestGet = async function (
+  path: string,
+  params?: any,
+
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+  params = new URLSearchParams(params);
+  console.log('veio para o request' + params);
   try {
     const response = await axios.get(
       //`${BASE_URL}${path}?${params.toString()}`,
@@ -360,6 +408,7 @@ const logout = () => {
 export default {
   requestGet,
   requestGetWithApiKey,
+  requestGetWithBody,
   requestPost,
   requestPostWithParams,
   requestPostWithApiKey,

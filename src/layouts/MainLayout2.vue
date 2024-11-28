@@ -88,7 +88,7 @@
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('justEC')">
                   <q-btn
                     flat
                     @click="handleButtonClick('/dashboard/saque', 'Dashboard')"
@@ -101,7 +101,10 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md" v-if="implementHierarchy('sysAdmin')" >
+            <div
+              class="row full-width flex-center q-ma-md"
+              v-if="implementHierarchy('sysAdmin')"
+            >
               <q-separator class="separators" />
             </div>
 
@@ -121,16 +124,15 @@
                 <q-item class="q-pl-xs">
                   <q-btn
                     flat
-                    @click="
-                      handleButtonClick('/polos/ativacao', 'Polos')
-                    "
+                    @click="handleButtonClick('/polos/ativacao', 'Polos')"
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Ativação / Desativação</div>
+                    <div class="items-start flex width-full">
+                      Ativação / Desativação
+                    </div>
                   </q-btn>
                 </q-item>
-
               </q-list>
             </q-expansion-item>
 
@@ -178,7 +180,7 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md" >
+            <div class="row full-width flex-center q-ma-md">
               <q-separator class="separators" />
             </div>
 
@@ -252,13 +254,13 @@
                   class="q-mr-md text-primary text-subtitle1"
                   style="line-height: 1"
                 >
-                  {{ user.name }}
+                  {{ name }}
                 </span>
                 <span
                   class="q-mr-md text-accent text-subtitle2"
                   style="line-height: 1"
                 >
-                  {{ user.userType }}
+                  {{ type }}
                 </span>
               </div>
 
@@ -272,7 +274,9 @@
                 @click="openNotifications"
                 class="text-primary"
               >
-                <q-badge class="q-mt-sm" color="red" rounded floating>9+</q-badge>
+                <q-badge class="q-mt-sm" color="red" rounded floating
+                  >9+</q-badge
+                >
                 <q-tooltip class="text-subtitle2">Notificações</q-tooltip>
               </q-btn>
 
@@ -301,20 +305,51 @@
 <script setup lang="ts">
 import api from 'src/lib/api';
 import { useConfigStore } from 'src/stores/useConfigStore';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 //import { implementHierarchy, ShowDialog } from 'src/utils/utils';
 import { implementHierarchy } from 'src/utils/utils';
-import { UserData } from 'src/models/user';
+import { SupStore } from 'src/models/supUserData';
+import { PoloDataStore } from 'src/models/poloUserData';
+import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
 
-const user = ref(new UserData());
 const pageName = ref('Dashboard');
 const config = useConfigStore();
 const leftDrawerOpen = ref(false);
 const selectedItem = ref<string | null>(null);
-//const messageText = ref(config.getConfig.SmsMessage);
 const router = useRouter();
+const name = ref('');
+const type = ref('');
+
+onMounted(() => {
+  console.log('foi montado');
+  userData();
+});
+
+const userData = async () => {
+  const userType = atob(localStorage.getItem('userType'));
+  if (userType == 'establishmentOwner') {
+    const ecStore = new EmployeeEstablishmentStore();
+    await ecStore.loadFromLocalStorage();
+    const ecEmployee = ecStore.data.employee;
+    name.value = ecEmployee.name;
+    type.value = 'Estabelecimento';
+
+  } else if (userType == 'polo') {
+    const poloStore = new PoloDataStore();
+    await poloStore.loadFromLocalStorage();
+    const poloEmployee = poloStore.data.employee;
+    name.value = poloEmployee.name;
+    type.value = 'Polo'
+  } else {
+    const supStore = new SupStore();
+    await supStore.loadFromLocalStorage();
+    const supportEmployee = supStore.data.employee;
+    name.value = supportEmployee.name
+    type.value = 'Suporte'
+  }
+};
 
 const openNotifications = () => {
   //api.logout();

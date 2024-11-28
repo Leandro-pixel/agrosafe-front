@@ -1,4 +1,5 @@
-//import { Formatter } from "src/utils/formatter";
+import { Formatter } from 'src/utils/formatter';
+
 
 export class Notifications {
   constructor(
@@ -8,7 +9,7 @@ export class Notifications {
     public url: string = '',
     public partner: string = '',
     public status: boolean = false,
-    public createdAt: Date = new Date(),
+    public createdAt: string = '',
     public code: string = '',
     public description: string = '',
     public userId: number = 0,
@@ -18,6 +19,9 @@ export class Notifications {
 
   static fromJson(json: any): Notifications | undefined {
     if (!json) return;
+    const createdAtFormatted = json.createdAt?.date
+    ? Formatter.formatIsoDateToBR(json.createdAt.date)
+    : '';
     return new Notifications(
       json.id,
       json.type,
@@ -25,7 +29,7 @@ export class Notifications {
       json.url,
       json.partner,
       json.status,
-      new Date(json.createdAt.date), // Converte para um objeto Date
+      createdAtFormatted,
       json.code,
       json.description,
       json.userId,
@@ -42,7 +46,7 @@ export class Notifications {
       url: this.url,
       partner: this.partner,
       status: this.status,
-      createdAt: this.createdAt.toISOString(), // Formata como string ISO
+      createdAt: this.createdAt,
       code: this.code,
       description: this.description,
       userId: this.userId,

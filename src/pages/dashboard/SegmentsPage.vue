@@ -1,32 +1,31 @@
 <template>
   <q-layout>
-	<q-page class="column q-pa-md">
-
-    <div class="flex justify-between q-mb-lg">
+    <q-page class="column q-pa-md">
+      <div class="flex justify-between q-mb-lg">
         <span
           class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
           style="border-top: 0.25rem solid #401a58"
         >
-          Seguimentos
+          Segmentos
         </span>
+      </div>
+      <div class="flex">
+        <div class="row flex-center q-mb-lg q-gutter-md">
+          <q-img
+            src="src/assets/cards/cartao_brands.png"
+            fit="fill"
+            class="logo__img"
+            style="width: 15rem; height: 10rem"
+          />
+          <q-img
+            src="src/assets/cards/cartao_brands.png"
+            fit="fill"
+            class="logo__img"
+            style="width: 15rem; height: 10rem"
+          />
         </div>
-    <div class="flex">
-      <div class="row flex-center q-mb-lg q-gutter-md">
-              <q-img
-              src="src/assets/cards/cartao_brands.png"
-                fit="fill"
-                class="logo__img"
-                style="width: 15rem; height: 10rem;"
-              />
-              <q-img
-              src="src/assets/cards/cartao_brands.png"
-                fit="fill"
-                class="logo__img"
-                style="width: 15rem; height: 10rem;"
-              />
-            </div>
-    </div>
-		<div class="flex">
+      </div>
+      <div class="flex">
         <span
           v-for="(item, index) in items1"
           :key="index"
@@ -41,7 +40,11 @@
         </span>
       </div>
 
-      <SearchableDateTable v-if="activeIndex === 0" :items="tableData" :columns="tableColumns" />
+      <SearchableDateTable
+        v-if="activeIndex === 0"
+        :items="tableData"
+        :columns="tableColumns"
+      />
 
       <searchableTable
         :items="items"
@@ -55,8 +58,8 @@
         :onToggleActive="onToggleActive"
         v-if="activeIndex === 2"
       />
-	</q-page>
-</q-layout>
+    </q-page>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
@@ -96,9 +99,24 @@ const tableData = [
 ];
 
 const tableColumns = [
-  { name: 'id', label: 'Quantia', align: 'left' as const, field: (row: any) => row.id },
-  { name: 'name', label: 'Nome EC', align: 'left' as const, field: (row: any) => row.name },
-  { name: 'date', label: 'Data', align: 'left' as const, field: (row: any) => row.date },
+  {
+    name: 'id',
+    label: 'Quantia',
+    align: 'left' as const,
+    field: (row: any) => row.id,
+  },
+  {
+    name: 'name',
+    label: 'Nome EC',
+    align: 'left' as const,
+    field: (row: any) => row.name,
+  },
+  {
+    name: 'date',
+    label: 'Data',
+    align: 'left' as const,
+    field: (row: any) => row.date,
+  },
 ];
 
 const columns = [
@@ -127,5 +145,4 @@ const onToggleActive = (row: any) => {
   row.active = !row.active;
   console.log(`${row.name} agora está ${row.active ? 'Ativo' : 'Inativo'}`);
 };
-
 </script>

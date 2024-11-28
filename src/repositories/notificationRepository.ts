@@ -1,4 +1,5 @@
 import api, { PaginatedResponse } from 'src/lib/api';
+import { Notifications } from 'src/models/notifications';
 
 export class NotificationRepository {
 
@@ -20,14 +21,14 @@ export class NotificationRepository {
       console.log('agora veio aqui');
       const data = await api.requestGet('/sms', params);
       console.log('aaaaaaaaaaaa', data);
-      /*
+
 			const json: PaginatedResponse = {
-				data: data.data.map((item: any) => Store.fromJson(item)),
+				data: data.data.map((item: any) => Notifications.fromJson(item)),
 				totalItems: data.totalItems
-			}*/
+			}
       console.log('não ta jaisão');
       //return json
-      return data;
+      return json;
     } catch (error) {
       throw new Error('Erro ao buscar lojas');
     }
