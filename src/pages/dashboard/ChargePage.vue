@@ -81,7 +81,7 @@ const submit = async () => {
   const phoneUnformatted = Formatter.clearSymbolsAndLetters(phone.value)
 	await customerStore.sendTransaction(phoneUnformatted, description.value, parsedValue.value)
 		.then(() => {
-			NotifyError.success('Senha alterada com sucesso!')
+			NotifyError.success('Cobrança gerada com sucesso!')
 		})
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
