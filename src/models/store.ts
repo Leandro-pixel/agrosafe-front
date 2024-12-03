@@ -51,10 +51,8 @@ export class EC {
 		public employeeEmail: string = '',
 		public employeePhone: string = '',
 		public employeeName: string = '',
-		public amount: number = 0,
-		public initialLimit: number = 0,
-		public maximumLimit: number = 0,
-		public poloId: number = 0
+		public poloId: number = 0,
+    public address: Address = new Address(),
 	) {}
 
 	static fromJson (json: any): EC | undefined {
@@ -69,10 +67,8 @@ export class EC {
 			json.employeeEmail,
 			json.employeePhone,
 			json.employeeName,
-			json.amount,
-			json.initialLimit,
-			json.maximumLimit,
-			json.poloId
+			json.poloId,
+      Address.fromJson(json.address),
 		)
 	}
 
@@ -87,9 +83,7 @@ export class EC {
       employeeEmail: this.employeeEmail,
       employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
       employeeName: this.employeeName,
-      amount: this.amount,
-      initialLimit: this.initialLimit,
-      maximumLimit: this.maximumLimit
+      address: this.address.toJson()
     };
 
     // Condicional para incluir `poloId` apenas se for diferente de 0
