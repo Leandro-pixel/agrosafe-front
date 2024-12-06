@@ -1,5 +1,6 @@
 import api, { PaginatedResponse } from 'src/lib/api'
 import { Hub, HubBrands, Polo } from 'src/models/hub'
+import { Representative } from 'src/models/representative'
 
 export class HubRepository {
 	async createHub (hub: Hub): Promise<Hub> {
@@ -15,6 +16,15 @@ export class HubRepository {
 		try {
 			const response = await api.requestPostWithApiKey('/employee', polo.toJson())
 			return Polo.fromJson(response) as Polo
+		} catch (error) {
+			throw new Error('Erro ao salvar polo')
+		}
+	}
+
+  async createRep (rep: Representative): Promise<Representative> {
+		try {
+			const response = await api.requestPostWithApiKey('/employee', rep.toJson())
+			return Representative.fromJson(response) as Representative
 		} catch (error) {
 			throw new Error('Erro ao salvar polo')
 		}

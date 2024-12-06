@@ -119,36 +119,6 @@
             <q-input
               dense
               outlined
-              v-model.trim="amount"
-              label="Montante do crédito"
-              lazy-rules
-              class="half-width"
-              @update:model-value="formatCurrency('amount')"
-              :rules="[(val:number) => !!val || 'Campo obrigatório']"
-            />
-            <q-input
-              dense
-              outlined
-              v-model.trim="initialLimit"
-              label="Limite inicial"
-              lazy-rules
-              class="half-width"
-              @update:model-value="formatCurrency('initialLimit')"
-              :rules="[(val:number) => !!val || 'Campo obrigatório']"
-            />
-            <q-input
-              dense
-              outlined
-              v-model.trim="maximumLimit"
-              label="Limite máximo"
-              lazy-rules
-              class="half-width"
-              @update:model-value="formatCurrency('maximumLimit')"
-              :rules="[(val:number) => !!val || 'Campo obrigatório']"
-            />
-            <q-input
-              dense
-              outlined
               v-model.trim="poloId"
               label="ID do polo"
               lazy-rules
@@ -158,29 +128,31 @@
             />
           </div>
         </q-step>
-        <!--
-      <q-step :name="2" title="Endereço" icon="place" :done="step > 2" caption="Obrigatório" class="column justify-content">
+
+      <q-step :name="3" title="Endereço" icon="place" :done="step > 2" caption="Obrigatório" class="column justify-content">
         <p class="text-h6 text-bold">Informações do endereço</p>
         <div>
-          <q-input dense outlined v-model.trim="address.zipCode.code" label="Cep" lazy-rules
+          <q-input dense outlined v-model.trim="postalCode" label="Cep" lazy-rules
             :rules="[(val: string) => val.length === 10 ]" mask="##.###-###"
-            class="half-width" @blur="AddressUtils.getAddress(address.zipCode, address)" />
-          <q-input dense outlined v-model.trim="address.city" label="Cidade"
-            class="half-width" :readonly="address.zipCode.code.length === 10" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.uf" label="Estado"
-            class="half-width" :readonly="!!address.zipCode" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.neighborhood" label="Bairro"
+            class="half-width"  />
+          <q-input dense outlined v-model.trim="city" label="Cidade"
+            class="half-width"  :rules="[ (val: string) => !!val ]" lazy-rules/>
+          <q-input dense outlined v-model.trim="state" label="Estado"
+            class="half-width"  :rules="[ (val: string) => !!val ]" lazy-rules/>
+          <q-input dense outlined v-model.trim="neighborhood" label="Bairro"
             class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.street" label="Rua"
+          <q-input dense outlined v-model.trim="street" label="Rua"
             class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.number" label="Número"
+            <q-input dense outlined v-model.trim="complement" label="Complemento"
+            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
+          <q-input dense outlined v-model.trim="number" label="Número"
             class="half-width" hide-bottom-space :readonly="useNumber"
             :rules="[ (val: string) => useNumber || !isNaN(Number(val)) ]"/>
           <q-checkbox class="q-ml-md" v-model.trim="useNumber" @update:model-value="updateAddressNumber()" label="Casa sem número"/>
         </div>
       </q-step>
-    -->
-        <q-step :name="3" title="Criar Loja" icon="check">
+
+        <q-step :name="4" title="Criar Loja" icon="check">
           <p class="text-h6 text-bold q-mb-md">Conclusão</p>
           <div class="q-pa-md">
             <p><strong>Nome da empresa:</strong> {{ businessName }}</p>
@@ -198,9 +170,12 @@
             </p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
-            <p><strong>Montante do crédito:</strong> {{ amount }}</p>
-            <p><strong>Limite inicial:</strong> {{ initialLimit }}</p>
-            <p><strong>Limite máximo:</strong> {{ maximumLimit }}</p>
+            <p><strong>CEP:</strong> {{ postalCode }}</p>
+          <p><strong>Cidade:</strong> {{ city }}</p>
+          <p><strong>Estado:</strong> {{ state }}</p>
+          <p><strong>Bairro:</strong> {{ neighborhood }}</p>
+          <p><strong>Rua:</strong> {{ street }}</p>
+          <p><strong>Número:</strong> {{ number }}</p>
             <p v-if="implementHierarchy('sysAdmin')" ><strong>ID do polo</strong> {{ poloId }}</p>
           </div>
           <div class="text-h6 text-center">
@@ -213,7 +188,7 @@
           <q-btn
             @click="checkFormValidation()"
             :color="getButtonColor()"
-            :label="step === 3 ? 'Confirmar' : 'Continuar'"
+            :label="step === 4 ? 'Confirmar' : 'Continuar'"
           />
         </q-stepper-navigation>
       </q-stepper>
@@ -222,7 +197,7 @@
 </template>
 
 <script setup lang="ts">
-//import { Address } from 'src/models/address'
+import { Address } from 'src/models/address'
 //import { Hub } from 'src/models/hub'
 import { implementHierarchy, NotifyError, ShowDialog } from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
@@ -231,7 +206,6 @@ import { useStoreStore } from 'src/stores/useStoreStore';
 //import {  useRouter } from 'vue-router'
 import { ref } from 'vue';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
-import { Formatter } from 'src/utils/formatter';
 
 const step = ref(1);
 const businessName = ref('');
@@ -243,28 +217,31 @@ const establishmentPhone = ref('');
 const employeeEmail = ref('');
 const employeePhone = ref('');
 const employeeName = ref('');
-const amount = ref('');
-const initialLimit = ref('');
-const maximumLimit = ref('');
+const city = ref('');
+const state = ref('');
+const neighborhood = ref('');
+const street = ref('');
+const number = ref('');
+const postalCode = ref('');
+const complement = ref('');
 const poloId = ref(0);
-const intAmount = ref(0);
-const intInitialLimit = ref(0);
-const intMaximumLimit = ref(0);
+const address = ref(new Address())
+const useNumber = ref(false)
 
 const storeStore = useStoreStore();
 //const route = useRoute()
 //const router = useRouter()
-/*
+
 const updateAddressNumber = () => {
 	if (useNumber.value) {
 		address.value.number = 'S/N'
 	} else {
 		address.value.number = ''
 	}
-}*/
+}
 
 
-
+/*
 const formatCurrency = (witchField: string): void => {
 
   if (witchField == 'amount'){
@@ -297,7 +274,7 @@ const formatCurrency = (witchField: string): void => {
   }
   }
 };
-
+*/
 
 const submit = async () => {
   try {
@@ -311,9 +288,13 @@ const submit = async () => {
       employeeEmail.value,
       employeePhone.value,
       employeeName.value,
-      intAmount.value,
-      intInitialLimit.value,
-      intMaximumLimit.value,
+      city.value,
+      state.value,
+      neighborhood.value,
+      street.value,
+      number.value,
+      postalCode.value,
+      complement.value,
       poloId.value
     );
     console.log(store)
@@ -343,7 +324,9 @@ const checkFormValidation = () => {
     Validator.isValidEmail(employeeEmail.value)
   ) {
     step.value = 3;
-  } else if (step.value === 3) {
+  }else if (step.value === 3) {
+    step.value = 4;
+  } else if (step.value === 4) {
     submit();
   } else {
     NotifyError.error('Preencha todos os campos obrigatórios.');
@@ -367,6 +350,8 @@ const getButtonColor = () => {
   ) {
     return 'primary';
   } else if (step.value === 3) {
+    return 'primary';
+  }else if (step.value === 4) {
     return 'primary';
   } else {
     return 'grey';

@@ -51,9 +51,13 @@ export class EC {
 		public employeeEmail: string = '',
 		public employeePhone: string = '',
 		public employeeName: string = '',
-		public amount: number = 0,
-		public initialLimit: number = 0,
-		public maximumLimit: number = 0,
+    public city: string = '',
+    public state: string = '',
+    public neighborhood: string = '',
+    public street: string = '',
+    public number: string = '',
+    public postalCode: string = '',
+    public complement: string = '',
 		public poloId: number = 0
 	) {}
 
@@ -69,9 +73,12 @@ export class EC {
 			json.employeeEmail,
 			json.employeePhone,
 			json.employeeName,
-			json.amount,
-			json.initialLimit,
-			json.maximumLimit,
+			json.city,
+			json.neighborhood,
+			json.street,
+			json.number,
+			json.postalCode,
+      json.complement,
 			json.poloId
 		)
 	}
@@ -87,9 +94,12 @@ export class EC {
       employeeEmail: this.employeeEmail,
       employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
       employeeName: this.employeeName,
-      amount: this.amount,
-      initialLimit: this.initialLimit,
-      maximumLimit: this.maximumLimit
+      city: this.city,
+      neighborhood: this.neighborhood,
+      street: this.street,
+      number: this.number,
+      postalcode: Formatter.clearSymbolsAndLetters(this.postalCode),
+      complement: this.complement,
     };
 
     // Condicional para incluir `poloId` apenas se for diferente de 0

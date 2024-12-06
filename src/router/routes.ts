@@ -51,6 +51,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/polos/CreatePolo.vue'),
       },
       {
+        path: '/representantes/cadastroRepresentante',
+        component: () => import('pages/representatives/CreateRepresentative.vue'),
+      },
+      {
         path: '/lojas/clientes',
         component: () => import('pages/stores/client/ClientsPage.vue'),
         children: [
@@ -92,6 +96,21 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'ativacao/:id', // Rota com parâmetro de ID
             component: () => import('pages/polos/PoloInfoPage.vue'),
+            props: true, // Passar o ID como propriedade para o componente
+          },
+        ],
+      },
+      {
+        path: '/representantes',
+        component: () => import('pages/representatives/RepresentativePage.vue'),
+        children: [
+          {
+            path: 'ativacao',
+            component: () => import('pages/representatives/SearchRepresentativePage.vue'),
+          },
+          {
+            path: 'ativacao/:id', // Rota com parâmetro de ID
+            component: () => import('pages/representatives/RepresentativeInfoPage.vue'),
             props: true, // Passar o ID como propriedade para o componente
           },
         ],

@@ -7,6 +7,7 @@ import DisableHubUseCase from 'src/usecases/disableHubUseCase'
 import CreateHubUseCase from 'src/usecases/createHubUseCase'
 import ActivateHubUseCase from 'src/usecases/activateHubUseCase'
 import { ref } from 'vue'
+import { Representative } from 'src/models/representative'
 
 const repository = new HubRepository()
 const fetchHubsUseCase = new FetchHubsUseCase(repository)
@@ -42,6 +43,9 @@ export const useHubStore = defineStore('hub', {
 		},
     async createPolo (polo: Polo) {
 			return await createHubUseCase.executePolo(polo)
+		},
+    async createRepresentative (rep: Representative) {
+			return await createHubUseCase.executePolo(rep)
 		},
 		async fetchHubById (id: string) {
 			return await fetchHubByIdUseCase.execute(id)

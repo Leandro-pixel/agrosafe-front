@@ -95,6 +95,7 @@ import { Validator } from 'src/utils/validator';
 import { PoloRepository } from 'src/repositories/poloRepository';
 import { EmployeeEstablishmentRepository } from 'src/repositories/ecRepository';
 import { SupRepository } from 'src/repositories/supRepository';
+import { RepRepository } from 'src/repositories/representativeRepository';
 //import { UserData } from 'src/models/user'
 
 const email = ref('');
@@ -121,6 +122,8 @@ const witchUser = async () => {
     ecData();
   } else if (userType == 'polo') {
     poloData();
+  } else if(userType == 'representative'){
+    repData();
   } else {
     supData();
   }
@@ -130,6 +133,19 @@ const poloData = async () => {
   const poloRepository = new PoloRepository();
   await poloRepository
     .fetchPoloUserData()
+    .then(() => {
+      router.push('/dashboard/segmentos');
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+const repData = async () => {
+  const poloRepository = new RepRepository();
+  await poloRepository
+    .fetchRepUserData()
     .then(() => {
       router.push('/dashboard/segmentos');
     })

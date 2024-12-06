@@ -10,7 +10,7 @@
         :model-value="true"
         :mini="leftDrawerOpen"
       >
-        <div class="column fit no-wrap bg-primary q-pt-md">
+        <div class="column fit bg-primary q-pt-md">
           <div class="desktop-hide flex justify-end q-pr-md width-full">
             <PrimaryButton
               dense
@@ -136,6 +136,41 @@
               </q-list>
             </q-expansion-item>
 
+            <div
+              class="row full-width flex-center q-ma-md"
+              v-if="implementHierarchy('polo')"
+            >
+              <q-separator class="separators" />
+            </div>
+
+            <q-expansion-item
+              icon="handshake"
+              label="Representantes"
+              indicator-color="secondary"
+              expand-icon="null"
+              :class="{
+                'text-accent': selectedItem === 'Representative',
+                'text-white ': selectedItem !== 'Representative',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('polo')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/representantes/ativacao', 'Representative')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Ativação / Desativação
+                    </div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
             <div class="row full-width flex-center q-ma-md">
               <q-separator class="separators" />
             </div>
@@ -153,7 +188,7 @@
               v-if="implementHierarchy('store')"
             >
               <q-list style="padding-left: 5%">
-                <q-item class="q-pl-xs" v-if="implementHierarchy('polo')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
                   <q-btn
                     flat
                     @click="
@@ -313,6 +348,7 @@ import { implementHierarchy } from 'src/utils/utils';
 import { SupStore } from 'src/models/supUserData';
 import { PoloDataStore } from 'src/models/poloUserData';
 import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
+import { RepDataStore } from 'src/models/repUserData';
 
 const pageName = ref('Dashboard');
 const config = useConfigStore();
@@ -342,6 +378,12 @@ const userData = async () => {
     const poloEmployee = poloStore.data.employee;
     name.value = poloEmployee.name;
     type.value = 'Polo'
+  } else if (userType == 'representative') {
+    const repStore = new RepDataStore();
+    await repStore.loadFromLocalStorage();
+    const repEmployee = repStore.data.employee;
+    name.value = repEmployee.name;
+    type.value = 'Representante'
   } else {
     const supStore = new SupStore();
     await supStore.loadFromLocalStorage();
