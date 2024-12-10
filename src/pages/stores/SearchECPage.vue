@@ -69,7 +69,7 @@ import { Pagination } from 'src/models/pagination'; //usa como propriedade para 
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 
 const columns: QTableColumn[] = [ //configura oque cada coluna mostra
-  //{ name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
+  { name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
   {name: 'businessName',label: 'Nome completo',align: 'left',field: (row: EC) => row.businessName,},
   //{name: 'fantasyName',label: 'Nome Fantasia',align: 'left',field: 'fantasyName',},
   {name: 'document',label: 'Documento',align: 'left',

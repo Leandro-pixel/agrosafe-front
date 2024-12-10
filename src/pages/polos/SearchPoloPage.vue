@@ -106,7 +106,7 @@ const onRequest = async (props:any) => {
 	const limit = rowsPerPage
 	const filterWithoutSymbols = Formatter.clearSymbols(props.filter)
 
-	await hubStore.fetchHubsBrands(limit, offset, filterWithoutSymbols)
+	await hubStore.fetchHubsBrands(limit, offset,'polo', filterWithoutSymbols)
 		.then(() => {
 			rows.value = hubStore.hubs
 			pagination.value.rowsNumber = hubStore.totalItemsInDB

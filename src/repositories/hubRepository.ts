@@ -49,8 +49,8 @@ export class HubRepository {
 		}
 	}
 
-  async fetchHubsBrands (limit?: number, offset?: number, filter?: string): Promise<PaginatedResponse> {
-    const type = 'polo'
+  async fetchHubsBrands (limit?: number, offset?: number,type?: string, filter?: string, ): Promise<PaginatedResponse> {
+    //const type = 'polo'
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,

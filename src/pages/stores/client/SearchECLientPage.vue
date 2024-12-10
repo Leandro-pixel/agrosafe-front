@@ -30,7 +30,7 @@ import { CustomerBrands } from 'src/models/customer'
 //import { Formatter } from 'src/utils/formatter'
 
 const columns: QTableColumn[] = [
-//{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
+{ name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
 { name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
 //{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
 //{ name: 'userType', label: 'Status', field: (row:User) => row.userType, align: 'left' },
