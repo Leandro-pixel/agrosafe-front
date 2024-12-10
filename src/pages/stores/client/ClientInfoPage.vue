@@ -31,7 +31,7 @@
         v-if="activeIndex === 2"
       />
 
-      <!-- Botão Editar para a aba Funding -->
+     
       <div v-if="activeIndex === 1" class="flex column">
         <q-btn
           flat
