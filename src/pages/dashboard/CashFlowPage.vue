@@ -12,38 +12,46 @@
       <div>
         <div class="flex row">
           <q-input
-              dense
-              outlined
-              v-model.trim="establishmentId"
-              label="ID do Estabelecimento"
-              lazy-rules
-              class="width-20"
-              :rules="implementHierarchy('polo') ? [(val:number) => !!val || 'Campo obrigatório'] : []"
-              v-if="implementHierarchy('polo')"
-            />
-            <q-input
-              dense
-              outlined
-              v-model.trim="userId"
-              label="ID do cliente"
-              lazy-rules
-              class="width-20"
-              :rules="[(val:number) => !!val || 'Campo obrigatório']"
-              v-if="implementHierarchy('store')"
-            />
-            <PrimaryButton flat @click="refreshData" label="Atualizar" :loading="loading" />
+            dense
+            outlined
+            v-model.trim="establishmentId"
+            label="ID do Estabelecimento"
+            lazy-rules
+            class="width-20"
+            :rules="implementHierarchy('polo') ? [(val:number) => !!val || 'Campo obrigatório'] : []"
+            v-if="implementHierarchy('polo')"
+          />
+          <q-input
+            dense
+            outlined
+            v-model.trim="userId"
+            label="ID do cliente"
+            lazy-rules
+            class="width-20"
+            :rules="[(val:number) => !!val || 'Campo obrigatório']"
+            v-if="implementHierarchy('store')"
+          />
+          <PrimaryButton
+            flat
+            @click="refreshData"
+            label="Atualizar"
+            :loading="loading"
+          />
         </div>
       </div>
       <div class="flex row q-gutter-md justify-between full-width">
-        <q-list bordered >
-          <q-item v-for="(transactions, index) in transactions" :key="index" class="transaction-item">
+        <q-list bordered>
+          <q-item
+            v-for="(transactions, index) in transactions"
+            :key="index"
+            class="transaction-item"
+          >
             <q-item-section>
-              <q-item-label>{{
-                transactions.createdAt
-              }}</q-item-label>
+              <q-item-label>{{ transactions.createdAt }}</q-item-label>
               <div class="flex row justify-between">
                 <q-item-label class="q-item-label--break-word" caption>{{
-                  transactions.description}}</q-item-label>
+                  transactions.description
+                }}</q-item-label>
               </div>
               <q-item-label caption>{{
                 transactions.status == 'pending'
@@ -51,8 +59,9 @@
                   : 'Compra negada'
               }}</q-item-label>
               <q-item-label caption>{{
-              transactions.transactionType == 'credit'
-              ? `Crédito em ${transactions.installmentCount}x` : 'Débito á vista'
+                transactions.transactionType == 'credit'
+                  ? `Crédito em ${transactions.installmentCount}x`
+                  : 'Débito á vista'
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -61,7 +70,7 @@
                   'non-selectable bg-' +
                   translateStatusToColor(transactions.status)
                 "
-                :label="'R$ ' + transactions.amount"
+                :label="'R$ ' + transactions.originalAmount"
               />
             </q-item-section>
           </q-item>
@@ -84,11 +93,10 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
 onMounted(() => {
-  console.log('foi montado')
+  console.log('foi montado');
   loading.value = true;
   onRequest({ pagination: pagination.value });
 });
-
 
 const refreshData = () => {
   loading.value = true;

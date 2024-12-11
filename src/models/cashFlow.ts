@@ -8,10 +8,16 @@ export class CashFlow {
     public userCardId: number = 0,
     public description: string = '',
     public transactionType: string = '',
-    public amount: number = 0, // Mantém como número
-    public status: string = '',
+    public amountToPay: number = 0, // Convertido de string para número
+    public originalAmount: number = 0, // Convertido de string para número
+    public cashbackAmount: number = 0, // Convertido de string para número
+    public interest: number = 0, // Convertido de string para número
     public installmentCount: number = 0,
-    public expirationDate: string = '', // Data formatada
+    public invoiceNumber: number = 0,
+    public month: number = 0,
+    public year: number = 0,
+    public paymentDate: string | null = null, // Pode ser null
+    public status: string = '',
     public createdAt: string = '', // Data formatada
     public updatedAt: string = '' // Data formatada
   ) {}
@@ -26,11 +32,17 @@ export class CashFlow {
       json.userCardId,
       json.description,
       json.transactionType,
-      json.amount, // Usa o valor como está no JSON (double)
-      json.status,
+      parseFloat(json.amountToPay), // Converte de string para número
+      parseFloat(json.originalAmount), // Converte de string para número
+      parseFloat(json.cashbackAmount), // Converte de string para número
+      parseFloat(json.interest), // Converte de string para número
       json.installmentCount,
-      Formatter.formatIsoDateToBR(json.expirationDate), // Formata a data para o padrão brasileiro
-      Formatter.formatIsoDateToBR(json.createdAt),
+      json.invoiceNumber,
+      json.month,
+      json.year,
+      json.paymentDate, // Permanece como string ou null
+      json.status,
+      Formatter.formatIsoDateToBR(json.createdAt), // Formata a data para o padrão brasileiro
       Formatter.formatIsoDateToBR(json.updatedAt)
     );
   }
@@ -43,17 +55,28 @@ export class CashFlow {
       userCardId: this.userCardId,
       description: this.description,
       transactionType: this.transactionType,
-      amount: this.amount, // Mantém como número
-      status: this.status,
+      amountToPay: this.amountToPay.toFixed(2), // Converte para string com duas casas decimais
+      originalAmount: this.originalAmount.toFixed(2),
+      cashbackAmount: this.cashbackAmount.toFixed(2),
+      interest: this.interest.toFixed(2),
       installmentCount: this.installmentCount,
-      expirationDate: Formatter.dateToTimestampBR(this.expirationDate), // Converte de volta para timestamp
+      invoiceNumber: this.invoiceNumber,
+      month: this.month,
+      year: this.year,
+      paymentDate: this.paymentDate,
+      status: this.status,
       createdAt: Formatter.dateToTimestampBR(this.createdAt),
       updatedAt: Formatter.dateToTimestampBR(this.updatedAt)
     };
   }
 
-  // Formata o amount para exibição como moeda brasileira
-  public getFormattedAmount(): string {
-    return Formatter.formatNumberToBRCurrency(this.amount);
+  // Formata o amountToPay para exibição como moeda brasileira
+  public getFormattedAmountToPay(): string {
+    return Formatter.formatNumberToBRCurrency(this.amountToPay);
+  }
+
+  // Formata o originalAmount para exibição como moeda brasileira
+  public getFormattedOriginalAmount(): string {
+    return Formatter.formatNumberToBRCurrency(this.originalAmount);
   }
 }
