@@ -59,9 +59,11 @@
                   : 'Compra negada'
               }}</q-item-label>
               <q-item-label caption>{{
-                transactions.transactionType == 'credit'
-                  ? `Crédito em ${transactions.installmentCount}x`
-                  : 'Débito á vista'
+                transactions.amountToPay != transactions.originalAmount
+                ?transactions.invoiceNumber == 1
+                  ? `1ª Parcela`
+                  : '2ª Parcela'
+                : ''
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -70,7 +72,7 @@
                   'non-selectable bg-' +
                   translateStatusToColor(transactions.status)
                 "
-                :label="'R$ ' + transactions.originalAmount"
+                :label="'R$ ' + transactions.amountToPay"
               />
             </q-item-section>
           </q-item>
