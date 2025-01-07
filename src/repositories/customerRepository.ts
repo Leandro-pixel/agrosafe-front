@@ -43,7 +43,7 @@ export class CustomerRepository {
 		}).filter(([, value]) => value !== undefined && value !== ''))
     console.log('parametros' + params)
 		try {
-			const data = await api.requestGet('/establishment/customers', params)
+			const data = await api.requestGet('/user', params)
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
 				totalItems: data.totalItems

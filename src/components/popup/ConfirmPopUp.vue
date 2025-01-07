@@ -26,7 +26,7 @@ import { useDialogPluginComponent } from 'quasar'
 defineProps({
 title: { type: String, required: true },
 message: { type: String, required: true },
-color: { type: String, default: 'secondary' }
+color: { type: String, default: 'primary' }
 })
 
 defineEmits([

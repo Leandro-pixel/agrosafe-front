@@ -21,7 +21,7 @@ export class StoreRepository {
       return EC.fromJson(response) as EC;
     } catch (error) {
       console.log('EC:' + ec.toJson);
-      throw new Error('Erro ao salvar loja2');
+      throw new Error('Erro ao cadastrar loja');
     }
   }
 

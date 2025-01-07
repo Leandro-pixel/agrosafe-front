@@ -78,7 +78,6 @@ const requestPost = async function (
         throw new UnauthorizedError();
       }
     } else if (error.response && error.response.status === 400) {
-      console.log(error.response.data + error.response)
       throw new BadRequestError();
     } else if (error.response && error.response.status === 404) {
       throw new NotFoundError();

@@ -7,12 +7,40 @@
   :columns="columns"
   :refresh="refresh"
   >
-    <template #body-cell-status="props">
-      <q-td style="align-items: center;" >
-        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.status)" size="md" flat>
-          {{props.props.row.status}}
+  <template #body-cell-status="props">
+      <q-td >
+        <q-chip
+          :class="
+            'non-selectable bg-' +
+            translateStatusToColor(props.props.row.userType == 'client' ? 'Ativo' : 'Inativo')
+          "
+          size="md"
+          flat
+        >
+          {{ props.props.row.userType == 'client' ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
+    </template>
+
+    <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex flex-row justify-center items-center gap-2">
+        <PrimaryButton
+                icon="add_business"
+                flat
+                @click="activateUser(props.props.row.id, props.props.row.name)"
+                label="Ativar"
+            />
+            <PrimaryButton
+                icon="key_off"
+                flat
+                @click="disableUser(props.props.row.id, props.props.row.name)"
+                label="Desativar"
+            />
+      </q-td>
+        </q-list>
+      </q-btn-dropdown>
     </template>
 
   </PrimaryTable>
@@ -21,20 +49,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { QTableColumn } from 'quasar'
-import { NotifyError} from 'src/utils/utils'
 import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination'
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
 import { useCustomerStore } from 'src/stores/useCustomerStore'
 import { CustomerBrands } from 'src/models/customer'
-//import { Formatter } from 'src/utils/formatter'
+import { Formatter } from 'src/utils/formatter'
+import { NotifyError, ShowDialog } from 'src/utils/utils';
+import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { implementHierarchy } from 'src/utils/utils';
 
 const columns: QTableColumn[] = [
 { name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
 { name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
-//{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-//{ name: 'userType', label: 'Status', field: (row:User) => row.userType, align: 'left' },
-{ name: 'userType', label: 'Status', field: (row:CustomerBrands) => row.userType, align: 'center' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+{ name: 'cpf', required: true, label: 'CPF', field: (row:CustomerBrands) => row.cpf, align: 'left' },
+{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
+{ name: 'celular', required: true, label: 'Celular', field: (row:CustomerBrands) => row.phone, align: 'left' },
+{ name: 'status', label: 'Status', field: (row:CustomerBrands) => row.userType == 'client' ? 'Ativo' : 'Inativo', align: 'center' },
 { name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
 ]
 
@@ -64,5 +96,16 @@ await userStore.fetchBrandsUsers(limit, offset, props.filter)
   })
   .catch((error:any) => NotifyError.error(error.message))
   .finally(() => { loading.value = false })
+}
+
+const activateUser = async (id: any, name: any) => {
+  if (!await ShowDialog.showConfirm('Ativar usuário', `Deseja realmente ATIVAR o usuário "${name}"?`, 'primary')) return
+
+  console.log(id)
+}
+
+const disableUser = async (id: any, name: any) => {
+  if (!await ShowDialog.showConfirm('Desativar usuário', `Deseja realmente DESATIVAR o usuário "${name}"?`, 'negative')) return
+  console.log(id)
 }
 </script>

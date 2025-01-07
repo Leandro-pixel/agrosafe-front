@@ -59,7 +59,7 @@
                   : 'Compra negada'
               }}</q-item-label>
               <q-item-label caption>{{
-                transactions.amountToPay != transactions.originalAmount
+                transactions.originalInstallment != transactions.originalAmount
                 ?transactions.invoiceNumber == 1
                   ? `1ª Parcela`
                   : '2ª Parcela'
@@ -72,7 +72,7 @@
                   'non-selectable bg-' +
                   translateStatusToColor(transactions.status)
                 "
-                :label="'R$ ' + transactions.amountToPay"
+                :label="'R$ ' + transactions.originalInstallment"
               />
             </q-item-section>
           </q-item>
