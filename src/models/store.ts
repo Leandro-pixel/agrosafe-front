@@ -46,6 +46,7 @@ export class EC {
 		public tradeName: string = '',
 		public cpf: string = '',
     public cnpj: string = '',
+    public automaticStatusAnticipation: string = 'false',
 		public establishmentEmail: string = '',
 		public establishmentPhone: string = '',
 		public employeeEmail: string = '',
@@ -58,7 +59,8 @@ export class EC {
     public number: string = '',
     public postalCode: string = '',
     public complement: string = '',
-		public poloId: number = 0
+		public poloId: number = 0,
+    public splitPercentage: number = 0
 	) {}
 
 	static fromJson (json: any): EC | undefined {
@@ -68,6 +70,7 @@ export class EC {
 			json.tradeName,
 			json.cpf,
       json.cnpj,
+      json.automaticStatusAnticipation,
 			json.establishmentEmail,
 			json.establishmentPhone,
 			json.employeeEmail,
@@ -79,7 +82,8 @@ export class EC {
 			json.number,
 			json.postalCode,
       json.complement,
-			json.poloId
+			json.poloId,
+      json.splitPercentage
 		)
 	}
 
@@ -89,6 +93,7 @@ export class EC {
       tradeName: this.tradeName,
       cpf: Formatter.clearSymbolsAndLetters(this.cpf),
       cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
+      automaticStatusAnticipation: this.automaticStatusAnticipation,
       establishmentEmail: this.establishmentEmail,
       establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
       employeeEmail: this.employeeEmail,
@@ -100,6 +105,7 @@ export class EC {
       number: this.number,
       postalcode: Formatter.clearSymbolsAndLetters(this.postalCode),
       complement: this.complement,
+      splitPercentage: this.splitPercentage
     };
 
     // Condicional para incluir `poloId` apenas se for diferente de 0

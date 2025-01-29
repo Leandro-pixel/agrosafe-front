@@ -21,6 +21,10 @@ export class Formatter {
 		return value.replace(/[^0-9a-zA-Z]/g, '')
 	}
 
+  static formatDoubleToCurrency = (value: number): string => {
+    return `R$${value.toFixed(2).replace('.', ',')}`
+  }
+
 	static formatNumberToBRCurrency = (value: number): string => {
     console.log('chegou aqui' + Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100))
 		return Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100)

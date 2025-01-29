@@ -18,6 +18,31 @@ export class CustomerRepository {
     }
   }
 
+  async ccbStatus(id: string, status: string) {
+    const params = Object.fromEntries(Object.entries({
+			status,
+		}).filter(([, value]) => value !== undefined && value !== ''))
+    try {
+      return await api.requestPut(`/ccb/status/${id}`, null,params);
+    } catch (error) {
+      throw new Error('Erro ao ativar conta, verifique se o usuário finalizou seu cadastro');
+    }
+  }
+
+  async sendBureauMessage(phone: string,description: string,title: string) {
+
+    const payload = Object.fromEntries(Object.entries({
+			phone,
+      description,
+      title
+		}).filter(([, value]) => value !== undefined && value !== ''))
+    try {
+      return await api.requestPost('/sms', payload);
+    } catch (error) {
+      throw new Error('Erro ao enviar mensagem');
+    }
+  }
+
   async sendTransactions(phone: string, description: string, amount: number) {
 
     const payload = Object.fromEntries(Object.entries({

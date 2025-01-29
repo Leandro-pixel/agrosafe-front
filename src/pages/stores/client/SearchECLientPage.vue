@@ -12,12 +12,12 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.userType == 'client' ? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
           "
           size="md"
           flat
         >
-          {{ props.props.row.userType == 'client' ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
     </template>
@@ -29,14 +29,20 @@
         <PrimaryButton
                 icon="add_business"
                 flat
-                @click="activateUser(props.props.row.id, props.props.row.name)"
+                @click="activateUser(props.props.row.id, props.props.row.name, 'true')"
                 label="Ativar"
             />
             <PrimaryButton
                 icon="key_off"
                 flat
-                @click="disableUser(props.props.row.id, props.props.row.name)"
+                @click="disableUser(props.props.row.id, props.props.row.name, 'false')"
                 label="Desativar"
+            />
+            <PrimaryButton
+                icon="notifications"
+                flat
+                @click="openMessageSender(props.props.row.phone)"
+                label="Bureau"
             />
       </q-td>
         </q-list>
@@ -66,7 +72,7 @@ const columns: QTableColumn[] = [
 { name: 'cpf', required: true, label: 'CPF', field: (row:CustomerBrands) => row.cpf, align: 'left' },
 { name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
 { name: 'celular', required: true, label: 'Celular', field: (row:CustomerBrands) => row.phone, align: 'left' },
-{ name: 'status', label: 'Status', field: (row:CustomerBrands) => row.userType == 'client' ? 'Ativo' : 'Inativo', align: 'center' },
+{ name: 'status', label: 'Status', field: (row:CustomerBrands) => row.CCBStatus? 'Ativo' : 'Inativo', align: 'center' },
 { name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
 ]
 
@@ -98,14 +104,37 @@ await userStore.fetchBrandsUsers(limit, offset, props.filter)
   .finally(() => { loading.value = false })
 }
 
-const activateUser = async (id: any, name: any) => {
+const openMessageSender = async (phone : string) => {
+  await userStore.sendBureauMessage(phone)
+  .then(() => {
+    console.log('chegou aqui1')
+
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })}
+
+const activateUser = async (id: any, name: any, status: string) => {
   if (!await ShowDialog.showConfirm('Ativar usuário', `Deseja realmente ATIVAR o usuário "${name}"?`, 'primary')) return
 
   console.log(id)
+  await userStore.activateCustomer(id, status)
+  .then(() => {
+    console.log('chegou aqui1')
+
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
 }
 
-const disableUser = async (id: any, name: any) => {
+const disableUser = async (id: any, name: any, status: string) => {
   if (!await ShowDialog.showConfirm('Desativar usuário', `Deseja realmente DESATIVAR o usuário "${name}"?`, 'negative')) return
   console.log(id)
+  await userStore.activateCustomer(id, status)
+  .then(() => {
+    console.log('chegou aqui1')
+
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
 }
 </script>

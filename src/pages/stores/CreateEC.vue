@@ -49,22 +49,12 @@
             <q-input
               dense
               outlined
-              v-model.trim="cpf"
-              label="Documento - CPF"
-              mask="###.###.###-##"
-              lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidCPF(val) || 'CPF inválido']"
-            />
-            <q-input
-              dense
-              outlined
-              v-model.trim="cnpj"
-              label="Documento - CNPJ"
-              mask="##.###.###/####-##"
-              lazy-rules
-              class="half-width"
-              :rules="[(val:string) => Validator.isValidCNPJ(val) || 'CNPJ inválido']"
+              v-model.trim="document"
+              label="CPF/CNPJ"
+              @update:model-value="updateMask"
+              :mask="currentMask"
+              :rules="[validateDocument]"
             />
           </div>
         </q-step>
@@ -116,10 +106,27 @@
               class="half-width"
               :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"
             />
+
             <q-input
               dense
               outlined
-              v-model.trim="poloId"
+              v-model.trim="splitPercentage"
+              label="porcentagem de split"
+              lazy-rules
+              class="half-width"
+            />
+
+
+            <q-checkbox
+  v-model="antecipationType"
+  label="Deseja antecipação automática?"
+  color="primary"
+/>
+
+            <q-input
+              dense
+              outlined
+              v-model.trim="poloID"
               label="ID do polo"
               lazy-rules
               class="half-width"
@@ -129,28 +136,89 @@
           </div>
         </q-step>
 
-      <q-step :name="3" title="Endereço" icon="place" :done="step > 2" caption="Obrigatório" class="column justify-content">
-        <p class="text-h6 text-bold">Informações do endereço</p>
-        <div>
-          <q-input dense outlined v-model.trim="postalCode" label="Cep" lazy-rules
-            :rules="[(val: string) => val.length === 10 ]" mask="##.###-###"
-            class="half-width"  />
-          <q-input dense outlined v-model.trim="city" label="Cidade"
-            class="half-width"  :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="state" label="Estado"
-            class="half-width"  :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="neighborhood" label="Bairro"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="street" label="Rua"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-            <q-input dense outlined v-model.trim="complement" label="Complemento"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="number" label="Número"
-            class="half-width" hide-bottom-space :readonly="useNumber"
-            :rules="[ (val: string) => useNumber || !isNaN(Number(val)) ]"/>
-          <q-checkbox class="q-ml-md" v-model.trim="useNumber" @update:model-value="updateAddressNumber()" label="Casa sem número"/>
-        </div>
-      </q-step>
+        <q-step
+          :name="3"
+          title="Endereço"
+          icon="place"
+          :done="step > 2"
+          caption="Obrigatório"
+          class="column justify-content"
+        >
+          <p class="text-h6 text-bold">Informações do endereço</p>
+          <div>
+            <q-input
+              dense
+              outlined
+              v-model.trim="postalCode"
+              label="Cep"
+              lazy-rules
+              :rules="[(val: string) => val.length === 10 ]"
+              mask="##.###-###"
+              class="half-width"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="city"
+              label="Cidade"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="state"
+              label="Estado"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="neighborhood"
+              label="Bairro"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="street"
+              label="Rua"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="complement"
+              label="Complemento"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="number"
+              label="Número"
+              class="half-width"
+              hide-bottom-space
+              :readonly="useNumber"
+              :rules="[ (val: string) => useNumber || !isNaN(Number(val)) ]"
+            />
+            <q-checkbox
+              class="q-ml-md"
+              v-model.trim="useNumber"
+              @update:model-value="updateAddressNumber()"
+              label="Casa sem número"
+            />
+          </div>
+        </q-step>
 
         <q-step :name="4" title="Criar Loja" icon="check">
           <p class="text-h6 text-bold q-mb-md">Conclusão</p>
@@ -158,8 +226,9 @@
             <p><strong>Nome da empresa:</strong> {{ businessName }}</p>
             <p><strong>Nome fantasia:</strong> {{ tradeName }}</p>
             <p><strong>Nome do proprietário:</strong> {{ employeeName }}</p>
-            <p><strong>CPF:</strong> {{ cpf }}</p>
-            <p><strong>CNPJ:</strong> {{ cnpj }}</p>
+            <p>
+              <strong>{{ documentType }}:</strong> {{ document }}
+            </p>
             <p>
               <strong>E-mail do estabelecimento:</strong>
               {{ establishmentEmail }}
@@ -168,15 +237,18 @@
               <strong>Telefone do estabelecimento:</strong>
               {{ establishmentPhone }}
             </p>
+            <p><strong>porcentagem de slipt:</strong> {{ splitPercentage }}%</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
             <p><strong>CEP:</strong> {{ postalCode }}</p>
-          <p><strong>Cidade:</strong> {{ city }}</p>
-          <p><strong>Estado:</strong> {{ state }}</p>
-          <p><strong>Bairro:</strong> {{ neighborhood }}</p>
-          <p><strong>Rua:</strong> {{ street }}</p>
-          <p><strong>Número:</strong> {{ number }}</p>
-            <p v-if="implementHierarchy('sysAdmin')" ><strong>ID do polo</strong> {{ poloId }}</p>
+            <p><strong>Cidade:</strong> {{ city }}</p>
+            <p><strong>Estado:</strong> {{ state }}</p>
+            <p><strong>Bairro:</strong> {{ neighborhood }}</p>
+            <p><strong>Rua:</strong> {{ street }}</p>
+            <p><strong>Número:</strong> {{ number }}</p>
+            <p v-if="implementHierarchy('sysAdmin')">
+              <strong>ID do polo</strong> {{ poloID }}
+            </p>
           </div>
           <div class="text-h6 text-center">
             Você confirma que todos os dados fornecidos estão corretos?
@@ -197,7 +269,7 @@
 </template>
 
 <script setup lang="ts">
-import { Address } from 'src/models/address'
+import { Address } from 'src/models/address';
 //import { Hub } from 'src/models/hub'
 import { implementHierarchy, NotifyError, ShowDialog } from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
@@ -212,6 +284,7 @@ const businessName = ref('');
 const tradeName = ref('');
 const cpf = ref('');
 const cnpj = ref('');
+const document = ref('');
 const establishmentEmail = ref('');
 const establishmentPhone = ref('');
 const employeeEmail = ref('');
@@ -224,22 +297,50 @@ const street = ref('');
 const number = ref('');
 const postalCode = ref('');
 const complement = ref('');
-const poloId = ref(0);
-const address = ref(new Address())
-const useNumber = ref(false)
-
+const poloID = ref(0);
+const splitPercentage = ref(0);
+const address = ref(new Address());
+const useNumber = ref(false);
+const currentMask = ref('###.###.###-##');
+const documentType = ref('cpf');
+const antecipationType = ref(false);
 const storeStore = useStoreStore();
 //const route = useRoute()
 //const router = useRouter()
 
 const updateAddressNumber = () => {
-	if (useNumber.value) {
-		address.value.number = 'S/N'
-	} else {
-		address.value.number = ''
-	}
-}
+  if (useNumber.value) {
+    address.value.number = 'S/N';
+  } else {
+    address.value.number = '';
+  }
+};
 
+const validateDocument = () => {
+  const cleanedVal = document.value.replace(/\D/g, '');
+  if (cleanedVal.length <= 11) {
+    return Validator.isValidCPF(cleanedVal) || 'CPF inválido';
+  } else if (cleanedVal.length === 14) {
+    return Validator.isValidCNPJ(cleanedVal) || 'CNPJ inválido';
+  } else {
+    return 'Documento inválido';
+  }
+};
+
+const updateMask = () => {
+  const cleanedValue = document.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+  if (cleanedValue.length >= 12) {
+    currentMask.value = '##.###.###/####-##'; // Máscara de CNPJ
+    cnpj.value = document.value;
+    cpf.value = '';
+    documentType.value = 'cnpj';
+  } else {
+    currentMask.value = '###.###.###-###'; // Máscara de CPF
+    cpf.value = document.value;
+    cnpj.value = '';
+    documentType.value = 'cpf';
+  }
+};
 
 /*
 const formatCurrency = (witchField: string): void => {
@@ -277,12 +378,15 @@ const formatCurrency = (witchField: string): void => {
 */
 
 const submit = async () => {
+
+
   try {
     const store = new EC(
       businessName.value,
       tradeName.value,
       cpf.value,
       cnpj.value,
+      antecipationType.value.toString(),
       establishmentEmail.value,
       establishmentPhone.value,
       employeeEmail.value,
@@ -295,9 +399,10 @@ const submit = async () => {
       number.value,
       postalCode.value,
       complement.value,
-      poloId.value
+      poloID.value,
+      splitPercentage.value
     );
-    console.log(store)
+    console.log(store);
     const response = await storeStore.createEC(store);
 
     ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
@@ -324,7 +429,7 @@ const checkFormValidation = () => {
     Validator.isValidEmail(employeeEmail.value)
   ) {
     step.value = 3;
-  }else if (step.value === 3) {
+  } else if (step.value === 3) {
     step.value = 4;
   } else if (step.value === 4) {
     submit();
@@ -351,7 +456,7 @@ const getButtonColor = () => {
     return 'primary';
   } else if (step.value === 3) {
     return 'primary';
-  }else if (step.value === 4) {
+  } else if (step.value === 4) {
     return 'primary';
   } else {
     return 'grey';

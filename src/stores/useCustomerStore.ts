@@ -28,6 +28,14 @@ export const useCustomerStore = defineStore('customer', {
 			return await sendMessageUseCase.execute(phone, message)
 		},
 
+    async activateCustomer (id: string, status: string): Promise<boolean>{
+			return await sendMessageUseCase.executeCCB(id, status)
+		},
+
+    async sendBureauMessage (phone: string){
+			return await sendMessageUseCase.executeBureauMessage(phone)
+		},
+
     async sendTransaction (phone: string, desc: string, amount: number){
 			return await sendMessageUseCase.executeTransaction(phone, desc, amount)
 		},

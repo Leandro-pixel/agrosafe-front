@@ -178,17 +178,18 @@ const requestGetWithBody = async function (
   headers = {
     ...headers,
     Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   };
   params = new URLSearchParams(params);
-  console.log('veio para o request' + params);
+  console.log('Conteúdo do body:', JSON.stringify(body));
 
   try {
-    const response = await axios({
-      method: 'get',
-      url: `${BASE_URL}${path}`,
+    const response = await axios.get(
+      `${BASE_URL}${path}`,
+      {
+
       headers,
       params,
-      data: body, // Incluindo o body no campo `data`
     });
 
     console.log('aquii', response.data);
@@ -335,19 +336,27 @@ const requestDelete = async (
 const requestPut = async function (
   path: string,
   body: any | null,
+  params?: any,
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
+  params = new URLSearchParams(params);
   const token = localStorage.getItem('accessToken');
   headers = {
     ...headers,
     Authorization: `Bearer ${token}`,
   };
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+
+  console.log(`path ${BASE_URL}${path}${queryString}`);
 
   try {
-    const response = await axios.put(`${BASE_URL}${path}`, body, {
+
+    const response = await axios.put(`${BASE_URL}${path}${queryString}`, body, {
       headers,
     });
+    console.log('aquii', response.data);
+
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -389,7 +398,9 @@ const login = async (email: string, password: string): Promise<void> => {
 
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
-    localStorage.setItem('userType', btoa(response.data.employeeType));
+    localStorage.setItem('userType', btoa(response.data.type));
+    localStorage.setItem('userName', response.data.name);
+
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       throw new UnauthorizedError('Seu e-mail ou senha estão incorretos.');

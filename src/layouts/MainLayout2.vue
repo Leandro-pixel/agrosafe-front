@@ -88,6 +88,17 @@
                   </q-btn>
                 </q-item>
 
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/antecipacoes', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Antecipações</div>
+                  </q-btn>
+                </q-item>
+
                 <q-item class="q-pl-xs" v-if="implementHierarchy('justEC')">
                   <q-btn
                     flat
@@ -360,6 +371,7 @@ const type = ref('');
 
 onMounted(() => {
   console.log('foi montado');
+  name.value = localStorage.getItem('userName');
   userData();
 });
 
@@ -368,27 +380,19 @@ const userData = async () => {
   if (userType == 'establishmentOwner') {
     const ecStore = new EmployeeEstablishmentStore();
     await ecStore.loadFromLocalStorage();
-    const ecEmployee = ecStore.data.employee;
-    name.value = ecEmployee.name;
     type.value = 'Estabelecimento';
 
   } else if (userType == 'polo') {
     const poloStore = new PoloDataStore();
     await poloStore.loadFromLocalStorage();
-    const poloEmployee = poloStore.data.employee;
-    name.value = poloEmployee.name;
     type.value = 'Polo'
   } else if (userType == 'representative') {
     const repStore = new RepDataStore();
     await repStore.loadFromLocalStorage();
-    const repEmployee = repStore.data.employee;
-    name.value = repEmployee.name;
     type.value = 'Representante'
   } else {
     const supStore = new SupStore();
     await supStore.loadFromLocalStorage();
-    const supportEmployee = supStore.data.employee;
-    name.value = supportEmployee.name
     type.value = 'Suporte'
   }
 };

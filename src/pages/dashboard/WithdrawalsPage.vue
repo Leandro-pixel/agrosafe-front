@@ -6,7 +6,7 @@
           class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
           style="border-top: 0.25rem solid #401a58"
         >
-          Movimentações
+          Antecipações
         </span>
       </div>
       <div>
@@ -21,16 +21,6 @@
             :rules="implementHierarchy('polo') ? [(val:number) => !!val || 'Campo obrigatório'] : []"
             v-if="implementHierarchy('polo')"
           />
-          <q-input
-            dense
-            outlined
-            v-model.trim="userId"
-            label="ID do cliente"
-            lazy-rules
-            class="width-20"
-            :rules="[(val:number) => !!val || 'Campo obrigatório']"
-            v-if="implementHierarchy('store')"
-          />
           <PrimaryButton
             flat
             @click="refreshData"
@@ -40,38 +30,34 @@
         </div>
       </div>
       <div class="flex row q-gutter-md justify-between full-width">
-        <div v-if="transactions.length === 0" class="q-mt-lg text-center">
-          <span class="text-body2 text-grey">Nenhuma movimentação encontrada.</span>
+        <div v-if="withdrals.length === 0" class="q-mt-lg text-center">
+          <span class="text-body2 text-grey">Nenhuma antecipação pendente.</span>
         </div>
         <q-list bordered>
           <q-item
-            v-for="(transactions, index) in transactions"
+            v-for="(withdrals, index) in withdrals"
             :key="index"
             class="transaction-item"
           >
             <q-item-section>
-              <q-item-label>{{ transactions.createdAt }}</q-item-label>
+              <q-item-label>{{ withdrals.createdAt }}</q-item-label>
               <div class="flex row justify-between">
                 <q-item-label class="q-item-label--break-word" caption>{{
-                  transactions.description
+                  withdrals.discountedByAnticipationFee
                 }}</q-item-label>
               </div>
+
               <q-item-label caption>{{
-                transactions.status == 'pending'
-                  ? 'Compra efetuada'
-                  : 'Compra negada'
-              }}</q-item-label>
-              <q-item-label caption>{{
-                `Parcelas: ${transactions.invoiceNumber}/${transactions.installmentCount} de ${Formatter.formatDoubleToCurrency(transactions.originalAmount)}`
+                `Parcelas: ${withdrals.amountToReceive}/${withdrals.amountToReceiveWithFee} de ${Formatter.formatDoubleToCurrency(withdrals.establishmentId)}`
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-chip
                 :class="
                   'non-selectable bg-' +
-                  translateStatusToColor(transactions.status)
+                  translateStatusToColor(withdrals.createdAt)
                 "
-                :label=" Formatter.formatDoubleToCurrency(transactions.originalInstallment)"
+                :label=" Formatter.formatDoubleToCurrency(withdrals.amountToReceive)"
               />
             </q-item-section>
           </q-item>
@@ -87,8 +73,8 @@ import { implementHierarchy, NotifyError } from 'src/utils/utils';
 import { Formatter } from 'src/utils/formatter';
 //import { useRouter } from 'vue-router';
 import { Pagination } from 'src/models/pagination';
-import { CashFlow } from 'src/models/cashFlow';
-import { useCachSflowStore } from 'src/stores/useCashFlowStore';
+import { Withdrawal } from 'src/models/withdrawals';
+import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
 import { onMounted } from 'vue';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
@@ -106,12 +92,10 @@ const refreshData = () => {
 
 const pagination = ref(new Pagination());
 //const filter = ref('');
-const transactions = ref([] as Array<CashFlow>);
+const withdrals = ref([] as Array<Withdrawal>);
 const establishmentId = ref(0);
-const cardId = ref(0);
 const userId = ref(0);
-const statuses = ref([]);
-const cashFlowStore = useCachSflowStore();
+const withdralStore = useWithdrawalStore();
 const loading = ref(false);
 //const refresh = ref(false);
 //const router = useRouter();
@@ -119,18 +103,13 @@ const loading = ref(false);
 const onRequest = async (props: any) => {
   console.log('veio aquiaqui' + userId.value + props);
 
-  await cashFlowStore
-    .fetchCashFlow(
-      establishmentId.value,
-      cardId.value,
-      userId.value,
-      statuses.value
-    )
+  await withdralStore
+    .fetchWithdrawal()
     .then(() => {
-      console.log('veio aquiaqui2' + cashFlowStore.getTransactions);
+      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
-      transactions.value = cashFlowStore.getTransactions;
-      pagination.value.rowsNumber = cashFlowStore.totalItemsInDB;
+      withdrals.value = withdralStore.getWithdrawals;
+      pagination.value.rowsNumber = withdralStore.totalItemsInDB;
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {

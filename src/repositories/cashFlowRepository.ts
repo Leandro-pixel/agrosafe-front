@@ -13,20 +13,25 @@ export class CashFlowRepository {
     console.log('chegou aqui T');
     const params = Object.fromEntries(
       Object.entries({
-        establishmentId,
-        cardId,
-        userId,
-        statuses: statuses ?? [],
+        establishmentId: establishmentId || undefined,
+        cardId: cardId || undefined,
+        userId: userId || undefined,
+        statuses: statuses && statuses.length > 0 ? statuses : undefined,
       }).filter(([, value]) => value !== undefined)
     );
-    const body = {
-      establishmentId: establishmentId || null,
-      cardId: cardId || null,
-      userId: userId || null,
-      statuses: statuses ?? [],
-    };
+    const body = Object.fromEntries(
+      Object.entries({
+        establishmentId: establishmentId || undefined,
+        cardId: cardId || undefined,
+        userId: userId || undefined,
+        statuses: statuses && statuses.length > 0 ? statuses : undefined,
+      }).filter(([ value]) => value !== undefined && value !== null)
+    );
+
+    console.log('Conteúdo do body limpo:', JSON.stringify(body));
+
     try {
-      console.log('agora veio aqui T' + body.userId);
+      console.log('agora veio aqui T' + params);
       const data = await api.requestGetWithBody('/transaction', params,body );
       console.log('aaaaaaaaaaaa T', data);
 
@@ -37,7 +42,7 @@ export class CashFlowRepository {
       console.log('não ta jaisão');
       return json
     } catch (error) {
-      throw new Error('Erro ao buscar lojas');
+      throw new Error('usuário não encontrado');
     }
   }
 
