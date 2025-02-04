@@ -23,5 +23,8 @@ export const useWithdrawalStore = defineStore('withdrawals', {
       this.withdrawls = response.data;
       this.totalItemsInDB = response.totalItems;
     },
+    async payWithdrawal(establishmentId: number, status: boolean) {
+       await fetchWithdrawalUseCase.pay(establishmentId, status);
+    },
   },
 });

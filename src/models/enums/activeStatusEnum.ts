@@ -35,6 +35,8 @@ export function translateStatusToColor (status: string): string {
 	case UserStatus.INACTIVE:
 	case 'Inativo':
 		return 'red'
+    case 'false':
+		return 'red'
     case 'lead':
 		return 'red'
   case 'onHold':

@@ -22,4 +22,16 @@ export class WithdrawalRepository {
     }
   }
 
+  async payWithdrawals(establishmentId: number, status: boolean){
+    console.log('chegou aqui' ,establishmentId);
+    try {
+      const data = await api.requestPut(`/establishment/withdrawals/approve/${establishmentId}`,{},{'status': status});
+      console.log('aaaaaaaaaaaa T', data);
+
+      return
+    } catch (error) {
+      throw new Error('Antecipações não encontradas');
+    }
+  }
+
 }

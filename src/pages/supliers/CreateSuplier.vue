@@ -123,7 +123,7 @@
             <q-input
               dense
               outlined
-              v-model.trim="poloID"
+              v-model.trim="employeeId"
               label="ID do polo"
               lazy-rules
               class="half-width"
@@ -189,7 +189,7 @@
           <p><strong>Rua:</strong> {{ address.street }}</p>
           <p><strong>Número:</strong> {{ address.number }}</p>
             <p v-if="implementHierarchy('sysAdmin')">
-              <strong>ID do polo</strong> {{ poloID }}
+              <strong>ID do polo</strong> {{ employeeId }}
             </p>
           </div>
           <div class="text-h6 text-center">
@@ -239,7 +239,7 @@ const street = ref('');
 const number = ref('');
 const postalCode = ref('');
 const complement = ref('');
-const poloID = ref(0);
+const employeeId = ref(0);
 const splitstatus = ref(false);
 const address = ref(new Address());
 const useNumber = ref(false);
@@ -284,7 +284,7 @@ const updateMask = () => {
 
 
 const submit = async () => {
-
+console.log('endereço: ' + address.value)
 
   try {
     const store = new EC(
@@ -306,8 +306,9 @@ const submit = async () => {
       number.value,
       postalCode.value,
       complement.value,
-      poloID.value.toString(),
-      splitstatus.value
+      employeeId.value.toString(),
+      splitstatus.value,
+      'true'
     );
     const response = await storeStore.createEC(store);
 

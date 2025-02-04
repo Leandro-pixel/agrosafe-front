@@ -214,6 +214,51 @@ const requestGetWithBody = async function (
   }
 };
 
+const requestGetCEP = async function (
+  path: string,
+  params?: any,
+
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+  params = new URLSearchParams(params);
+  console.log('veio para o request' + params);
+  try {
+    const response = await axios.get(
+      `${path}`,
+      {
+        headers,
+        params
+      }
+    );
+    console.log('aquii', response.data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestGet(path, params, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    console.log('veio para o request' + params());
+    throw new InternalError();
+  }
+};
+
+
 
 const requestGet = async function (
   path: string,
@@ -429,6 +474,7 @@ const logout = () => {
 
 export default {
   requestGet,
+  requestGetCEP,
   requestGetWithApiKey,
   requestGetWithBody,
   requestPost,

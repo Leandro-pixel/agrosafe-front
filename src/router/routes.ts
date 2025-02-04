@@ -32,6 +32,21 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/WithdrawPage.vue'),
       },
       {
+        path: '/fornecedor',
+        component: () => import('pages/supliers/SuplierPage.vue'),
+        children: [
+          {
+            path: 'fornecedores',
+            component: () => import('pages/supliers/SearchSuplierPage.vue'),
+          },
+          {
+            path: 'fornecedores/:id',
+            component: () => import('pages/supliers/SuplierInfoPage.vue'),
+            props: true,
+          },
+        ],
+      },
+      {
         path: '/lojas',
         component: () => import('pages/stores/ECPage.vue'),
         children: [
@@ -47,6 +62,10 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: '/fornecedor/cadastroFornecedor',
+        component: () => import('pages/supliers/CreateSuplier.vue'),
+      },
+      {
         path: '/lojas/cadastroEC',
         component: () => import('pages/stores/CreateEC.vue'),
       },
@@ -56,8 +75,27 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/representantes/cadastroRepresentante',
-        component: () => import('pages/representatives/CreateRepresentative.vue'),
+        component: () =>
+          import('pages/representatives/CreateRepresentative.vue'),
       },
+
+      {
+        path: '/fornecedor/clientes',
+        component: () => import('pages/supliers/client/ClientsPage.vue'),
+        children: [
+          {
+            path: '',
+            component: () =>
+              import('pages/suplier/client/SearchSuplierClientPage.vue'),
+          },
+          {
+            path: ':id',
+            component: () => import('pages/supliers/client/ClientInfoPage.vue'),
+            props: true,
+          },
+        ],
+      },
+
       {
         path: '/lojas/clientes',
         component: () => import('pages/stores/client/ClientsPage.vue'),
@@ -110,11 +148,13 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             path: 'ativacao',
-            component: () => import('pages/representatives/SearchRepresentativePage.vue'),
+            component: () =>
+              import('pages/representatives/SearchRepresentativePage.vue'),
           },
           {
             path: 'ativacao/:id', // Rota com parâmetro de ID
-            component: () => import('pages/representatives/RepresentativeInfoPage.vue'),
+            component: () =>
+              import('pages/representatives/RepresentativeInfoPage.vue'),
             props: true, // Passar o ID como propriedade para o componente
           },
         ],
@@ -145,7 +185,6 @@ const routes: RouteRecordRaw[] = [
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },
-
 ];
 
 export default routes;

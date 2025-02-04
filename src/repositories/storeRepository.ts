@@ -72,6 +72,19 @@ export class StoreRepository {
     }
   }
 
+  async activateEC(id: string, status: boolean) {
+    const params = Object.fromEntries(
+      Object.entries({
+        status
+      }).filter(([, value]) => value !== undefined)
+    );
+    try {
+      await api.requestPut(`/establishment/approve/${id}`, {}, params);
+    } catch (error) {
+      throw new Error('Erro ao ativar loja');
+    }
+  }
+
   async disableStore(id: string) {
     try {
       await api.requestDelete(`/store/inactivate/${id}`);

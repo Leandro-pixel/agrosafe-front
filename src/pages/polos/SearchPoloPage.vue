@@ -83,7 +83,7 @@ const onNameClick = (id: any, name: any) => {
 };
 
 const columns: QTableColumn[] = [
-	//{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
+	{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
 	{ name: 'name', label: 'Nome completo', align: 'left', field: (row:HubBrands) => row.name },
 	{ name: 'email', label: 'E-mail', align: 'left', field: 'email' },
 	{ name: 'telefone', label: 'Telefone', align: 'left', field: (row:HubBrands) => row.phone },

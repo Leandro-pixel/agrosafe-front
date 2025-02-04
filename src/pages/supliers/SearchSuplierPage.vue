@@ -13,12 +13,12 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.status ? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
           "
           size="md"
           flat
         >
-          {{ props.props.row.status ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
     </template>
@@ -38,13 +38,13 @@
         <PrimaryButton
                 icon="add_business"
                 flat
-                @click="activateStore(props.props.row, props.props.row.id)"
+                @click="activateStore(props.props.row)"
                 label="Ativar loja"
             />
             <PrimaryButton
                 icon="key_off"
                 flat
-                @click="disableStore(props.props.row, props.props.row.id)"
+                @click="disableStore(props.props.row)"
                 label="Desativar loja"
             />
       </q-td>
@@ -71,14 +71,12 @@ import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 const columns: QTableColumn[] = [ //configura oque cada coluna mostra
   { name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
   {name: 'businessName',label: 'Nome completo',align: 'left',field: (row: EC) => row.businessName,},
-  //{name: 'fantasyName',label: 'Nome Fantasia',align: 'left',field: 'fantasyName',},
   {name: 'document',label: 'Documento',align: 'left',
   field:
   (row: EC) =>
   (row.cnpj && row.cnpj.length > 0)
     ? Formatter.strToCnpj(row.cnpj)
     : (row.cpf ? Formatter.strToCpf(row.cpf) : ''),},
-  //{name: 'address',label: 'Endereço',align: 'left',field: (row: Store) => row.address.toString(),},
   {name: 'status',label: 'Status',field: (row: Store) => (row.active ? 'Ativo' : 'Inativo'),align: 'left',},
   { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];
@@ -118,7 +116,7 @@ const onRequest = async (props: any) => {
       loading.value = false;
     });
 };
-const activateStore = async (ec: EC, id: string) => {
+const activateStore = async (ec: EC) => {
   if (
     !(await ShowDialog.showConfirm(
       'Ativar loja',
@@ -129,7 +127,7 @@ const activateStore = async (ec: EC, id: string) => {
     return;
   loading.value = true;
   await storeStore
-    .activateEC(id, true)
+    .activateStore(ec.cpf)
     .then(() => {
       refresh.value = !refresh.value;
     })
@@ -138,7 +136,7 @@ const activateStore = async (ec: EC, id: string) => {
       loading.value = false;
     });
 };
-const disableStore = async (ec: EC, id: string) => {
+const disableStore = async (ec: EC) => {
   if (
     !(await ShowDialog.showConfirm(
       'Desativar loja',
@@ -149,7 +147,7 @@ const disableStore = async (ec: EC, id: string) => {
     return;
   loading.value = true;
   await storeStore
-    .activateEC(id, false)
+    .disableStore(ec.cpf)
     .then(() => {
       refresh.value = !refresh.value;
     })

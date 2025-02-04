@@ -26,8 +26,8 @@ export const useStoreStore = defineStore('store', {
     async activateStore(storeId: string) {
       return await activateStoreUseCase.execute(storeId);
     },
-    async activateEC(ecId: string) {
-      return await activateStoreUseCase.execute(ecId);
+    async activateEC(ecId: string, status: boolean) {
+      return await activateStoreUseCase.executeEC(ecId, status);
     },
     async disableStore(storeId: string) {
       return await disableStoreUseCase.execute(storeId);

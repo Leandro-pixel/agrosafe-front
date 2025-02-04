@@ -12,6 +12,9 @@ class FetchWithdrawalUseCase {
     return this.withdrawalRepository.fetchWithdrawals(
     );
   }
+  async pay(establishmentId: number, status: boolean) {
+     this.withdrawalRepository.payWithdrawals(establishmentId, status);
+  }
 }
 
 export default FetchWithdrawalUseCase;

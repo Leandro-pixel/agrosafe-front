@@ -182,10 +182,54 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md">
+            <div class="row full-width flex-center q-ma-md"
+             v-if="implementHierarchy('sysAdmin')"
+            >
               <q-separator class="separators" />
             </div>
 
+            <q-expansion-item
+              icon="shopping_bag"
+              label="Fornecedores"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Fornecedores',
+                'text-white custom-icon-size': selectedItem !== 'Fornecedores',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/fornecedor/fornecedores', 'Fornecedores')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Fornecedores
+                    </div>
+                  </q-btn>
+                </q-item>
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/fornecedor/clientes', 'Fornecedores')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div style="text-align: left; width: 100%">Clientes</div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <div class="row full-width flex-center q-ma-md">
+              <q-separator class="separators" />
+            </div>
             <!-- Item de menu com opções expansíveis para Polos -->
             <q-expansion-item
               icon="store"

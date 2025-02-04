@@ -40,25 +40,37 @@
             class="transaction-item"
           >
             <q-item-section>
-              <q-item-label>{{ withdrals.createdAt }}</q-item-label>
+              <q-item-label>Solicitado em: {{ withdrals.createdAt }}</q-item-label>
               <div class="flex row justify-between">
-                <q-item-label class="q-item-label--break-word" caption>{{
-                  withdrals.discountedByAnticipationFee
+                <q-item-label class="q-item-label--break-word" caption>Valor com taxas {{
+                  Formatter.formatDoubleToCurrency(withdrals.amountToReceiveWithFee)
                 }}</q-item-label>
               </div>
 
-              <q-item-label caption>{{
-                `Parcelas: ${withdrals.amountToReceive}/${withdrals.amountToReceiveWithFee} de ${Formatter.formatDoubleToCurrency(withdrals.establishmentId)}`
-              }}</q-item-label>
+              <q-item-label caption>Valor sem taxas {{
+                  Formatter.formatDoubleToCurrency(withdrals.amountToReceive)
+                }}</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="justify-center">
               <q-chip
                 :class="
                   'non-selectable bg-' +
-                  translateStatusToColor(withdrals.createdAt)
+                  translateStatusToColor(withdrals.paidStatus? 'Ativo' : 'Inativo')
                 "
-                :label=" Formatter.formatDoubleToCurrency(withdrals.amountToReceive)"
+                :label="withdrals.paidStatus? 'Pago':'Pendente'"
               />
+              <PrimaryButton
+            flat
+            @click="pay(withdrals.id, true)"
+            label="Efetuar pagamento"
+            :loading="loading"
+          />
+          <PrimaryButton
+            flat
+            @click="pay(withdrals.id, false)"
+            label="Desfazer pagamento"
+            :loading="loading"
+          />
             </q-item-section>
           </q-item>
         </q-list>
@@ -99,6 +111,20 @@ const withdralStore = useWithdrawalStore();
 const loading = ref(false);
 //const refresh = ref(false);
 //const router = useRouter();
+
+const pay = async (props: any, status: boolean) => {
+  console.log('veio aquiaqui' + props);
+
+  await withdralStore
+    .payWithdrawal(props, status)
+    .then(() => {
+      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
 const onRequest = async (props: any) => {
   console.log('veio aquiaqui' + userId.value + props);
