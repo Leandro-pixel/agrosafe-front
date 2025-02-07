@@ -6,7 +6,7 @@
           class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
           style="border-top: 0.25rem solid #401a58"
         >
-          Antecipações
+          Pagamentos
         </span>
       </div>
       <div>
@@ -41,6 +41,7 @@
           >
             <q-item-section>
               <q-item-label>Solicitado em: {{ withdrals.createdAt }}</q-item-label>
+              <q-item-label>Tipo: {{ withdrals.anticipationType }}</q-item-label>
               <div class="flex row justify-between">
                 <q-item-label class="q-item-label--break-word" caption>Valor com taxas {{
                   Formatter.formatDoubleToCurrency(withdrals.amountToReceiveWithFee)
@@ -55,7 +56,7 @@
               <q-chip
                 :class="
                   'non-selectable bg-' +
-                  translateStatusToColor(withdrals.paidStatus? 'Ativo' : 'Inativo')
+                  translateStatusToColor(withdrals.paidStatus? 'Ativo' : 'pending')
                 "
                 :label="withdrals.paidStatus? 'Pago':'Pendente'"
               />
@@ -63,12 +64,6 @@
             flat
             @click="pay(withdrals.id, true)"
             label="Efetuar pagamento"
-            :loading="loading"
-          />
-          <PrimaryButton
-            flat
-            @click="pay(withdrals.id, false)"
-            label="Desfazer pagamento"
             :loading="loading"
           />
             </q-item-section>

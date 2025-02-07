@@ -28,8 +28,6 @@ export function translateStatusToColor (status: string): string {
 	case UserStatus.ACTIVE:
 	case 'Ativo':
 		return 'positive'
-  case 'pending':
-		return 'positive'
   case 'client':
 		return 'positive'
 	case UserStatus.INACTIVE:
@@ -45,6 +43,8 @@ export function translateStatusToColor (status: string): string {
 		return 'red'
 	case UserStatus.PENDING_APPROVAL:
 	case 'Aguardando aprovação':
+		return 'warning'
+  case 'pending':
 		return 'warning'
 	default:
 		return 'grey'

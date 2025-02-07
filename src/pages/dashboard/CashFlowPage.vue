@@ -41,7 +41,9 @@
       </div>
       <div class="flex row q-gutter-md justify-between full-width">
         <div v-if="transactions.length === 0" class="q-mt-lg text-center">
-          <span class="text-body2 text-grey">Nenhuma movimentação encontrada.</span>
+          <span class="text-body2 text-grey"
+            >Nenhuma movimentação encontrada.</span
+          >
         </div>
         <q-list bordered>
           <q-item
@@ -51,27 +53,34 @@
           >
             <q-item-section>
               <q-item-label>{{ transactions.createdAt }}</q-item-label>
+              <q-item-label>Valor de split: {{ Formatter.formatDoubleToCurrency(transactions.splitAmount) }}</q-item-label>
               <div class="flex row justify-between">
-                <q-item-label class="q-item-label--break-word" caption>{{
+                <q-item-label class="q-item-label--break-word" caption>Descrição: {{
                   transactions.description
                 }}</q-item-label>
               </div>
               <q-item-label caption>{{
-                transactions.status == 'pending'
-                  ? 'Compra efetuada'
+                transactions.statuses[0] == 'pending'
+                  ? 'Compra pendente'
                   : 'Compra negada'
               }}</q-item-label>
               <q-item-label caption>{{
-                `Parcelas: ${transactions.invoiceNumber}/${transactions.installmentCount} de ${Formatter.formatDoubleToCurrency(transactions.originalAmount)}`
+                `Parcelado em ${transactions.installmentCount}x de ${Formatter.formatDoubleToCurrency(
+                  transactions.originalAmount
+                )}`
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-chip
                 :class="
                   'non-selectable bg-' +
-                  translateStatusToColor(transactions.status)
+                  translateStatusToColor(transactions.statuses[0])
                 "
-                :label=" Formatter.formatDoubleToCurrency(transactions.originalInstallment)"
+                :label="
+                  Formatter.formatDoubleToCurrency(
+                    transactions.originalAmount
+                  )
+                "
               />
             </q-item-section>
           </q-item>

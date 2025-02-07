@@ -95,7 +95,7 @@
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Antecipações</div>
+                    <div class="items-start flex width-full">Pagamentos</div>
                   </q-btn>
                 </q-item>
 

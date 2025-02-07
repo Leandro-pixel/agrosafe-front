@@ -2,8 +2,6 @@ import api, { PaginatedResponse } from 'src/lib/api';
 import { CashFlow } from 'src/models/cashFlow';
 
 export class CashFlowRepository {
-
-
   async fetchTransactions(
     establishmentId?: number,
     cardId?: number,
@@ -25,25 +23,28 @@ export class CashFlowRepository {
         cardId: cardId || undefined,
         userId: userId || undefined,
         statuses: statuses && statuses.length > 0 ? statuses : undefined,
-      }).filter(([ value]) => value !== undefined && value !== null)
+      }).filter(([value]) => value !== undefined && value !== null)
     );
 
     console.log('Conteúdo do body limpo:', JSON.stringify(body));
 
     try {
       console.log('agora veio aqui T' + params);
-      const data = await api.requestGetWithBody('/transaction', params,body );
+      const data = await api.requestGet(
+        '/transaction/purchase',
+        params
+      );
       console.log('aaaaaaaaaaaa T', data);
 
-			const json: PaginatedResponse = {
-				data: data.data.map((item: any) => CashFlow.fromJson(item)),
-				totalItems: data.totalItems
-			}
+      const json: PaginatedResponse = {
+        data: data.map((item: any) => CashFlow.fromJson(item)),
+        totalItems: data.totalItems,
+      };
       console.log('não ta jaisão');
-      return json
+      return json;
     } catch (error) {
+      console.log(error)
       throw new Error('usuário não encontrado');
     }
   }
-
 }
