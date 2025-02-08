@@ -21,7 +21,16 @@
         </q-chip>
       </q-td>
     </template>
-
+    <template v-slot:body-cell-userName="props">
+            <q-td >
+              <span
+                class="text-primary hoverable"
+                @click="onNameClick( props.props.row.id, props.props.row.name)"
+              >
+                {{ props.props.row.name }}
+              </span>
+            </q-td>
+          </template>
     <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
       <q-btn-dropdown flat color="primary" dropdown-icon="settings">
         <q-list>
@@ -64,6 +73,7 @@ import { Formatter } from 'src/utils/formatter'
 import { NotifyError, ShowDialog } from 'src/utils/utils';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { implementHierarchy } from 'src/utils/utils';
+import { useRouter } from 'vue-router';
 
 const columns: QTableColumn[] = [
 { name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
@@ -75,6 +85,15 @@ const columns: QTableColumn[] = [
 { name: 'status', label: 'Status', field: (row:CustomerBrands) => row.CCBStatus? 'Ativo' : 'Inativo', align: 'center' },
 { name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
 ]
+
+const router = useRouter();
+
+
+const onNameClick = (id: any, name: any) => {
+  console.log('name:', id + name);
+  router.push({ path: `/fornecedor/clientes/${id}`, query: {name}});
+
+};
 
 const pagination = ref(new Pagination())
 const rows = ref([] as Array<CustomerBrands>)

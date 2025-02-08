@@ -80,16 +80,16 @@ const routes: RouteRecordRaw[] = [
       },
 
       {
-        path: '/fornecedor/clientes',
+        path: '/fornecedor',
         component: () => import('pages/supliers/client/ClientsPage.vue'),
         children: [
           {
-            path: '',
+            path: 'clientes',
             component: () =>
-              import('pages/suplier/client/SearchSuplierClientPage.vue'),
+              import('pages/supliers/client/SearchSuplierClientPage.vue'),
           },
           {
-            path: ':id',
+            path: 'clientes/:id',
             component: () => import('pages/supliers/client/ClientInfoPage.vue'),
             props: true,
           },
