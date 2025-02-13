@@ -28,8 +28,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/WithdrawalsPage.vue'),
       },
       {
-        path: '/dashboard/saque',
-        component: () => import('pages/dashboard/WithdrawPage.vue'),
+        path: '/dashboard/faturas',
+        component: () => import('pages/dashboard/InvoicePage.vue'),
       },
       {
         path: '/fornecedor',

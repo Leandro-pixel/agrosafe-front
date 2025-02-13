@@ -22,12 +22,12 @@ export class Invoice {
     return new Invoice(
       json.id,
       json.userCardId,
-      parseFloat(json.creditBalance?.amount || 0),
-      parseFloat(json.outstandingBalance?.amount || 0),
-      parseFloat(json.balanceWithFee?.amount || 0),
-      parseFloat(json.debitBalance?.amount || 0),
-      parseFloat(json.creditLimit?.amount || 0),
-      parseFloat(json.debitLimit?.amount || 0),
+      parseFloat(json.creditBalance?? 0),
+      parseFloat(json.outstandingBalance?? 0),
+      parseFloat(json.balanceWithFee?? 0),
+      parseFloat(json.debitBalance?? 0),
+      parseFloat(json.creditLimit?? 0),
+      parseFloat(json.debitLimit?? 0),
       Formatter.formatIsoDateToBR(json.dueDate),
       Formatter.formatIsoDateToBR(json.paymentDate),
       Formatter.formatIsoDateToBR(json.createdAt),
@@ -61,7 +61,8 @@ export class Invoice {
   }
 
   public getFormattedBalanceWithFee(): string {
-    return Formatter.formatNumberToBRCurrency(this.balanceWithFee);
+    console.log(this.balanceWithFee)
+    return Formatter.formatDoubleToCurrency(this.balanceWithFee);
   }
 
   public getFormattedDebitBalance(): string {

@@ -1,17 +1,7 @@
 <template>
   <q-layout>
-    <q-page class="q-pa-md">
-      <div class="flex justify-between q-mb-lg">
-        <span
-          class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
-          style="border-top: 0.25rem solid #401a58"
-        >
-          Movimentações
-        </span>
-      </div>
-      <div>
-        <PurchaseTable/>
-        <PrimaryTable
+    <q-page class="column">
+      <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
   :rows="rows"
@@ -43,7 +33,7 @@
               </span>
             </q-td>
           </template>
-    <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
+    <template #body-cell-actions="props" >
       <q-btn-dropdown flat color="primary" dropdown-icon="settings">
         <q-list>
       <q-td class=" flex flex-row justify-center items-center gap-2">
@@ -59,26 +49,46 @@
     </template>
 
   </PrimaryTable>
-      </div>
     </q-page>
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { implementHierarchy, NotifyError } from 'src/utils/utils';
-import { Formatter } from 'src/utils/formatter';
-import { QTableColumn } from 'quasar'
-import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination';
-import { CashFlow } from 'src/models/cashFlow';
-import { useCachSflowStore } from 'src/stores/useCashFlowStore';
-import { onMounted } from 'vue';
+import { Formatter } from 'src/utils/formatter';
+import { NotifyError} from 'src/utils/utils';
+import PrimaryTable from 'src/components/list/PrimaryTable.vue';
+import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
+//import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
-import PurchaseTable from 'src/components/list/Purchase-table.vue';
+import { useCachSflowStore } from 'src/stores/useCashFlowStore';
+import { CashFlow } from 'src/models/cashFlow';
 
-const columns: QTableColumn[] = [
+
+//const router = useRouter()
+const rows = ref([] as Array<CashFlow>);
+const cashFlowStore = useCachSflowStore();
+// Recebe o ID da rota como propriedade
+const props = defineProps<{
+  searchBy?: Array<{
+    id?: number;
+    cpf?: string;
+    status?: boolean;
+  }>;
+}>();
+
+
+const pagination = ref(new Pagination());
+const loading = ref(false);
+const refresh = ref(false);
+
+console.log('propriedades:' + props)
+// Índice do span ativo
+
+
+  const columns: QTableColumn[] = [
 { name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
 { name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
 { name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount, align: 'left' },
@@ -86,42 +96,24 @@ const columns: QTableColumn[] = [
 { name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
 ]
 
+
 const onCashClick = (id: any, name: any) => {
-  console.log(id,name)
+  console.log('name:', id + name);
+  //router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
 };
+
 
 const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-onMounted(() => {
-  console.log('foi montado');
-  loading.value = true;
-  onRequest({ pagination: pagination.value });
-});
-
-
-const pagination = ref(new Pagination());
-//const filter = ref('');
-const rows = ref([] as Array<CashFlow>);
-const establishmentId = ref(0);
-const cardId = ref(0);
-const userId = ref(0);
-const statuses = ref([]);
-const cashFlowStore = useCachSflowStore();
-const loading = ref(false);
-const refresh = ref(false);
-//const router = useRouter();
-
 const onRequest = async (props: any) => {
-  console.log('veio aquiaqui' + userId.value + props);
+  console.log('veio aquiaqui' + props);
 
   await cashFlowStore
     .fetchCashFlow(
-      establishmentId.value,
-      cardId.value,
-      userId.value,
-      statuses.value
+      props.id,
+      props.status
     )
     .then(() => {
       console.log('veio aquiaqui2' + cashFlowStore.getTransactions);
@@ -134,21 +126,5 @@ const onRequest = async (props: any) => {
       loading.value = false;
     });
 };
+
 </script>
-
-<style scoped>
-.q-btn {
-  min-width: 150px;
-}
-.transaction-item {
-  border-bottom: 4px solid #ccc; /* Cor e espessura da linha de separação */
-  padding-bottom: 10px; /* Espaço entre a transação e a linha de separação */
-}
-
-.transaction-item:last-child {
-  border-bottom: none; /* Remove a linha de separação do último item */
-}
-.row {
-  align-items: flex-start; /* Alinha os itens no topo */
-}
-</style>

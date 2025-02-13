@@ -46,10 +46,10 @@
         <q-list>
       <q-td class=" flex flex-row justify-center items-center gap-2">
         <PrimaryButton
-                icon="add_business"
+                icon="payment"
                 flat
                 @click="pay(props.props.row.id, true)"
-                label="Efetual agamentoP"
+                label="Efetuar Pagamento"
             />
       </q-td>
         </q-list>
@@ -65,7 +65,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { implementHierarchy, NotifyError } from 'src/utils/utils';
-import { Formatter } from 'src/utils/formatter';
 import { QTableColumn } from 'quasar'
 import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination';
@@ -77,13 +76,13 @@ import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
 const columns: QTableColumn[] = [
 { name: 'id', label: 'ID', field: (row:Withdrawal) => row.id, align: 'center' },
-{ name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType, align: 'left' },
+{ name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => row.createdAt, align: 'left' },
+{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':'Automática', align: 'left' },
 { name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
-{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive, align: 'left' },
-{ name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus, align: 'left' },
+{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive(), align: 'left' },
+{ name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus? 'Efetuado': 'Pendente', align: 'left' },
 { name: 'pixKey', required: true, label: 'Chave pix', field: (row:Withdrawal) => row.pixKey, align: 'left' },
-
+{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
 ]
 
 onMounted(() => {

@@ -58,7 +58,7 @@
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Segmentos</div>
+                    <div class="items-start flex width-full">Analíticos</div>
                   </q-btn>
                 </q-item>
 
@@ -96,6 +96,17 @@
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">Pagamentos</div>
+                  </q-btn>
+                </q-item>
+
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/faturas', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Faturas</div>
                   </q-btn>
                 </q-item>
 
@@ -223,7 +234,7 @@
             <!-- Item de menu com opções expansíveis para Polos -->
             <q-expansion-item
               icon="store"
-              label="Lojas"
+              label="Segmentos"
               expand-icon="null"
               :class="{
                 'text-accent custom-icon-size': selectedItem === 'Lojas',

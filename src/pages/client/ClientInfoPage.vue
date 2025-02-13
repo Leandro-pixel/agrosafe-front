@@ -62,31 +62,7 @@
 
   </PrimaryTable>
 
-  <PrimaryTable
-  @request="onRequestWithdrawal"
-  v-model:pagination="pagination"
-  :rows="invoice"
-  :loading="loading"
-  :columns="columnsInvoices"
-  :refresh="refresh"
-  v-if="activeIndex === 3"
-  >
-  <template #body-cell-status="props">
-      <q-td >
-        <q-chip
-          :class="
-            'non-selectable bg-' +
-            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
-          "
-          size="md"
-          flat
-        >
-          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
-        </q-chip>
-      </q-td>
-    </template>
-
-  </PrimaryTable>
+  <InvoiceTable v-if="activeIndex === 3"/>
 
     </q-page>
   </q-layout>
@@ -106,8 +82,7 @@ import { useHubStore } from 'src/stores/useHubStore';
 import { onMounted } from 'vue';
 import { CashFlow } from 'src/models/cashFlow';
 import { useCachSflowStore } from 'src/stores/useCashFlowStore';
-import { Invoice } from 'src/models/invoices';
-import { useInvoiceStore } from 'src/stores/useInvoiceStore';
+import InvoiceTable from 'src/components/list/Invoice-table.vue';
 
 onMounted(() => {
   datas();
@@ -126,8 +101,6 @@ const infoList = ref<Array<{ icon: string; label: string; value: any }>>([]);
 const limitInfo = ref<Array<{ icon: string; label: string; value: any }>>([]);
 const cashFlowStore = useCachSflowStore();
 //const router = useRouter();
-const invoice = ref([] as Array<Invoice>);
-  const invoiceStore = useInvoiceStore();
 const infor = InfoList;
 // Acessando o nome via query string
 const route = useRoute();
@@ -147,13 +120,6 @@ const setActive = (index: number) => {
   activeIndex.value = index;
 };
 
-const columnsInvoices: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:Invoice) => row.id, align: 'center' },
-{ name: 'createdAt', required: true, label: 'data criação', field: (row:Invoice) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'paymentDate', required: true, label: 'Data de pagamento', field: (row:Invoice) => Formatter.formatDateToBR(row.paymentDate), align: 'left' },
-{ name: 'balanceWithFee', required: true, label: 'Valor com Taxa', field: (row:Invoice) => row.getFormattedBalanceWithFee, align: 'left' }
-
-]
 
 const columnsCash: QTableColumn[] = [
 { name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
@@ -203,22 +169,6 @@ const datas = async () => {
 const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
-
-const onRequestWithdrawal = async (props: any) => {
-  console.log('veio aquiaqui' + props);
-
-  await invoiceStore
-    .fetchInvoice()
-    .then(() => {
-
-      invoice.value = invoiceStore.getinvoices;
-      pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
 
 const onRequestCash = async (props: any) => {
   console.log('veio aquiaqui' + props);

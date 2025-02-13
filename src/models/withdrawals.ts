@@ -59,7 +59,7 @@ export class Withdrawal {
   }
 
   public getFormattedAmountToReceive(): string {
-    return Formatter.formatNumberToBRCurrency(this.amountToReceive);
+    return Formatter.formatDoubleToCurrency(this.amountToReceive);
   }
 
   public getFormattedAmountToReceiveWithFee(): string {

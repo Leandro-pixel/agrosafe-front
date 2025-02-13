@@ -6,7 +6,7 @@
           class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
           style="border-top: 0.25rem solid #401a58"
         >
-          Saques
+          Faturas
         </span>
         </div>
     <div class="flex row q-gutter-md justify-between full-width ">
