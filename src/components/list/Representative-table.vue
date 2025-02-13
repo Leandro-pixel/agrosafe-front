@@ -34,7 +34,7 @@
               </span>
             </q-td>
           </template>
-    <template v-slot:body-cell-actions="props">
+    <template v-slot:body-cell-actions="props" v-if="implementHierarchy('sysAdmin')">
       <q-btn-dropdown flat color="primary" dropdown-icon="settings">
         <q-list>
       <q-td class=" flex justify-center items-center gap-2">
@@ -70,7 +70,7 @@
 import { ref } from 'vue';
 import { Pagination } from 'src/models/pagination';
 import { Formatter } from 'src/utils/formatter';
-import { NotifyError, ShowDialog} from 'src/utils/utils';
+import { implementHierarchy,NotifyError, ShowDialog} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
