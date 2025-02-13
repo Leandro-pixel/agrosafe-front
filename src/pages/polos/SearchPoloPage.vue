@@ -36,7 +36,9 @@
           </template>
           <!--aqui são as ações-->
     <template v-slot:body-cell-actions="props">
-      <q-td class=" flex justify-center items-center">
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex justify-center items-center gap-2">
         <PrimaryButton
                 icon="add_business"
                 flat
@@ -50,6 +52,8 @@
                 label="Desativar Polo"
             />
       </q-td>
+      </q-list>
+      </q-btn-dropdown>
     </template>
   </PrimaryTable>
     </q-page>
@@ -77,9 +81,8 @@ const router = useRouter()
 //const route = useRoute()
 const hubStore = useHubStore()
 
-const onNameClick = (id: any, name: any) => {
-  console.log('name:', id + name);
-  router.push({ path: `/polos/ativacao/${id}`, query: {name}});
+const onNameClick = async (id: number, name: any) => {
+			router.push({ path: `/polos/ativacao/${id}`, query: {name}});
 };
 
 const columns: QTableColumn[] = [

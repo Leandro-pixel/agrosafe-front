@@ -11,6 +11,13 @@ class FetchStoresUseCase {
     console.log('veio aqui2')
 		return this.storeRepository.fetchStores(limit, offset, filter)
 	}
+  async executeFindOne (id?: number, supplierStatus?: boolean){
+		return this.storeRepository.fetchOne(id, supplierStatus)
+	}
+  async executeSuplier (limit:number, offset:number, filter:string): Promise<PaginatedResponse> {
+    console.log('veio aqui2')
+		return this.storeRepository.fetchSuplier(limit, offset, filter, 'true')
+	}
 }
 
 export default FetchStoresUseCase

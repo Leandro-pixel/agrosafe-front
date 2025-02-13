@@ -33,6 +33,19 @@ export const useHubStore = defineStore('hub', {
 			this.hubs = response.data
 			this.totalItemsInDB = response.totalItems
 		},
+
+    async fetchOnePolo (id: number) {
+			 return await fetchHubsUseCase.executeOnePolo(id)
+		},
+
+    async fetchOneUser (id: number) {
+      return await fetchHubsUseCase.executeOneUser(id)
+   },
+
+    async fetchOneRep (id: number) {
+      return await fetchHubsUseCase.executeOneRep(id)
+   },
+
     async fetchHubsBrands (limit: number, offset: number,type: string, filter: string) {
 			const response = await fetchHubsUseCase.executeBrands(limit, offset,type, filter)
 			this.hubs = response.data
@@ -45,7 +58,7 @@ export const useHubStore = defineStore('hub', {
 			return await createHubUseCase.executePolo(polo)
 		},
     async createRepresentative (rep: Representative) {
-			return await createHubUseCase.executePolo(rep)
+			return await createHubUseCase.executeRep(rep)
 		},
 		async fetchHubById (id: string) {
 			return await fetchHubByIdUseCase.execute(id)

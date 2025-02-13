@@ -307,7 +307,7 @@ const submit = async () => {
       postalCode.value,
       complement.value,
       poloID.value.toString(),
-      splitstatus.value
+      splitstatus.value.toString()
     );
     const response = await storeStore.createEC(store);
 

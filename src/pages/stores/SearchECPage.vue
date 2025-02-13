@@ -34,7 +34,9 @@
           </template>
           <!--aqui são as ações-->
     <template v-slot:body-cell-actions="props">
-      <q-td class=" flex justify-center items-center">
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex justify-center items-center gap-2">
         <PrimaryButton
                 icon="add_business"
                 flat
@@ -48,6 +50,8 @@
                 label="Desativar loja"
             />
       </q-td>
+    </q-list>
+  </q-btn-dropdown>
     </template>
   </PrimaryTable>
 </template>

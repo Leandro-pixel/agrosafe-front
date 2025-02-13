@@ -92,7 +92,7 @@ const idEC = Array.isArray(route.params.id) ? route.params.id[0] : route.params.
  console.log(idEC)
 const edit = ref(false);
 // Dados dos spans
-const items1 = ['Credenciais', 'Clientes', 'Funding'];
+const items1 = ['Credenciais', 'Estabelecimentos', 'Movimentações'];
 
 // Índice do span ativo
 const activeIndex = ref<number>(0);

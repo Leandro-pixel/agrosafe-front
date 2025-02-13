@@ -11,6 +11,15 @@ class FetchHubsUseCase {
 		return await this.hubRepository.fetchHubs(limit, offset, filter)
 	}
 
+  async executeOnePolo (id?: number) {
+		return await this.hubRepository.fetchOnePolo(id, false, false)
+	}
+  async executeOneUser (id?: number) {
+		return await this.hubRepository.fetchOneUser(id, false, true)
+	}
+  async executeOneRep (id?: number) {
+		return await this.hubRepository.fetchOneRep(id, false, false)
+	}
   async executeBrands (limit: number, offset: number,type: string, filter: string): Promise<PaginatedResponse> {
 		return await this.hubRepository.fetchHubsBrands(limit, offset,type, filter)
 	}

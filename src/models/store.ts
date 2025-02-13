@@ -39,7 +39,8 @@ export class Store {
 			address: this.address.toJson()
 		}
 	}
-}export class EC {
+}
+export class EC {
 	constructor (
 		public businessName: string = '',
 		public tradeName: string = '',
@@ -60,7 +61,7 @@ export class Store {
 		public postalCode: string = address.zipCode.getCodeWithoutSymbols(),
 		public complement: string = address.complement,
 		public employeeId: string = '',
-		public splitStatus: boolean = false,
+		public splitStatus: string = 'false',
 		public supplierStatus: string = 'false'
 	) {}
 

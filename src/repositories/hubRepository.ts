@@ -1,6 +1,8 @@
 import api, { PaginatedResponse } from 'src/lib/api'
+import { Employee } from 'src/models/employee'
 import { Hub, HubBrands, Polo } from 'src/models/hub'
 import { Representative } from 'src/models/representative'
+import { User } from 'src/models/userCLient'
 
 export class HubRepository {
 	async createHub (hub: Hub): Promise<Hub> {
@@ -14,7 +16,7 @@ export class HubRepository {
 
   async createPolo (polo: Polo): Promise<Polo> {
 		try {
-			const response = await api.requestPostWithApiKey('/employee', polo.toJson())
+			const response = await api.requestPostWithApiKey('/establishment', polo.toJson())
 			return Polo.fromJson(response) as Polo
 		} catch (error) {
 			throw new Error('Erro ao salvar polo')
@@ -48,6 +50,57 @@ export class HubRepository {
 			throw new Error('Erro ao buscar polos')
 		}
 	}
+
+  async fetchOneUser(id?: number,viewPersonalData?: boolean,seeUser?: boolean) {
+    const params = Object.fromEntries(
+      Object.entries({
+        id,
+        viewPersonalData,
+        seeUser
+      }).filter(([, value]) => value !== undefined)
+    );
+    try {
+      const data = await api.requestGet('/profile', params); // Busca os dados da API
+
+      return User.fromJson(data); // Retorna os dados para uso imediato ou para outra lógica
+    } catch (error) {
+      throw new Error('Erro ao buscar dados do suporte');
+    }
+  }
+
+  async fetchOnePolo(id?: number,viewPersonalData?: boolean,seeUser?: boolean) {
+        const params = Object.fromEntries(
+          Object.entries({
+            id,
+            viewPersonalData,
+            seeUser
+          }).filter(([, value]) => value !== undefined)
+        );
+        try {
+          const data = await api.requestGet('/profile', params); // Busca os dados da API
+
+          return Employee.fromJson(data); // Retorna os dados para uso imediato ou para outra lógica
+        } catch (error) {
+          throw new Error('Erro ao buscar dados do suporte');
+        }
+      }
+
+      async fetchOneRep(id?: number,viewPersonalData?: boolean,seeUser?: boolean) {
+        const params = Object.fromEntries(
+          Object.entries({
+            id,
+            viewPersonalData,
+            seeUser
+          }).filter(([, value]) => value !== undefined)
+        );
+        try {
+          const data = await api.requestGet('/profile', params); // Busca os dados da API
+
+          return Employee.fromJson(data); // Retorna os dados para uso imediato ou para outra lógica
+        } catch (error) {
+          throw new Error('Erro ao buscar dados do suporte');
+        }
+      }
 
   async fetchHubsBrands (limit?: number, offset?: number,type?: string, filter?: string, ): Promise<PaginatedResponse> {
     //const type = 'polo'

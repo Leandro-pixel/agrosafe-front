@@ -108,17 +108,16 @@
             />
 
             <q-checkbox
-  v-model="splitstatus"
-  label="O logista deseja split ?"
-  color="primary"
-/>
-
+              v-model="splitstatus"
+              label="O logista deseja split ?"
+              color="primary"
+            />
 
             <q-checkbox
-  v-model="antecipationType"
-  label="O logista deseja antecipação automática?"
-  color="primary"
-/>
+              v-model="antecipationType"
+              label="O logista deseja antecipação automática?"
+              color="primary"
+            />
 
             <q-input
               dense
@@ -143,21 +142,71 @@
         >
           <p class="text-h6 text-bold">Informações do endereço</p>
           <div>
-            <q-input dense outlined v-model.trim="address.zipCode.code" label="Cep" lazy-rules
-            :rules="[(val: string) => val.length === 10 ]" mask="##.###-###"
-            class="half-width" @blur="AddressUtils.getAddress(address.zipCode, address)" />
-            <q-input dense outlined v-model.trim="address.city" label="Cidade"
-            class="half-width" :readonly="address.zipCode.code.length === 10" :rules="[ (val: string) => !!val ]" lazy-rules/>
-            <q-input dense outlined v-model.trim="address.uf" label="Estado"
-            class="half-width" :readonly="!!address.zipCode" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.neighborhood" label="Bairro"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.street" label="Rua"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.number" label="Número"
-            class="half-width" hide-bottom-space :readonly="useNumber"
-            :rules="[ (val: string) => useNumber || Validator.isValidNumber(val) ]"/>
-          <q-checkbox class="q-ml-md" v-model.trim="useNumber" @update:model-value="updateAddressNumber()" label="Casa sem número"/>
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.zipCode.code"
+              label="Cep"
+              lazy-rules
+              :rules="[(val: string) => val.length === 10 ]"
+              mask="##.###-###"
+              class="half-width"
+              @blur="AddressUtils.getAddress(address.zipCode, address)"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.city"
+              label="Cidade"
+              class="half-width"
+              :readonly="address.zipCode.code.length === 10"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.uf"
+              label="Estado"
+              class="half-width"
+              :readonly="!!address.zipCode"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.neighborhood"
+              label="Bairro"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.street"
+              label="Rua"
+              class="half-width"
+              :rules="[ (val: string) => !!val ]"
+              lazy-rules
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="address.number"
+              label="Número"
+              class="half-width"
+              hide-bottom-space
+              :readonly="useNumber"
+              :rules="[ (val: string) => useNumber || Validator.isValidNumber(val) ]"
+            />
+            <q-checkbox
+              class="q-ml-md"
+              v-model.trim="useNumber"
+              @update:model-value="updateAddressNumber()"
+              label="Casa sem número"
+            />
           </div>
         </q-step>
 
@@ -179,15 +228,15 @@
               {{ establishmentPhone }}
             </p>
 
-            <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não'  }}</p>
+            <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não' }}</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
             <p><strong>CEP:</strong> {{ address.zipCode.code }}</p>
-          <p><strong>Cidade:</strong> {{ address.city }}</p>
-          <p><strong>Estado:</strong> {{ address.uf }}</p>
-          <p><strong>Bairro:</strong> {{ address.neighborhood }}</p>
-          <p><strong>Rua:</strong> {{ address.street }}</p>
-          <p><strong>Número:</strong> {{ address.number }}</p>
+            <p><strong>Cidade:</strong> {{ address.city }}</p>
+            <p><strong>Estado:</strong> {{ address.uf }}</p>
+            <p><strong>Bairro:</strong> {{ address.neighborhood }}</p>
+            <p><strong>Rua:</strong> {{ address.street }}</p>
+            <p><strong>Número:</strong> {{ address.number }}</p>
             <p v-if="implementHierarchy('sysAdmin')">
               <strong>ID do polo</strong> {{ employeeId }}
             </p>
@@ -213,7 +262,12 @@
 <script setup lang="ts">
 import { Address } from 'src/models/address';
 //import { Hub } from 'src/models/hub'
-import { AddressUtils, implementHierarchy, NotifyError, ShowDialog } from 'src/utils/utils';
+import {
+  AddressUtils,
+  implementHierarchy,
+  NotifyError,
+  ShowDialog,
+} from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
 import { EC } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
@@ -282,9 +336,8 @@ const updateMask = () => {
   }
 };
 
-
 const submit = async () => {
-console.log('endereço: ' + address.value)
+  console.log('endereço: ' + address.value);
 
   try {
     const store = new EC(
@@ -307,7 +360,7 @@ console.log('endereço: ' + address.value)
       postalCode.value,
       complement.value,
       employeeId.value.toString(),
-      splitstatus.value,
+      splitstatus.value.toString(),
       'true'
     );
     const response = await storeStore.createEC(store);
@@ -336,7 +389,7 @@ const checkFormValidation = () => {
   ) {
     step.value = 3;
   } else if (
-    step.value === 3  &&
+    step.value === 3 &&
     address.value.zipCode &&
     address.value.city &&
     address.value.uf &&

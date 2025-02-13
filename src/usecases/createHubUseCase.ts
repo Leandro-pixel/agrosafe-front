@@ -15,7 +15,7 @@ class CreateHubUseCase {
 		return await this.hubRepository.createPolo(polo)
 	}
   async executeRep (rep: Representative) {
-		return await this.hubRepository.createPolo(rep)
+		return await this.hubRepository.createRep(rep)
 	}
 }
 

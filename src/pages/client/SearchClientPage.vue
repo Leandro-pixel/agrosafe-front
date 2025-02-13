@@ -91,7 +91,7 @@ const router = useRouter();
 
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/fornecedor/clientes/${id}`, query: {name}});
+  router.push({ path: `/clientes/${id}`, query: {name}});
 
 };
 

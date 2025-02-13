@@ -34,7 +34,9 @@
           </template>
           <!--aqui são as ações-->
     <template v-slot:body-cell-actions="props">
-      <q-td class=" flex justify-center items-center">
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex justify-center items-center gap-2">
         <PrimaryButton
                 icon="add_business"
                 flat
@@ -48,6 +50,8 @@
                 label="Desativar loja"
             />
       </q-td>
+      </q-list>
+      </q-btn-dropdown>
     </template>
   </PrimaryTable>
 </template>
@@ -90,7 +94,7 @@ const router = useRouter();
 
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/lojas/estabelecimentos/${id}`, query: {name}});
+  router.push({ path: `/fornecedor/fornecedores/${id}`, query: {name}});
 
 };
 
@@ -103,7 +107,7 @@ const onRequest = async (props: any) => {
   const filterWithoutSymbols = Formatter.clearSymbols(filter.value);
 
   await storeStore
-    .fetchStores(limit, offset, filterWithoutSymbols)
+    .fetchSuplier(limit, offset, filterWithoutSymbols)
     .then(() => {
       rows.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;

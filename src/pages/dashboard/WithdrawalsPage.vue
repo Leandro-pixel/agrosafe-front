@@ -10,65 +10,53 @@
         </span>
       </div>
       <div>
-        <div class="flex row">
-          <q-input
-            dense
-            outlined
-            v-model.trim="establishmentId"
-            label="ID do Estabelecimento"
-            lazy-rules
-            class="width-20"
-            :rules="implementHierarchy('polo') ? [(val:number) => !!val || 'Campo obrigatório'] : []"
-            v-if="implementHierarchy('polo')"
-          />
-          <PrimaryButton
-            flat
-            @click="refreshData"
-            label="Atualizar"
-            :loading="loading"
-          />
-        </div>
-      </div>
-      <div class="flex row q-gutter-md justify-between full-width">
-        <div v-if="withdrals.length === 0" class="q-mt-lg text-center">
-          <span class="text-body2 text-grey">Nenhuma antecipação pendente.</span>
-        </div>
-        <q-list bordered>
-          <q-item
-            v-for="(withdrals, index) in withdrals"
-            :key="index"
-            class="transaction-item"
-          >
-            <q-item-section>
-              <q-item-label>Solicitado em: {{ withdrals.createdAt }}</q-item-label>
-              <q-item-label>Tipo: {{ withdrals.anticipationType }}</q-item-label>
-              <div class="flex row justify-between">
-                <q-item-label class="q-item-label--break-word" caption>Valor com taxas {{
-                  Formatter.formatDoubleToCurrency(withdrals.amountToReceiveWithFee)
-                }}</q-item-label>
-              </div>
-
-              <q-item-label caption>Valor sem taxas {{
-                  Formatter.formatDoubleToCurrency(withdrals.amountToReceive)
-                }}</q-item-label>
-            </q-item-section>
-            <q-item-section side class="justify-center">
-              <q-chip
-                :class="
-                  'non-selectable bg-' +
-                  translateStatusToColor(withdrals.paidStatus? 'Ativo' : 'pending')
-                "
-                :label="withdrals.paidStatus? 'Pago':'Pendente'"
-              />
-              <PrimaryButton
-            flat
-            @click="pay(withdrals.id, true)"
-            label="Efetuar pagamento"
-            :loading="loading"
-          />
-            </q-item-section>
-          </q-item>
+        <PrimaryTable
+  @request="onRequest"
+  v-model:pagination="pagination"
+  :rows="rows"
+  :loading="loading"
+  :columns="columns"
+  :refresh="refresh"
+  >
+  <template #body-cell-status="props">
+      <q-td >
+        <q-chip
+          :class="
+            'non-selectable bg-' +
+            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
+          "
+          size="md"
+          flat
+        >
+          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
+        </q-chip>
+      </q-td>
+    </template>
+    <template v-slot:body-cell-userName="props">
+            <q-td >
+              <span
+                class="text-primary hoverable"
+              >
+                {{ props.props.row.name }}
+              </span>
+            </q-td>
+          </template>
+    <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex flex-row justify-center items-center gap-2">
+        <PrimaryButton
+                icon="add_business"
+                flat
+                @click="pay(props.props.row.id, true)"
+                label="Efetual agamentoP"
+            />
+      </q-td>
         </q-list>
+      </q-btn-dropdown>
+    </template>
+
+  </PrimaryTable>
       </div>
     </q-page>
   </q-layout>
@@ -78,7 +66,8 @@
 import { ref } from 'vue';
 import { implementHierarchy, NotifyError } from 'src/utils/utils';
 import { Formatter } from 'src/utils/formatter';
-//import { useRouter } from 'vue-router';
+import { QTableColumn } from 'quasar'
+import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination';
 import { Withdrawal } from 'src/models/withdrawals';
 import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
@@ -86,25 +75,31 @@ import { onMounted } from 'vue';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
+const columns: QTableColumn[] = [
+{ name: 'id', label: 'ID', field: (row:Withdrawal) => row.id, align: 'center' },
+{ name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType, align: 'left' },
+{ name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
+{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive, align: 'left' },
+{ name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus, align: 'left' },
+{ name: 'pixKey', required: true, label: 'Chave pix', field: (row:Withdrawal) => row.pixKey, align: 'left' },
+
+]
+
 onMounted(() => {
   console.log('foi montado');
   loading.value = true;
   onRequest({ pagination: pagination.value });
 });
 
-const refreshData = () => {
-  loading.value = true;
-  onRequest({ pagination: pagination.value });
-};
-
 const pagination = ref(new Pagination());
 //const filter = ref('');
-const withdrals = ref([] as Array<Withdrawal>);
-const establishmentId = ref(0);
+const rows = ref([] as Array<Withdrawal>);
+//const establishmentId = ref(0);
 const userId = ref(0);
 const withdralStore = useWithdrawalStore();
 const loading = ref(false);
-//const refresh = ref(false);
+const refresh = ref(false);
 //const router = useRouter();
 
 const pay = async (props: any, status: boolean) => {
@@ -129,7 +124,7 @@ const onRequest = async (props: any) => {
     .then(() => {
       console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
-      withdrals.value = withdralStore.getWithdrawals;
+      rows.value = withdralStore.getWithdrawals;
       pagination.value.rowsNumber = withdralStore.totalItemsInDB;
     })
     .catch((error: any) => NotifyError.error(error.message))

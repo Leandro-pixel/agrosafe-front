@@ -2,6 +2,7 @@ import api from '../lib/api';
 import { SupStore } from 'src/models/supUserData';
 
 export class SupRepository {
+
   async fetchUserData() {
     try {
       const data = await api.requestGet('/profile'); // Busca os dados da API

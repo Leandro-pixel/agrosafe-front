@@ -10,81 +10,54 @@
         </span>
       </div>
       <div>
-        <div class="flex row">
-          <q-input
-            dense
-            outlined
-            v-model.trim="establishmentId"
-            label="ID do Estabelecimento"
-            lazy-rules
-            class="width-20"
-            :rules="implementHierarchy('polo') ? [(val:number) => !!val || 'Campo obrigatório'] : []"
-            v-if="implementHierarchy('polo')"
-          />
-          <q-input
-            dense
-            outlined
-            v-model.trim="userId"
-            label="ID do cliente"
-            lazy-rules
-            class="width-20"
-            :rules="[(val:number) => !!val || 'Campo obrigatório']"
-            v-if="implementHierarchy('store')"
-          />
-          <PrimaryButton
-            flat
-            @click="refreshData"
-            label="Atualizar"
-            :loading="loading"
-          />
-        </div>
-      </div>
-      <div class="flex row q-gutter-md justify-between full-width">
-        <div v-if="transactions.length === 0" class="q-mt-lg text-center">
-          <span class="text-body2 text-grey"
-            >Nenhuma movimentação encontrada.</span
-          >
-        </div>
-        <q-list bordered>
-          <q-item
-            v-for="(transactions, index) in transactions"
-            :key="index"
-            class="transaction-item"
-          >
-            <q-item-section>
-              <q-item-label>{{ transactions.createdAt }}</q-item-label>
-              <q-item-label>Valor de split: {{ Formatter.formatDoubleToCurrency(transactions.splitAmount) }}</q-item-label>
-              <div class="flex row justify-between">
-                <q-item-label class="q-item-label--break-word" caption>Descrição: {{
-                  transactions.description
-                }}</q-item-label>
-              </div>
-              <q-item-label caption>{{
-                transactions.statuses[0] == 'pending'
-                  ? 'Compra pendente'
-                  : 'Compra negada'
-              }}</q-item-label>
-              <q-item-label caption>{{
-                `Parcelado em ${transactions.installmentCount}x de ${Formatter.formatDoubleToCurrency(
-                  transactions.originalAmount
-                )}`
-              }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-chip
-                :class="
-                  'non-selectable bg-' +
-                  translateStatusToColor(transactions.statuses[0])
-                "
-                :label="
-                  Formatter.formatDoubleToCurrency(
-                    transactions.originalAmount
-                  )
-                "
-              />
-            </q-item-section>
-          </q-item>
+        <PrimaryTable
+  @request="onRequest"
+  v-model:pagination="pagination"
+  :rows="rows"
+  :loading="loading"
+  :columns="columns"
+  :refresh="refresh"
+  >
+  <template #body-cell-status="props">
+      <q-td >
+        <q-chip
+          :class="
+            'non-selectable bg-' +
+            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
+          "
+          size="md"
+          flat
+        >
+          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
+        </q-chip>
+      </q-td>
+    </template>
+    <template v-slot:body-cell-userName="props">
+            <q-td >
+              <span
+                class="text-primary hoverable"
+                @click="onCashClick( props.props.row.id, props.props.row.name)"
+              >
+                {{ props.props.row.name }}
+              </span>
+            </q-td>
+          </template>
+    <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
+      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
+        <q-list>
+      <q-td class=" flex flex-row justify-center items-center gap-2">
+        <PrimaryButton
+                icon="add_business"
+                flat
+                @click="details(props.props.row.id, props.props.row.name, 'true')"
+                label="Detalhes"
+            />
+      </q-td>
         </q-list>
+      </q-btn-dropdown>
+    </template>
+
+  </PrimaryTable>
       </div>
     </q-page>
   </q-layout>
@@ -94,7 +67,8 @@
 import { ref } from 'vue';
 import { implementHierarchy, NotifyError } from 'src/utils/utils';
 import { Formatter } from 'src/utils/formatter';
-//import { useRouter } from 'vue-router';
+import { QTableColumn } from 'quasar'
+import PrimaryTable from 'src/components/list/PrimaryTable.vue'
 import { Pagination } from 'src/models/pagination';
 import { CashFlow } from 'src/models/cashFlow';
 import { useCachSflowStore } from 'src/stores/useCashFlowStore';
@@ -102,27 +76,39 @@ import { onMounted } from 'vue';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
+const columns: QTableColumn[] = [
+{ name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount, align: 'left' },
+{ name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
+{ name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
+]
+
+const onCashClick = (id: any, name: any) => {
+  console.log(id,name)
+};
+
+const details = async (id: any, name: any, status: string) => {
+  console.log(id, name, status)
+}
+
 onMounted(() => {
   console.log('foi montado');
   loading.value = true;
   onRequest({ pagination: pagination.value });
 });
 
-const refreshData = () => {
-  loading.value = true;
-  onRequest({ pagination: pagination.value });
-};
 
 const pagination = ref(new Pagination());
 //const filter = ref('');
-const transactions = ref([] as Array<CashFlow>);
+const rows = ref([] as Array<CashFlow>);
 const establishmentId = ref(0);
 const cardId = ref(0);
 const userId = ref(0);
 const statuses = ref([]);
 const cashFlowStore = useCachSflowStore();
 const loading = ref(false);
-//const refresh = ref(false);
+const refresh = ref(false);
 //const router = useRouter();
 
 const onRequest = async (props: any) => {
@@ -138,7 +124,7 @@ const onRequest = async (props: any) => {
     .then(() => {
       console.log('veio aquiaqui2' + cashFlowStore.getTransactions);
 
-      transactions.value = cashFlowStore.getTransactions;
+      rows.value = cashFlowStore.getTransactions;
       pagination.value.rowsNumber = cashFlowStore.totalItemsInDB;
     })
     .catch((error: any) => NotifyError.error(error.message))

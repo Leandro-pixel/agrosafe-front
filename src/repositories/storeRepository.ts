@@ -1,4 +1,5 @@
 import api, { PaginatedResponse } from 'src/lib/api';
+import { Establishment } from 'src/models/establishment';
 import { EC, Store } from 'src/models/store';
 
 export class StoreRepository {
@@ -25,6 +26,26 @@ export class StoreRepository {
     }
   }
 
+  async fetchOne(
+    id?: number,
+    supplierStatus?: boolean
+  ){
+    const params = Object.fromEntries(
+      Object.entries({
+        id,
+        supplierStatus,
+      }).filter(([, value]) => value !== undefined)
+    );
+    try {
+      console.log('agora veio aqui');
+      const data = await api.requestGet('/establishment/find', params);
+      console.log('aaaaaaaaaaaa', data);
+      return Establishment.fromJson(data);
+    } catch (error) {
+      throw new Error('Erro ao buscar lojas');
+    }
+  }
+
   async fetchStores(
     limit?: number,
     offset?: number,
@@ -36,6 +57,38 @@ export class StoreRepository {
         limit,
         offset,
         filter,
+      }).filter(([, value]) => value !== undefined)
+    );
+    try {
+      console.log('agora veio aqui');
+      const data = await api.requestGet('/establishment', params);
+      console.log('aaaaaaaaaaaa', data);
+      /*
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => Store.fromJson(item)),
+				totalItems: data.totalItems
+			}*/
+      console.log('não ta jaisão');
+      //return json
+      return data;
+    } catch (error) {
+      throw new Error('Erro ao buscar lojas');
+    }
+  }
+
+  async fetchSuplier(
+    limit?: number,
+    offset?: number,
+    filter?: string,
+    supplierStatus?: string,
+  ): Promise<PaginatedResponse> {
+
+    const params = Object.fromEntries(
+      Object.entries({
+        limit,
+        offset,
+        filter,
+        supplierStatus
       }).filter(([, value]) => value !== undefined)
     );
     try {

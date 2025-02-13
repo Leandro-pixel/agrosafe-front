@@ -42,6 +42,19 @@ export const useStoreStore = defineStore('store', {
       this.stores = response.data;
       this.totalItemsInDB = response.totalItems;
     },
+
+    async fetchOneStore(id?: number, supplierStatus?: boolean) {
+      console.log('veio aqui')
+      return await fetchStoresUseCase.executeFindOne(id, supplierStatus);
+    },
+
+    async fetchSuplier(limit: number, offset: number, filter: string) {
+      console.log('veio aqui sup')
+      const response = await fetchStoresUseCase.executeSuplier(limit, offset, filter);
+      console.log('voltou')
+      this.stores = response.data;
+      this.totalItemsInDB = response.totalItems;
+    },
     async createStore(store: Store) {
       return await createStoreUseCase.execute(store);
     },

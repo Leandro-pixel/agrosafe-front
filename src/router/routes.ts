@@ -78,7 +78,7 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('pages/representatives/CreateRepresentative.vue'),
       },
-
+/*
       {
         path: '/fornecedor',
         component: () => import('pages/supliers/client/ClientsPage.vue'),
@@ -95,19 +95,19 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
-
+*/
       {
-        path: '/lojas/clientes',
-        component: () => import('pages/stores/client/ClientsPage.vue'),
+        path: '/clientes',
+        component: () => import('pages/client/ClientsPage.vue'),
         children: [
           {
             path: '',
             component: () =>
-              import('pages/stores/client/SearchECLientPage.vue'),
+              import('pages/client/SearchClientPage.vue'),
           },
           {
             path: ':id',
-            component: () => import('pages/stores/client/ClientInfoPage.vue'),
+            component: () => import('pages/client/ClientInfoPage.vue'),
             props: true,
           },
         ],
