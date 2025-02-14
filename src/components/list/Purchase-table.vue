@@ -14,12 +14,12 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.statuses[0])
           "
           size="md"
           flat
         >
-          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.statuses[0]== 'pending'?  'Pendente' : 'Pago'}}
         </q-chip>
       </q-td>
     </template>
@@ -56,7 +56,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Pagination } from 'src/models/pagination';
-import { Formatter } from 'src/utils/formatter';
 import { NotifyError} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
@@ -89,9 +88,9 @@ console.log('propriedades:' + props)
 
 
   const columns: QTableColumn[] = [
-{ name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount, align: 'left' },
+{ name: 'hash', label: 'ID', field: (row:CashFlow) => row.hash, align: 'center' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => row.createdAt, align: 'left' },
+{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount(), align: 'left' },
 { name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
 { name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
 ]

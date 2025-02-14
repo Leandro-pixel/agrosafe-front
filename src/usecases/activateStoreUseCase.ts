@@ -9,7 +9,7 @@ class ActivateStoreUseCase {
   async executeEC (storeId: string, status: boolean) {
 		return await this.storeRepository.activateEC(storeId, status)
 	}
-  
+
 }
 
 export default ActivateStoreUseCase

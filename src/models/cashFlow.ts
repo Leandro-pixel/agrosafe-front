@@ -62,7 +62,7 @@ export class CashFlow {
   }
 
   public getFormattedOriginalAmount(): string {
-    return Formatter.formatNumberToBRCurrency(this.originalAmount);
+    return Formatter.formatDoubleToCurrency(this.originalAmount);
   }
 
   public getFormattedAvailableWithdrawalAmount(): string {
