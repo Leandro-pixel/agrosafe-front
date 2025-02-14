@@ -2,62 +2,45 @@
   <q-layout>
     <q-page class="column">
       <PrimaryTable
-    @request="onRequestRep"
-    v-model:pagination="pagination"
-    :rows="reps"
-    :loading="loading"
-    :columns="columnsRep"
-    :refresh="refresh"
+  @request="onRequest"
+  v-model:pagination="pagination"
+  :rows="rows"
+  :loading="loading"
+  :columns="columns"
+  :refresh="refresh"
   >
-    <template #top-left> </template>
-    <template #body-cell-status="props">
+  <template #body-cell-status="props">
       <q-td >
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
           "
           size="md"
           flat
         >
-          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
     </template>
-    <template v-slot:body-cell-name="props">
-            <q-td >
-              <span
-                class="text-primary hoverable"
-                @click="onNameClick( props.props.row.id, props.props.row.name)"
-              >
-                {{ props.props.row.name }}
-              </span>
-            </q-td>
-          </template>
-    <template v-slot:body-cell-actions="props">
+    <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
       <q-btn-dropdown flat color="primary" dropdown-icon="settings">
         <q-list>
-      <q-td class=" flex justify-center items-center gap-2">
+      <q-td class=" flex flex-row justify-center items-center gap-2">
         <PrimaryButton
-                icon="add_business"
+                icon="payment"
                 flat
-                @click="details(props.props.id,props.props.name,props.props.status)"
+                @click="pay(props.props.row.id, true)"
+                label="Efetuar Pagamento"
+            />
+            <PrimaryButton
+                icon="details"
+                flat
+                @click="details"
                 label="Detalhes"
             />
-            <PrimaryButton
-                icon="add_business"
-                flat
-                @click="activateHub(props.props.row)"
-                label="Ativar Representante"
-            />
-            <PrimaryButton
-                icon="key_off"
-                flat
-                @click="disableHub(props.props.row)"
-                label="Desativar Representante"
-            />
       </q-td>
-      </q-list>
+        </q-list>
       </q-btn-dropdown>
     </template>
 
@@ -69,19 +52,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Pagination } from 'src/models/pagination';
-import { Formatter } from 'src/utils/formatter';
-import { NotifyError, ShowDialog} from 'src/utils/utils';
+import { implementHierarchy, NotifyError} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
-import { useHubStore } from 'src/stores/useHubStore';
-import { Hub, HubBrands } from 'src/models/hub';
-import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { Withdrawal } from 'src/models/withdrawals';
+import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
 
 
-const hubStore = useHubStore();
-const router = useRouter()
+const withdralStore = useWithdrawalStore();
 
 // Recebe o ID da rota como propriedade
 const props = defineProps<{
@@ -99,64 +79,53 @@ const refresh = ref(false);
 
 console.log('propriedades:' + props)
 // Índice do span ativo
-const reps = ref([] as Array<Hub>)
+const rows = ref([] as Array<Withdrawal>);
 
 
-const columnsRep: QTableColumn[] = [
-	{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
-	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
-	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
-	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
-	{ name: 'status', label: 'Status', field: (rep:HubBrands) => rep.status ? 'Ativo' : 'Inativo', align: 'center' },
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
+  const columns: QTableColumn[] = [
+{ name: 'id', label: 'ID', field: (row:Withdrawal) => row.id, align: 'center' },
+{ name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => row.createdAt, align: 'left' },
+{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':'Automática', align: 'left' },
+{ name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
+{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive(), align: 'left' },
+{ name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus? 'Efetuado': 'Pendente', align: 'left' },
+{ name: 'pixKey', required: true, label: 'Chave pix', field: (row:Withdrawal) => row.pixKey, align: 'left' },
+{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
 ]
-
-const onNameClick = (id: any, name: any) => {
-  console.log('name:', id + name);
-  router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
-};
-
 
 const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-const onRequestRep = async (props:any) => {
-	loading.value = true
+const pay = async (props: any, status: boolean) => {
+  console.log('veio aquiaqui' + props);
 
-	const { page, rowsPerPage } = props.pagination
-	const offset = page - 1
-	const limit = rowsPerPage
-	const filterWithoutSymbols = Formatter.clearSymbols(props.filter)
+  await withdralStore
+    .payWithdrawal(props, status)
+    .then(() => {
+      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
-	await hubStore.fetchHubsBrands(limit, offset,'representative', filterWithoutSymbols)
-		.then(() => {
-			reps.value = hubStore.hubs
-			pagination.value.rowsNumber = hubStore.totalItemsInDB
+const onRequest = async (props: any) => {
+  console.log('veio aquiaqui' + props);
 
-			pagination.value.page = page
-			pagination.value.rowsPerPage = rowsPerPage
-		})
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
+  await withdralStore
+    .fetchWithdrawal()
+    .then(() => {
+      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
-const activateHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Ativar representante', `Deseja realmente ATIVAR o representante "${hub.fantasyName}"?`, 'warning')) return
-	loading.value = true
-	await hubStore.activateHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
-
-const disableHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Desativar representante', `Deseja realmente DESATIVAR o representante "${hub.fantasyName}"?`, 'negative')) return
-	loading.value = true
-	await hubStore.disableHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
+      rows.value = withdralStore.getWithdrawals;
+      pagination.value.rowsNumber = withdralStore.totalItemsInDB;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
 </script>

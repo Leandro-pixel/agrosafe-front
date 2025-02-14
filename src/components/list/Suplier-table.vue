@@ -114,7 +114,7 @@ console.log('propriedades:' + props)
 ];
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
+  router.push({ path: `/fornecedor/fornecedores/${id}`, query: {name}});
 };
 
 

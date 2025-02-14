@@ -31,46 +31,23 @@
   >
     <template #body-cell-status="props">
       <q-td style="align-items: center;" >
-        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.userType)" size="md" flat>
-          {{props.props.row.userType}}
+        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')" size="md" flat>
+          {{props.props.row.CCBStatus? 'Ativo' : 'Inativo'}}
         </q-chip>
       </q-td>
     </template>
 
   </PrimaryTable>
 </template>
-      <InfoList v-if="activeIndex === 2" :info-array="fundingList"></InfoList>
-
-       <!-- Botão Editar para a aba Funding -->
-       <div v-if="activeIndex === 2" class="flex column">
-        <q-btn
-          flat
-          icon="edit"
-          @click="onToggle(edit)"
-          label="Editar"
-          class="bg-primary text-white items-center"
-          style="width: 8rem"
-        ></q-btn>
-
-        <!-- Edição Habilitada -->
-        <div v-if="edit">
-          <span>Habilitou para editar valores</span>
-          <q-btn
-            flat
-            @click="onToggle(edit)"
-            label="Alterar valor"
-            class="bg-primary text-white items-center"
-            style="width: 8rem"
-          ></q-btn>
-        </div>
-      </div>
+      <InfoList v-if="activeIndex === 2" :info-array="limitInfo"></InfoList>
+      <WithdrawalTable v-if="activeIndex === 3"/>
     </q-page>
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import InfoList from 'src/components/list/InfoList.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 //import { User } from 'src/models/user'
 import { QTableColumn } from 'quasar'
@@ -80,8 +57,15 @@ import { Pagination } from 'src/models/pagination'
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
 import { CustomerBrands } from 'src/models/customer';
 import { useCustomerStore } from 'src/stores/useCustomerStore';
+import { useSuplierStore } from 'src/stores/useSuplierStore';
+import { Formatter } from 'src/utils/formatter';
+import WithdrawalTable from 'src/components/list/Withdrawal-table.vue';
 // Recebe o ID da rota como propriedade
 defineProps<{ id: string }>();
+
+onMounted(() => {
+  datas();
+});
 
 const infor = InfoList;
 
@@ -90,10 +74,11 @@ const route = useRoute();
 const name = route.query.name || 'Nome não disponível';
 const idEC = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
  console.log(idEC)
-const edit = ref(false);
 // Dados dos spans
-const items1 = ['Credenciais', 'Estabelecimentos', 'Movimentações'];
-
+const items1 = ['Credenciais', 'Estabelecimentos', 'Limites', 'Splits'];
+const id1 = route.params.id || 'Nome não disponível';
+const infoList = ref<Array<{ icon: string; label: string; value: any }>>([]);
+const limitInfo = ref<Array<{ icon: string; label: string; value: any }>>([]);
 // Índice do span ativo
 const activeIndex = ref<number>(0);
 
@@ -102,36 +87,14 @@ const setActive = (index: number) => {
   activeIndex.value = index;
 };
 
-// Função para alternar estado de edição
-const onToggle = (value: boolean) => {
-  edit.value = !value; // Inverte o valor de edição
-};
-
-const fundingList = [
-  { icon: 'monetization_on', label: 'Saldo disponível', value: 'R$2.000,00' },
-  { icon: 'money_off', label: 'Saldo usado', value: 'R$3.000,00' },
-  {
-    icon: 'schedule',
-    label: 'Última atualização',
-    value: '01/10/2024, 16:12:13',
-  },
-];
-
-const infoList = [
-  { icon: 'badge', label: 'Nome fantasia', value: 'PG DISTRIBUIDORA LTDA' },
-  { icon: 'description', label: 'CNPJ', value: '14.163.708/0001-78' },
-  { icon: 'place', label: 'Endereço', value: 'Belo Horizonte, MG, Centro, Rua Rio de Janeiro, 30160-911' },
-  { icon: 'check_circle', label: 'Status', value: 'Ativo' },
-  { icon: 'schedule', label: 'Criado em', value: '01/10/2024, 16:12:13' },
-];
-
 const columns: QTableColumn[] = [
-//{ name: 'id', label: 'ID', field: (row:User) => row.id, align: 'center' },
+{ name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
 { name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
-//{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
-//{ name: 'userType', label: 'Status', field: (row:User) => row.userType, align: 'left' },
-{ name: 'userType', label: 'Status', field: (row:CustomerBrands) => row.userType, align: 'center' },
-{ name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
+{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+{ name: 'cpf', required: true, label: 'CPF', field: (row:CustomerBrands) => row.cpf, align: 'left' },
+{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
+{ name: 'celular', required: true, label: 'Celular', field: (row:CustomerBrands) => row.phone, align: 'left' },
+{ name: 'status', label: 'CCB', field: (row:CustomerBrands) => row.CCBStatus? 'Ativo' : 'Inativo', align: 'center' },
 ]
 
 const pagination = ref(new Pagination())
@@ -139,7 +102,42 @@ const rows = ref([] as Array<CustomerBrands>)
 const loading = ref(false)
 const userStore = useCustomerStore()
 const refresh = ref(false)
+const suplierStore = useSuplierStore();
+const datas = async () => {
+  const hubId = Array.isArray(route.params.id) ? parseInt(route.params.id[0]) : parseInt(route.params.id as string);
+  console.log('route.query.id:', id1);
 
+    if (isNaN(hubId)) {
+      throw new Error('ID inválido');
+    }
+  try {
+    loading.value = true;
+    const response = await suplierStore.fetchOneStore(hubId, true);
+    console.log('Dados retornados:', response); // Debugging
+
+    infoList.value = [
+    { icon: 'badge', label: 'ID', value: response.id },
+    { icon: 'person', label: 'Nome fantasia', value: response.tradeName },
+      { icon: 'description', label: 'Documento', value: Formatter.strToCpf(response.cnpj) },
+      { icon: 'phone', label: 'Celular', value: response.phone },
+      { icon: 'check_circle', label: 'Status', value: response.status ? 'Ativo' : 'Inativo' },
+      { icon: 'schedule', label: 'Criado em', value: Formatter.formatDateToBR(response.createdAt) },
+    ];
+
+    limitInfo.value = [
+  { icon: 'monetization_on', label: 'Saldo disponível', value: Formatter.formatDoubleToCurrency(parseFloat(response.amountToReceive)) },
+  {
+    icon: 'schedule',
+    label: 'Última atualização',
+    value: Formatter.formatDateToBR(response.updatedAt),
+  },
+];
+  } catch (error: any) {
+    NotifyError.error(error.message);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const onRequest = async (props:any) => {
 loading.value = true
