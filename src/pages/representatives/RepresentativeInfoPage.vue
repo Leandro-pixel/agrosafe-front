@@ -59,7 +59,7 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.statuses[0])
           "
           size="md"
           flat
@@ -147,14 +147,14 @@ const setActive = (index: number) => {
 
 const columnsCash: QTableColumn[] = [
 { name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount, align: 'left' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => row.createdAt, align: 'left' },
+{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount(), align: 'left' },
 { name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
 { name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
 ]
 
 const columnsEC: QTableColumn[] = [ //configura oque cada coluna mostra
-  //{ name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
+  { name: 'id', label: 'ID', align: 'center', field: (row: Store) => row.id },
   {name: 'fullName',label: 'Nome completo',align: 'left',field: (row: EC) => row.businessName,},
   //{name: 'fantasyName',label: 'Nome Fantasia',align: 'left',field: 'fantasyName',},
   {name: 'document',label: 'Documento',align: 'left',
@@ -164,7 +164,7 @@ const columnsEC: QTableColumn[] = [ //configura oque cada coluna mostra
     ? Formatter.strToCnpj(row.cnpj)
     : (row.cpf ? Formatter.strToCpf(row.cpf) : ''),},
   //{name: 'address',label: 'Endereço',align: 'left',field: (row: Store) => row.address.toString(),},
-  {name: 'status',label: 'Status',field: (row: Store) => (row.active ? 'Ativo' : 'Inativo'),align: 'left',},
+  //{name: 'status',label: 'Status',field: (row: Store) => (row.active ? 'Ativo' : 'Inativo'),align: 'left',},
   //{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];
 

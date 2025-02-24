@@ -8,16 +8,17 @@ class FetchCashFlowUseCase {
   }
 
   async execute(
-    establishmentId?: number,
-    cardId?: number,
-    userId?: number,
+    searchByType?: string,
+      searchValueBy?: string,
+    idType?: string,
+    idValue?: number,
     statuses?: Array<any>
   ): Promise<PaginatedResponse> {
-    console.log('veio aqui user2' + userId);
     return this.cashFlowRepository.fetchTransactions(
-      establishmentId,
-      cardId,
-      userId,
+      searchByType,
+        searchValueBy,
+      idType,
+      idValue,
       statuses
     );
   }

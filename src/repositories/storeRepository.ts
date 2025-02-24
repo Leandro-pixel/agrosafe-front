@@ -51,12 +51,13 @@ export class StoreRepository {
     offset?: number,
     filter?: string
   ): Promise<PaginatedResponse> {
-    console.log('chegou aqui');
+    const supplierStatus = false;
     const params = Object.fromEntries(
       Object.entries({
         limit,
         offset,
         filter,
+        supplierStatus
       }).filter(([, value]) => value !== undefined)
     );
     try {

@@ -3,30 +3,21 @@ import { CashFlow } from 'src/models/cashFlow';
 
 export class CashFlowRepository {
   async fetchTransactions(
-    establishmentId?: number,
-    cardId?: number,
-    userId?: number,
+    searchByType?: string,
+    searchValueBy?: string,
+    idType?: string,
+    idValue?: number,
     statuses?: Array<any>
   ): Promise<PaginatedResponse> {
-    console.log('chegou aqui T');
+
+
     const params = Object.fromEntries(
       Object.entries({
-        establishmentId: establishmentId || undefined,
-        cardId: cardId || undefined,
-        userId: userId || undefined,
+        [searchByType || '']: searchValueBy,
+        [idType || '']: idValue,
         statuses: statuses && statuses.length > 0 ? statuses : undefined,
       }).filter(([, value]) => value !== undefined)
     );
-    const body = Object.fromEntries(
-      Object.entries({
-        establishmentId: establishmentId || undefined,
-        cardId: cardId || undefined,
-        userId: userId || undefined,
-        statuses: statuses && statuses.length > 0 ? statuses : undefined,
-      }).filter(([value]) => value !== undefined && value !== null)
-    );
-
-    console.log('Conteúdo do body limpo:', JSON.stringify(body));
 
     try {
       console.log('agora veio aqui T' + params);

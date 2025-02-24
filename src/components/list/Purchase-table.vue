@@ -1,6 +1,61 @@
 <template>
   <q-layout>
     <q-page class="column">
+      <Div class="row q-gutter-md items-center">
+        <Span>Documento</Span>
+        <q-input
+  v-model="searchValueBy"
+  placeholder="Digite CPF, CNPJ ou telefone"
+  outlined
+  dense
+  filled
+  @update:model-value="detectSearchType"
+  />
+  <Span>ID</Span>
+  <q-select
+  v-model="selectedIdType"
+  filled
+  dense
+  :options ="[
+    { label: 'Estabelecimento', value: 'establishmentId' },
+    { label: 'Cliente', value: 'userId' },
+    { label: 'Cartão', value: 'cardId' }
+  ]"
+  label="Selecione o tipo de ID"
+  outlined
+  emit-value
+  map-options
+/>
+        <q-input   v-if="selectedIdType != ''" filled
+        v-model="searchValue" dense placeholder="Digite o ID" outlined />
+
+        <q-input
+  v-model="selectedDate"
+  filled
+  dense
+  readonly
+  placeholder="Selecione uma data"
+>
+  <template v-slot:append>
+    <q-icon name="event" class="cursor-pointer" @click="showDatePicker = true" />
+  </template>
+
+  <q-popup-proxy v-model="showDatePicker">
+    <q-date
+      mask="YYYY-MM-DD"
+      v-model="dateRange"
+      range
+      @update:model-value="updateDateRange"
+    />
+  </q-popup-proxy>
+</q-input>
+
+
+
+<PrimaryButton @click="onRequest" label="Pesquisar" :loading="loading"/>
+
+      </Div>
+
       <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
@@ -64,9 +119,15 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { useCachSflowStore } from 'src/stores/useCashFlowStore';
 import { CashFlow } from 'src/models/cashFlow';
+import { Validator } from 'src/utils/validator';
 
+const selectedDate = ref('');
+const showDatePicker = ref(false);
+const dateRange = ref({ from: '', to: '' });
 
 //const router = useRouter()
+const searchValue = ref();
+const selectedIdType = ref('');
 const rows = ref([] as Array<CashFlow>);
 const cashFlowStore = useCachSflowStore();
 // Recebe o ID da rota como propriedade
@@ -78,14 +139,35 @@ const props = defineProps<{
   }>;
 }>();
 
+const updateDateRange = () => {
+  if (dateRange.value.from && dateRange.value.to) {
+    selectedDate.value = `${dateRange.value.from} até ${dateRange.value.to}`;
+  }
+};
 
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);
+const searchByType = ref('')
 
 console.log('propriedades:' + props)
 // Índice do span ativo
 
+const searchValueBy = ref('')
+
+const detectSearchType = () => {
+  const value = searchValueBy.value.replace(/\D/g, '') // Remove caracteres não numéricos
+
+  if (Validator.isValidCPF(value)) {
+    searchByType.value = 'cpf'
+  } else if (Validator.isValidCNPJ(value)) {
+    searchByType.value = 'cnpj'
+  } else if (Validator.isValidPhoneNumber(value)) {
+    searchByType.value = 'phone'
+  } else {
+    searchByType.value = ''
+  }
+}
 
   const columns: QTableColumn[] = [
 { name: 'hash', label: 'ID', field: (row:CashFlow) => row.hash, align: 'center' },
@@ -106,13 +188,16 @@ const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-const onRequest = async (props: any) => {
-  console.log('veio aquiaqui' + props);
+const onRequest = async () => {
+  console.log('veio aquiaqui' + searchByType.value);
 
   await cashFlowStore
     .fetchCashFlow(
-      props.id,
-      props.status
+      searchByType.value,
+      searchValueBy.value,
+      selectedIdType.value,
+      searchValue.value,
+      undefined
     )
     .then(() => {
       console.log('veio aquiaqui2' + cashFlowStore.getTransactions);

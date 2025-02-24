@@ -130,12 +130,12 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.statuses[0])
           "
           size="md"
           flat
         >
-          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.statuses[0] == 'pending' ? 'pendente' : 'liquidado' }}
         </q-chip>
       </q-td>
     </template>
@@ -224,8 +224,8 @@ const columnsWithdrawal: QTableColumn[] = [
 
 const columnsCash: QTableColumn[] = [
 { name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount, align: 'left' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => row.createdAt, align: 'left' },
+{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount(), align: 'left' },
 { name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
 { name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
 ]

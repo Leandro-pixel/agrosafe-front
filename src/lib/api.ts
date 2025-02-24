@@ -263,7 +263,6 @@ const requestGetCEP = async function (
 const requestGet = async function (
   path: string,
   params?: any,
-
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {

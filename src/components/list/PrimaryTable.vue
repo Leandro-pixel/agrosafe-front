@@ -51,7 +51,7 @@
           </template>
           <template #top-left>
               <slot name="top-left">
-                  <q-input outlined dense debounce="1000" v-model="filter" placeholder="Pesquisar...">
+                  <q-input outlined dense debounce="1000" v-model="filter" placeholder="Filtrar por...">
                       <template v-slot:append>
                           <q-icon name="search" />
                       </template>

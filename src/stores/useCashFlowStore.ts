@@ -16,16 +16,17 @@ export const useCachSflowStore = defineStore('cashFlow', {
   },
   actions: {
     async fetchCashFlow(
-      establishmentId?: number,
-      cardId?: number,
-      userId?: number,
+      searchByType?: string,
+      searchValueBy?: string,
+      idType?: string,
+      idValue?: number,
       statuses?: Array<any>
     ) {
-      console.log('veio aqui user' + userId);
       const response = await fetchCashFlowUseCase.execute(
-        establishmentId,
-        cardId,
-        userId,
+        searchByType,
+        searchValueBy,
+        idType,
+        idValue,
         statuses
       );
       console.log('voltou');
