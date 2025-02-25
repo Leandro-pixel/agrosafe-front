@@ -75,72 +75,9 @@
 
 
   </PrimaryTable>
+  <PurchaseTable v-if="activeIndex === 3" class="q-mt-md"/>
 
-  <PrimaryTable
-  @request="onRequestCash"
-  v-model:pagination="pagination"
-  :rows="cashs"
-  :loading="loading"
-  :columns="columnsCash"
-  :refresh="refresh"
-  v-if="activeIndex === 3"
-  >
-  <template #body-cell-status="props">
-      <q-td >
-        <q-chip
-          :class="
-            'non-selectable bg-' +
-            translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')
-          "
-          size="md"
-          flat
-        >
-          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
-        </q-chip>
-      </q-td>
-    </template>
-    <template #body-cell-actions="props"  >
-      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
-        <q-list>
-      <q-td class=" flex flex-row justify-center items-center gap-2">
-        <PrimaryButton
-                icon="add_business"
-                flat
-                @click="details(props.props.row.id, props.props.row.name, 'true')"
-                label="Detalhes"
-            />
-      </q-td>
-        </q-list>
-      </q-btn-dropdown>
-    </template>
-
-  </PrimaryTable>
-
-  <PrimaryTable
-  @request="onRequestWithdrawal"
-  v-model:pagination="pagination"
-  :rows="withdrawals"
-  :loading="loading"
-  :columns="columnsWithdrawal"
-  :refresh="refresh"
-  v-if="activeIndex === 4"
-  >
-  <template #body-cell-status="props">
-      <q-td >
-        <q-chip
-          :class="
-            'non-selectable bg-' +
-            translateStatusToColor(props.props.row.statuses[0])
-          "
-          size="md"
-          flat
-        >
-          {{ props.props.row.statuses[0] == 'pending' ? 'pendente' : 'liquidado' }}
-        </q-chip>
-      </q-td>
-    </template>
-
-  </PrimaryTable>
+  <WithdrawalTable v-if="activeIndex === 4"></WithdrawalTable>
 
     </q-page>
   </q-layout>
@@ -160,12 +97,10 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import { useHubStore } from 'src/stores/useHubStore';
 import { onMounted } from 'vue';
 import { Hub, HubBrands } from 'src/models/hub';
-import { CashFlow } from 'src/models/cashFlow';
-import { useCachSflowStore } from 'src/stores/useCashFlowStore';
 import { CustomerBrands } from 'src/models/customer';
 import { useCustomerStore } from 'src/stores/useCustomerStore'
-import { Withdrawal } from 'src/models/withdrawals';
-import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
+import PurchaseTable from 'src/components/list/Purchase-table.vue';
+import WithdrawalTable from 'src/components/list/Withdrawal-table.vue';
 
 onMounted(() => {
   datas();
@@ -177,17 +112,13 @@ const hubStore = useHubStore();
 defineProps<{ id: string }>();
 
 const pagination = ref(new Pagination());
-  const cashs = ref([] as Array<CashFlow>);
 const storeStore = useStoreStore();
 const loading = ref(false);
 const refresh = ref(false);
 const infoList = ref<Array<{ icon: string; label: string; value: any }>>([]);
 const limitInfo = ref<Array<{ icon: string; label: string; value: any }>>([]);
-const cashFlowStore = useCachSflowStore();
 const clients = ref([] as Array<CustomerBrands>)
 const userStore = useCustomerStore()
-const withdrawals = ref([] as Array<Withdrawal>);
-  const withdralStore = useWithdrawalStore();
 
 //const router = useRouter();
 
@@ -211,24 +142,7 @@ const setActive = (index: number) => {
   activeIndex.value = index;
 };
 
-const columnsWithdrawal: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:Withdrawal) => row.id, align: 'center' },
-{ name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => row.createdAt, align: 'left' },
-{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':'Automática', align: 'left' },
-{ name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
-{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive(), align: 'left' },
-{ name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus? 'Efetuado': 'Pendente', align: 'left' },
-{ name: 'pixKey', required: true, label: 'Chave pix', field: (row:Withdrawal) => row.pixKey, align: 'left' },
-{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
-]
 
-const columnsCash: QTableColumn[] = [
-{ name: 'hash', label: 'hash', field: (row:CashFlow) => row.hash, align: 'center' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => row.createdAt, align: 'left' },
-{ name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount(), align: 'left' },
-{ name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
-{ name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
-]
 
 const columnsRep: QTableColumn[] = [
 	//{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
@@ -290,27 +204,6 @@ const datas = async () => {
   }
 };
 
-const details = async (id: any, name: any, status: string) => {
-  console.log(id, name, status)
-}
-
-const onRequestWithdrawal = async (props: any) => {
-  console.log('veio aquiaqui' + props);
-
-  await withdralStore
-    .fetchWithdrawal()
-    .then(() => {
-      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
-
-      withdrawals.value = withdralStore.getWithdrawals;
-      pagination.value.rowsNumber = withdralStore.totalItemsInDB;
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
-
 const onRequestRep = async (props:any) => {
 	loading.value = true
 
@@ -352,21 +245,4 @@ await userStore.fetchBrandsUsers(limit, offset, props.filter)
   .finally(() => { loading.value = false })
 }
 
-const onRequestCash = async (props: any) => {
-  console.log('veio aquiaqui' + props);
-
-  await cashFlowStore
-    .fetchCashFlow(
-    )
-    .then(() => {
-      console.log('veio aquiaqui2' + cashFlowStore.getTransactions);
-
-      cashs.value = cashFlowStore.getTransactions;
-      pagination.value.rowsNumber = cashFlowStore.totalItemsInDB;
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
 </script>

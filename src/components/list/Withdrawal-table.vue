@@ -1,6 +1,60 @@
 <template>
   <q-layout>
     <q-page class="column">
+      <Div class="row q-gutter-md items-center">
+        <Span>Documento</Span>
+        <q-input
+  v-model="searchValueBy"
+  placeholder="Digite CPF, CNPJ ou telefone"
+  outlined
+  dense
+  filled
+  @update:model-value="detectSearchType"
+  />
+  <Span>ID</Span>
+  <q-select
+  v-model="selectedIdType"
+  filled
+  dense
+  :options ="[
+    { label: 'Estabelecimento', value: 'establishmentId' },
+    { label: 'Cliente', value: 'userId' },
+    { label: 'Cartão', value: 'cardId' }
+  ]"
+  label="Selecione o tipo de ID"
+  outlined
+  emit-value
+  map-options
+/>
+        <q-input   v-if="selectedIdType != ''" filled
+        v-model="searchValue" dense placeholder="Digite o ID" outlined />
+
+        <q-input
+  v-model="selectedDate"
+  filled
+  dense
+  readonly
+  placeholder="Selecione uma data"
+>
+  <template v-slot:append>
+    <q-icon name="event" class="cursor-pointer" @click="showDatePicker = true" />
+  </template>
+
+  <q-popup-proxy v-model="showDatePicker">
+    <q-date
+      mask="YYYY-MM-DD"
+      v-model="dateRange"
+      range
+      @update:model-value="updateDateRange"
+    />
+  </q-popup-proxy>
+</q-input>
+
+
+
+<PrimaryButton @click="onRequest" label="Pesquisar" :loading="loading"/>
+
+      </Div>
       <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
@@ -59,6 +113,7 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Withdrawal } from 'src/models/withdrawals';
 import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
+import { Validator } from 'src/utils/validator';
 
 
 const withdralStore = useWithdrawalStore();
@@ -76,6 +131,35 @@ const props = defineProps<{
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);
+const searchByType = ref('')
+const selectedDate = ref('');
+const showDatePicker = ref(false);
+const dateRange = ref({ from: '', to: '' });
+const searchValue = ref();
+const selectedIdType = ref('');
+
+const updateDateRange = () => {
+  if (dateRange.value.from && dateRange.value.to) {
+    selectedDate.value = `${dateRange.value.from} até ${dateRange.value.to}`;
+  }
+};
+
+
+const searchValueBy = ref('')
+
+const detectSearchType = () => {
+  const value = searchValueBy.value.replace(/\D/g, '') // Remove caracteres não numéricos
+
+  if (Validator.isValidCPF(value)) {
+    searchByType.value = 'cpf'
+  } else if (Validator.isValidCNPJ(value)) {
+    searchByType.value = 'cnpj'
+  } else if (Validator.isValidPhoneNumber(value)) {
+    searchByType.value = 'phone'
+  } else {
+    searchByType.value = ''
+  }
+}
 
 console.log('propriedades:' + props)
 // Índice do span ativo
