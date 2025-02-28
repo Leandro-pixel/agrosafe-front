@@ -8,7 +8,7 @@ export default class Config {
     public primary = '',
     public secondary = '',
     public logoUrl = 'src/assets/logo_brands.png',
-    public tenantName = 'Brands Card',
+    public tenantName = 'BrandsCard',
     public secondaryLogoUrl = 'src/assets/icone_brands.png',
     public SmsMessage = '',
     public paymentProcessors = [] as PaymentProcessor[],

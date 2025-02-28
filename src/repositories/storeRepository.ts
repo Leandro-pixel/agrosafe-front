@@ -1,4 +1,9 @@
+import { UnauthorizedError } from 'src/lib/errors/unauthorizedError';
+import { InternalError } from 'src/lib/errors/internalError';
+import { BadRequestError } from 'src/lib/errors/badRequestError';
+import { NotFoundError } from 'src/lib/errors/notFoundError';
 import api, { PaginatedResponse } from 'src/lib/api';
+import { NotAcceptableError } from 'src/lib/errors/notAcceptableError';
 import { Establishment } from 'src/models/establishment';
 import { EC, Store } from 'src/models/store';
 
@@ -19,10 +24,25 @@ export class StoreRepository {
     );
     try {
       const response = await api.requestPost('/establishment', ec.toJson());
+
+
       return EC.fromJson(response) as EC;
     } catch (error) {
-      console.log('EC:' + ec.toJson);
-      throw new Error('Erro ao cadastrar loja');
+      console.error('Erro ao cadastrar loja:', error.response);
+
+      if (error instanceof NotAcceptableError) {
+        throw new Error('Erro 406: Alguma informação do formulário já esta sendo usada por outro EC');
+      } else if (error instanceof BadRequestError) {
+        throw new Error('Erro 400: Requisição inválida.');
+      } else if (error instanceof UnauthorizedError) {
+        throw new Error('Erro 401: Não autorizado.');
+      } else if (error instanceof NotFoundError) {
+        throw new Error('Erro 404: Recurso não encontrado.');
+      } else if (error instanceof InternalError) {
+        throw new Error('Erro 500: Erro interno do servidor.');
+      } else {
+        throw new Error(`Erro desconhecido: ${error.message}`);
+      }
     }
   }
 
