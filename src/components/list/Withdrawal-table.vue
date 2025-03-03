@@ -52,7 +52,7 @@
 
 
 
-<PrimaryButton @click="onRequest" label="Pesquisar" :loading="loading"/>
+<PrimaryButton @click="onRequest" label="Pesquisar"/>
 
       </Div>
       <PrimaryTable
@@ -197,6 +197,7 @@ const pay = async (props: any, status: boolean) => {
 
 const onRequest = async (props: any) => {
   console.log('veio aquiaqui' + props);
+  loading.value = true;
 
   await withdralStore
     .fetchWithdrawal()

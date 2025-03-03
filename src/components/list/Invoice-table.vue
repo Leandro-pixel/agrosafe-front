@@ -52,7 +52,7 @@
 
 
 
-<PrimaryButton @click="onRequest" label="Pesquisar" :loading="loading"/>
+<PrimaryButton @click="onRequest" label="Pesquisar" />
 
       </Div>
       <PrimaryTable
@@ -189,7 +189,7 @@ const details = async (id: any, name: any, status: string) => {
 
 const onRequest = async (props: any) => {
   console.log('veio aquiaqui' + props);
-
+  loading.value = true;
   await invoiceStore
     .fetchInvoice()
     .then(() => {

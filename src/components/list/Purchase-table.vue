@@ -52,7 +52,7 @@
 
 
 
-<PrimaryButton @click="onRequest" label="Pesquisar" :loading="loading"/>
+<PrimaryButton @click="onRequest" label="Pesquisar" />
 
       </Div>
 
@@ -190,7 +190,7 @@ const details = async (id: any, name: any, status: string) => {
 
 const onRequest = async () => {
   console.log('veio aquiaqui' + searchByType.value);
-
+  loading.value = true;
   await cashFlowStore
     .fetchCashFlow(
       searchByType.value,

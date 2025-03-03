@@ -2,11 +2,11 @@
   <q-layout>
     <q-page class="column">
       <PrimaryTable
-    @request="onRequestRep"
+    @request="onRequest"
     v-model:pagination="pagination"
-    :rows="reps"
+    :rows="rows"
     :loading="loading"
-    :columns="columnsRep"
+    :columns="columns"
     :refresh="refresh"
   >
     <template #top-left> </template>
@@ -15,16 +15,16 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.CCBStatus ? 'Ativo' : 'Inativo')
           "
           size="md"
           flat
         >
-          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.CCBStatus ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
     </template>
-    <template v-slot:body-cell-name="props">
+    <template v-slot:body-cell-userName="props">
             <q-td >
               <span
                 class="text-primary hoverable"
@@ -34,30 +34,30 @@
               </span>
             </q-td>
           </template>
-    <template v-slot:body-cell-actions="props">
+          <template #body-cell-actions="props"  v-if="implementHierarchy('sysAdmin')" >
       <q-btn-dropdown flat color="primary" dropdown-icon="settings">
         <q-list>
-      <q-td class=" flex justify-center items-center gap-2">
+      <q-td class=" flex flex-row justify-center items-center gap-2">
         <PrimaryButton
                 icon="add_business"
                 flat
-                @click="details(props.props.id,props.props.name,props.props.status)"
-                label="Detalhes"
-            />
-            <PrimaryButton
-                icon="add_business"
-                flat
-                @click="activateHub(props.props.row)"
-                label="Ativar Representante"
+                @click="activateUser(props.props.row.id, props.props.row.name, 'true')"
+                label="Ativar"
             />
             <PrimaryButton
                 icon="key_off"
                 flat
-                @click="disableHub(props.props.row)"
-                label="Desativar Representante"
+                @click="disableUser(props.props.row.id, props.props.row.name, 'false')"
+                label="Desativar"
+            />
+            <PrimaryButton
+                icon="notifications"
+                flat
+                @click="openMessageSender(props.props.row.phone)"
+                label="Bureau"
             />
       </q-td>
-      </q-list>
+        </q-list>
       </q-btn-dropdown>
     </template>
 
@@ -69,18 +69,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Pagination } from 'src/models/pagination';
-import { Formatter } from 'src/utils/formatter';
-import { NotifyError, ShowDialog} from 'src/utils/utils';
+import { implementHierarchy, NotifyError, ShowDialog} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
-import { useHubStore } from 'src/stores/useHubStore';
-import { Hub, HubBrands } from 'src/models/hub';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { useCustomerStore } from 'src/stores/useCustomerStore';
+import { CustomerBrands } from 'src/models/customer';
+import { Formatter } from 'src/utils/formatter';
 
 
-const hubStore = useHubStore();
 const router = useRouter()
 
 // Recebe o ID da rota como propriedade
@@ -93,70 +92,84 @@ const props = defineProps<{
 }>();
 
 
-const pagination = ref(new Pagination());
-const loading = ref(false);
-const refresh = ref(false);
-
+const pagination = ref(new Pagination())
+const rows = ref([] as Array<CustomerBrands>)
+const loading = ref(false)
+const userStore = useCustomerStore()
+const refresh = ref(false)
 console.log('propriedades:' + props)
 // Índice do span ativo
-const reps = ref([] as Array<Hub>)
 
 
-const columnsRep: QTableColumn[] = [
-	{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
-	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
-	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
-	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
-	{ name: 'status', label: 'Status', field: (rep:HubBrands) => rep.status ? 'Ativo' : 'Inativo', align: 'center' },
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
+  const columns: QTableColumn[] = [
+{ name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
+{ name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
+{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+{ name: 'cpf', required: true, label: 'CPF', field: (row:CustomerBrands) => row.cpf, align: 'left' },
+{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
+{ name: 'celular', required: true, label: 'Celular', field: (row:CustomerBrands) => row.phone, align: 'left' },
+{ name: 'status', label: 'Status', field: (row:CustomerBrands) => row.CCBStatus? 'Ativo' : 'Inativo', align: 'center' },
+{ name: 'actions', label: 'Ações', field: 'actions', align: 'center' }
 ]
 
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
+  router.push({ path: `/clientes/${id}`, query: {name}});
+
 };
 
+const onRequest = async (props:any) => {
+loading.value = true
+const { page, rowsPerPage } = props.pagination
 
-const details = async (id: any, name: any, status: string) => {
-  console.log(id, name, status)
+const offset = page - 1
+const limit = rowsPerPage
+
+await userStore.fetchBrandsUsers(limit, offset, props.filter)
+  .then(() => {
+    console.log('chegou aqui1')
+
+    rows.value = userStore.getUsers
+    pagination.value.rowsNumber = userStore.totalItemsInDB
+
+    pagination.value.page = page
+    pagination.value.rowsPerPage = rowsPerPage
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
 }
 
-const onRequestRep = async (props:any) => {
-	loading.value = true
+const openMessageSender = async (phone : string) => {
+  loading.value = true
+  await userStore.sendBureauMessage(phone)
+  .then(() => {
+    console.log('chegou aqui1')
 
-	const { page, rowsPerPage } = props.pagination
-	const offset = page - 1
-	const limit = rowsPerPage
-	const filterWithoutSymbols = Formatter.clearSymbols(props.filter)
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })}
 
-	await hubStore.fetchHubsBrands(limit, offset,'representative', filterWithoutSymbols)
-		.then(() => {
-			reps.value = hubStore.hubs
-			pagination.value.rowsNumber = hubStore.totalItemsInDB
-
-			pagination.value.page = page
-			pagination.value.rowsPerPage = rowsPerPage
-		})
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
+const activateUser = async (id: any, name: any, status: string) => {
+  if (!await ShowDialog.showConfirm('Ativar usuário', `Deseja realmente ATIVAR o usuário "${name}"?`, 'primary')) return
+  loading.value = true
+  console.log(id)
+  await userStore.activateCustomer(id, status)
+  .then(() => {
+      refresh.value = !refresh.value;
+    })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
 }
 
-const activateHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Ativar representante', `Deseja realmente ATIVAR o representante "${hub.fantasyName}"?`, 'warning')) return
-	loading.value = true
-	await hubStore.activateHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
-
-const disableHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Desativar representante', `Deseja realmente DESATIVAR o representante "${hub.fantasyName}"?`, 'negative')) return
-	loading.value = true
-	await hubStore.disableHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
+const disableUser = async (id: any, name: any, status: string) => {
+  if (!await ShowDialog.showConfirm('Desativar usuário', `Deseja realmente DESATIVAR o usuário "${name}"?`, 'negative')) return
+  loading.value = true
+    await userStore.activateCustomer(id, status)
+    .then(() => {
+      refresh.value = !refresh.value;
+    })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
 }
 
 </script>
