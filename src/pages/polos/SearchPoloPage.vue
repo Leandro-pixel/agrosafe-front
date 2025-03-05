@@ -15,12 +15,12 @@
         <q-chip
           :class="
             'non-selectable bg-' +
-            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
+            translateStatusToColor(props.props.row.status ? 'Ativo' : 'Inativo')
           "
           size="md"
           flat
         >
-          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
+          {{ props.props.row.status ? 'Ativo' : 'Inativo' }}
         </q-chip>
       </q-td>
     </template>
@@ -72,6 +72,7 @@ import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { NotifyError, ShowDialog } from 'src/utils/utils';
+import { useStoreStore } from 'src/stores/useStoreStore';
 
 const pagination = ref(new Pagination())
 const rows = ref([] as Array<Hub>)
@@ -80,6 +81,7 @@ const refresh = ref(false)
 const router = useRouter()
 //const route = useRoute()
 const hubStore = useHubStore()
+const storeStore = useStoreStore();
 
 const onNameClick = async (id: number, name: any) => {
 			router.push({ path: `/polos/ativacao/${id}`, query: {name}});
@@ -103,7 +105,6 @@ const viewUsers = (id:string) => router.push(`usuarios/hub/${HashIds.encryptId(i
 */
 const onRequest = async (props:any) => {
 	loading.value = true
-
 	const { page, rowsPerPage } = props.pagination
 	const offset = page - 1
 	const limit = rowsPerPage
@@ -121,19 +122,19 @@ const onRequest = async (props:any) => {
 		.finally(() => { loading.value = false })
 }
 
-const activateHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Ativar polo', `Deseja realmente ATIVAR o polo "${hub.fantasyName}"?`, 'warning')) return
+const activateHub = async (hub:HubBrands) => {
+	if (!await ShowDialog.showConfirm('Ativar polo', `Deseja realmente ATIVAR o polo "${hub.name}"?`, 'primary')) return
 	loading.value = true
-	await hubStore.activateHub(hub.id)
+	await storeStore.activateEC(hub.establishmentId, true)
 		.then(() => { refresh.value = !refresh.value })
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
 }
 
-const disableHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Desativar polo', `Deseja realmente DESATIVAR o polo "${hub.fantasyName}"?`, 'negative')) return
+const disableHub = async (hub:HubBrands) => {
+	if (!await ShowDialog.showConfirm('Desativar polo', `Deseja realmente DESATIVAR o polo "${hub.name}"?`, 'negative')) return
 	loading.value = true
-	await hubStore.disableHub(hub.id)
+	await storeStore.activateEC(hub.establishmentId, false)
 		.then(() => { refresh.value = !refresh.value })
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })

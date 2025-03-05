@@ -23,8 +23,11 @@
 
       <q-stepper-navigation class="text-center">
         <PrimaryButton v-if="step > 1" flat @click="step--" label="Voltar" />
-        <q-btn @click="checkFormValidation()" :color="getButtonColor()"
-          :label="step === 3 ? 'Confirmar' : 'Continuar'"/>
+        <q-btn
+        @click="checkFormValidation()" :color="getButtonColor()"
+          :label="step === 3 ? 'Confirmar' : 'Continuar'"
+          :loading="loading"
+          />
       </q-stepper-navigation>
     </q-stepper>
   </q-page>
@@ -36,7 +39,7 @@ import { ref } from 'vue'
 import { useHubStore } from 'src/stores/useHubStore'
 //import { Address } from 'src/models/address'
 import { Representative } from 'src/models/representative'
-import { NotifyError, ShowDialog } from 'src/utils/utils'
+import { NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils'
 //import { useRouter } from 'vue-router'
 import PrimaryButton from 'src/components/button/PrimaryButton.vue'
 import { Validator } from 'src/utils/validator'
@@ -47,10 +50,13 @@ const email = ref('')
 const phone = ref('')
 const employeeType = ref('representative')
 const hubStore = useHubStore()
+const loading = ref(false)
+
 //const router = useRouter()
 
 
 const submit = async () => {
+  await ShowLoading.show('Criando...');
 	try {
 		const representative = new Representative(
 			name.value,
@@ -58,13 +64,13 @@ const submit = async () => {
 			phone.value,
 			employeeType.value,
 		)
-
 		const response = await hubStore.createRepresentative(representative)
-
-		await ShowDialog.show('Sucesso', 'Representante criado com sucesso!')
+    await ShowDialog.show('Sucesso', 'Representante criado com sucesso!')
+    await ShowLoading.hide('');
 console.log(response)
 		//router.push(`/polos/${HashIds.encryptId(response.id as string)}`)
 	} catch (error:any) {
+    await ShowLoading.hide('');
 		NotifyError.error(error.message)
 	}
 }

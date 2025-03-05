@@ -28,7 +28,7 @@
             <q-td >
               <span
                 class="text-primary hoverable"
-                @click="onNameClick( props.props.row.id, props.props.row.name)"
+                @click="implementHierarchy('sysAdmin')? onNameClick( props.props.row.id, props.props.row.name): {}"
               >
                 {{ props.props.row.name }}
               </span>

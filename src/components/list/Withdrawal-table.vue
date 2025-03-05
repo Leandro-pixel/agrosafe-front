@@ -169,7 +169,7 @@ const rows = ref([] as Array<Withdrawal>);
   const columns: QTableColumn[] = [
 { name: 'id', label: 'ID', field: (row:Withdrawal) => row.id, align: 'center' },
 { name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => row.createdAt, align: 'left' },
-{ name: 'anticipationType', required: true, label: 'Tipo de antecipação', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':'Automática', align: 'left' },
+{ name: 'anticipationType', required: true, label: 'Tipo', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':row.anticipationType == 'split'? 'Split': 'Automática', align: 'left' },
 { name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
 { name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive(), align: 'left' },
 { name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus? 'Efetuado': 'Pendente', align: 'left' },

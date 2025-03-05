@@ -16,7 +16,7 @@ class SendMessageUseCase {
 	}
 
   async executeBureauMessage (phone: string){
-		return await this.customerRepository.sendBureauMessage(phone,'Brands Card: Sua avaliação avançou para a próxima etapa, agora basta acessar seu e-mail e assinar os termos que enviamos para você e seus créditos estarão liberados!', 'Quase lá!')
+		return await this.customerRepository.sendBureauMessage(phone,'BrandsCard: Sua avaliação avançou para a próxima etapa, agora basta acessar seu e-mail e assinar os termos que enviamos para você e seus créditos estarão liberados!', 'Quase lá!')
 	}
 
   async executeTransaction (phone: string, desc: string, amount: number){

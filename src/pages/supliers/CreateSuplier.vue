@@ -107,18 +107,6 @@
               :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"
             />
 
-            <q-checkbox
-              v-model="splitstatus"
-              label="O logista deseja split ?"
-              color="primary"
-            />
-
-            <q-checkbox
-              v-model="antecipationType"
-              label="O logista deseja antecipação automática?"
-              color="primary"
-            />
-
             <q-input
               dense
               outlined
@@ -228,7 +216,6 @@
               {{ establishmentPhone }}
             </p>
 
-            <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não' }}</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
             <p><strong>CEP:</strong> {{ address.zipCode.code }}</p>
@@ -267,6 +254,7 @@ import {
   implementHierarchy,
   NotifyError,
   ShowDialog,
+  ShowLoading,
 } from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
 import { EC } from 'src/models/store';
@@ -337,7 +325,7 @@ const updateMask = () => {
 };
 
 const submit = async () => {
-  console.log('endereço: ' + address.value);
+  await ShowLoading.hide('Criando...');
 
   try {
     const store = new EC(
@@ -364,10 +352,11 @@ const submit = async () => {
       'true'
     );
     const response = await storeStore.createEC(store);
-
+    await ShowLoading.hide('');
     ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
     console.log(response);
   } catch (error: any) {
+    await ShowLoading.hide('');
     NotifyError.error(error.message);
   }
 };

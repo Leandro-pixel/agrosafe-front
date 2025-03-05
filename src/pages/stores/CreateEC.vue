@@ -213,7 +213,7 @@
 <script setup lang="ts">
 import { Address } from 'src/models/address';
 //import { Hub } from 'src/models/hub'
-import { AddressUtils, implementHierarchy, NotifyError, ShowDialog } from 'src/utils/utils';
+import { AddressUtils, implementHierarchy, NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
 import { EC } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
@@ -284,7 +284,7 @@ const updateMask = () => {
 
 
 const submit = async () => {
-
+  await ShowLoading.hide('Criando...');
 
   try {
     const store = new EC(
@@ -310,10 +310,11 @@ const submit = async () => {
       splitstatus.value.toString()
     );
     const response = await storeStore.createEC(store);
-
+    await ShowLoading.hide('');
     ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
     console.log(response);
   } catch (error: any) {
+    await ShowLoading.hide('');
     NotifyError.error(error.message);
   }
 };

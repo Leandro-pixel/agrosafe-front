@@ -60,7 +60,7 @@ const route = useRoute();
 //const router = useRouter();
 
 const name = route.query.name || 'Nome não disponível';
-const id1 = route.params.id || 'Nome não disponível';
+const id1 = route.params.id || 'id não disponível';
 
 // Dados dos spans
 const items1 = ['Informações', 'Limites', 'Movimentações', 'Faturas'];
@@ -87,7 +87,7 @@ const datas = async () => {
 
     infoList.value = [
     { icon: 'badge', label: 'ID', value: response.id },
-    { icon: 'person', label: 'Nome fantasia', value: response.name },
+    { icon: 'person', label: 'Nome', value: response.name },
       { icon: 'description', label: 'Documento', value: Formatter.strToCpf(response.cpf) },
       { icon: 'phone', label: 'Celular', value: response.phone },
       { icon: 'check_circle', label: 'Status', value: response.status ? 'Ativo' : 'Inativo' },

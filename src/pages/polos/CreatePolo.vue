@@ -187,7 +187,7 @@ import { ref } from 'vue'
 import { useHubStore } from 'src/stores/useHubStore'
 //import { Address } from 'src/models/address'
 import { Polo } from 'src/models/hub'
-import { AddressUtils,NotifyError, ShowDialog } from 'src/utils/utils'
+import { AddressUtils,NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils'
 //import { useRouter } from 'vue-router'
 import PrimaryButton from 'src/components/button/PrimaryButton.vue'
 import { Validator } from 'src/utils/validator'
@@ -255,6 +255,7 @@ const hubStore = useHubStore()
 
 
 const submit = async () => {
+  await ShowLoading.hide('Criando...');
 	try {
 		const polo = new Polo(
 			businessName.value,
@@ -277,13 +278,11 @@ const submit = async () => {
       employeeId.value.toString(),
       'true'
 		)
-
-		const response = await hubStore.createPolo(polo)
-
+		await hubStore.createPolo(polo)
+    await ShowLoading.hide('');
 		await ShowDialog.show('Sucesso', 'Polo criado com sucesso!')
-console.log(response)
-		//router.push(`/polos/${HashIds.encryptId(response.id as string)}`)
 	} catch (error:any) {
+    await ShowLoading.hide('');
 		NotifyError.error(error.message)
 	}
 }

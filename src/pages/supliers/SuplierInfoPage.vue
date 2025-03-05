@@ -21,23 +21,7 @@
       </div>
       <infor v-if="activeIndex === 0" :info-array="infoList" ></infor>
       <template v-if="activeIndex === 1">
-  <PrimaryTable
-  @request="onRequest"
-  v-model:pagination="pagination"
-  :rows="rows"
-  :loading="loading"
-  :columns="columns"
-  :refresh="refresh"
-  >
-    <template #body-cell-status="props">
-      <q-td style="align-items: center;" >
-        <q-chip :class="'non-selectable bg-' + translateStatusToColor(props.props.row.CCBStatus? 'Ativo' : 'Inativo')" size="md" flat>
-          {{props.props.row.CCBStatus? 'Ativo' : 'Inativo'}}
-        </q-chip>
-      </q-td>
-    </template>
-
-  </PrimaryTable>
+  <EstablishmentTable/>
 </template>
       <InfoList v-if="activeIndex === 2" :info-array="limitInfo"></InfoList>
       <WithdrawalTable v-if="activeIndex === 3"/>
@@ -50,13 +34,8 @@ import InfoList from 'src/components/list/InfoList.vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 //import { User } from 'src/models/user'
-import { QTableColumn } from 'quasar'
 import { NotifyError} from 'src/utils/utils'
-import PrimaryTable from 'src/components/list/PrimaryTable.vue'
-import { Pagination } from 'src/models/pagination'
-import { translateStatusToColor } from 'src/models/enums/activeStatusEnum'
-import { CustomerBrands } from 'src/models/customer';
-import { useCustomerStore } from 'src/stores/useCustomerStore';
+import EstablishmentTable from 'src/components/list/Establishment-table.vue';
 import { useSuplierStore } from 'src/stores/useSuplierStore';
 import { Formatter } from 'src/utils/formatter';
 import WithdrawalTable from 'src/components/list/Withdrawal-table.vue';
@@ -87,21 +66,8 @@ const setActive = (index: number) => {
   activeIndex.value = index;
 };
 
-const columns: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:CustomerBrands) => row.id, align: 'center' },
-{ name: 'userName', required: true, label: 'Name', field: (row:CustomerBrands) => row.name, align: 'left' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:CustomerBrands) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'cpf', required: true, label: 'CPF', field: (row:CustomerBrands) => row.cpf, align: 'left' },
-{ name: 'email', required: true, label: 'E-mail', field: (row:CustomerBrands) => row.email, align: 'left' },
-{ name: 'celular', required: true, label: 'Celular', field: (row:CustomerBrands) => row.phone, align: 'left' },
-{ name: 'status', label: 'CCB', field: (row:CustomerBrands) => row.CCBStatus? 'Ativo' : 'Inativo', align: 'center' },
-]
 
-const pagination = ref(new Pagination())
-const rows = ref([] as Array<CustomerBrands>)
 const loading = ref(false)
-const userStore = useCustomerStore()
-const refresh = ref(false)
 const suplierStore = useSuplierStore();
 const datas = async () => {
   const hubId = Array.isArray(route.params.id) ? parseInt(route.params.id[0]) : parseInt(route.params.id as string);
@@ -118,7 +84,7 @@ const datas = async () => {
     infoList.value = [
     { icon: 'badge', label: 'ID', value: response.id },
     { icon: 'person', label: 'Nome fantasia', value: response.tradeName },
-      { icon: 'description', label: 'Documento', value: Formatter.strToCpf(response.cnpj) },
+      { icon: 'description', label: 'Documento', value: response.cpf.length < 1? Formatter.strToCnpj(response.cnpj): Formatter.strToCpf(response.cpf) },
       { icon: 'phone', label: 'Celular', value: response.phone },
       { icon: 'check_circle', label: 'Status', value: response.status ? 'Ativo' : 'Inativo' },
       { icon: 'schedule', label: 'Criado em', value: Formatter.formatDateToBR(response.createdAt) },
@@ -138,24 +104,5 @@ const datas = async () => {
     loading.value = false;
   }
 };
-
-const onRequest = async (props:any) => {
-loading.value = true
-const { page, rowsPerPage } = props.pagination
-
-const offset = page - 1
-const limit = rowsPerPage
-
-await userStore.fetchBrandsUsers(limit, offset,idEC, props.filter)
-  .then(() => {
-    rows.value = userStore.getUsers
-    pagination.value.rowsNumber = userStore.totalItemsInDB
-
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-  })
-  .catch((error:any) => NotifyError.error(error.message))
-  .finally(() => { loading.value = false })
-}
 
 </script>

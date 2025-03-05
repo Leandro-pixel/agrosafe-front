@@ -10,20 +10,6 @@
     :refresh="refresh"
   >
     <template #top-left> </template>
-    <template #body-cell-status="props">
-      <q-td >
-        <q-chip
-          :class="
-            'non-selectable bg-' +
-            translateStatusToColor(props.props.row.active ? 'Ativo' : 'Inativo')
-          "
-          size="md"
-          flat
-        >
-          {{ props.props.row.active ? 'Ativo' : 'Inativo' }}
-        </q-chip>
-      </q-td>
-    </template>
     <template v-slot:body-cell-name="props">
             <q-td >
               <span
@@ -34,33 +20,6 @@
               </span>
             </q-td>
           </template>
-    <template v-slot:body-cell-actions="props" v-if="implementHierarchy('sysAdmin')">
-      <q-btn-dropdown flat color="primary" dropdown-icon="settings">
-        <q-list>
-      <q-td class=" flex justify-center items-center gap-2">
-        <PrimaryButton
-                icon="add_business"
-                flat
-                @click="details(props.props.id,props.props.name,props.props.status)"
-                label="Detalhes"
-            />
-            <PrimaryButton
-                icon="add_business"
-                flat
-                @click="activateHub(props.props.row)"
-                label="Ativar Representante"
-            />
-            <PrimaryButton
-                icon="key_off"
-                flat
-                @click="disableHub(props.props.row)"
-                label="Desativar Representante"
-            />
-      </q-td>
-      </q-list>
-      </q-btn-dropdown>
-    </template>
-
   </PrimaryTable>
     </q-page>
   </q-layout>
@@ -70,14 +29,12 @@
 import { ref } from 'vue';
 import { Pagination } from 'src/models/pagination';
 import { Formatter } from 'src/utils/formatter';
-import { implementHierarchy,NotifyError, ShowDialog} from 'src/utils/utils';
+import { NotifyError} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
-import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import { useHubStore } from 'src/stores/useHubStore';
 import { Hub, HubBrands } from 'src/models/hub';
 import { useRouter } from 'vue-router';
-import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 
 
 const hubStore = useHubStore();
@@ -107,8 +64,6 @@ const columnsRep: QTableColumn[] = [
 	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
 	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
 	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
-	{ name: 'status', label: 'Status', field: (rep:HubBrands) => rep.status ? 'Ativo' : 'Inativo', align: 'center' },
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
 ]
 
 const onNameClick = (id: any, name: any) => {
@@ -116,10 +71,6 @@ const onNameClick = (id: any, name: any) => {
   router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
 };
 
-
-const details = async (id: any, name: any, status: string) => {
-  console.log(id, name, status)
-}
 
 const onRequestRep = async (props:any) => {
 	loading.value = true
@@ -140,7 +91,7 @@ const onRequestRep = async (props:any) => {
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
 }
-
+/*
 const activateHub = async (hub:Hub) => {
 	if (!await ShowDialog.showConfirm('Ativar representante', `Deseja realmente ATIVAR o representante "${hub.fantasyName}"?`, 'warning')) return
 	loading.value = true
@@ -158,5 +109,5 @@ const disableHub = async (hub:Hub) => {
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
 }
-
+*/
 </script>

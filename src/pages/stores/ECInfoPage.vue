@@ -90,7 +90,7 @@ import { useRoute } from 'vue-router';
 import { Pagination } from 'src/models/pagination';
 import { useStoreStore } from 'src/stores/useStoreStore';
 import { Formatter } from 'src/utils/formatter';
-import { NotifyError} from 'src/utils/utils';
+import { implementHierarchy, NotifyError} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
@@ -131,7 +131,7 @@ const name = route.query.name || 'Nome não disponível';
 const id1 = route.params.id || 'Nome não disponível';
 
 // Dados dos spans
-const items1 = ['Credenciais', 'Clientes', 'Limites', 'Movimentações', 'Antecipações'];
+const items1 = ['Credenciais', 'Clientes', 'Limites', 'Movimentações',(implementHierarchy('sysAdmin') ?'Antecipações': '')];
 
 // Índice do span ativo
 const activeIndex = ref<number>(0);
@@ -189,7 +189,12 @@ const datas = async () => {
     limitInfo.value = [
   { icon: 'monetization_on', label: 'Saldo disponível', value: Formatter.formatDoubleToCurrency(parseFloat(response.availableCreditBalance)) },
   { icon: 'money_off', label: 'Saldo não usado', value: Formatter.formatDoubleToCurrency(parseFloat(response.outstandingCredit)) },
-  { icon: 'redeem', label: 'Saldo splitado', value: Formatter.formatDoubleToCurrency(parseFloat(response.splitDiscount)) },
+  ...(implementHierarchy('sysAdmin') ? [{
+    icon: 'redeem',
+    label: 'Saldo splitado',
+    value: Formatter.formatDoubleToCurrency(parseFloat(response.splitDiscount))
+  }] : []),
+
   { icon: 'group', label: 'Limite de clientes', value: response.customerLimit },
   {
     icon: 'schedule',
@@ -197,6 +202,7 @@ const datas = async () => {
     value: Formatter.formatDateToBR(response.updatedAt),
   },
 ];
+
   } catch (error: any) {
     NotifyError.error(error.message);
   } finally {
