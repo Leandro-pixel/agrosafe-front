@@ -109,14 +109,14 @@
 
             <q-checkbox
   v-model="splitstatus"
-  label="O logista deseja split ?"
+  label="O estabelecimento deseja split ?"
   color="primary"
 />
 
 
             <q-checkbox
   v-model="antecipationType"
-  label="O logista deseja antecipação automática?"
+  label="O estabelecimento deseja antecipação automática?"
   color="primary"
 />
 
@@ -284,7 +284,7 @@ const updateMask = () => {
 
 
 const submit = async () => {
-  await ShowLoading.hide('Criando...');
+  ShowLoading.show('Criando...');
 
   try {
     const store = new EC(

@@ -94,7 +94,7 @@ const columns: QTableColumn[] = [
 	{ name: 'telefone', label: 'Telefone', align: 'left', field: (row:HubBrands) => row.phone },
 	//{ name: 'address', label: 'Endereço', align: 'left', field: (row:HubBrands) => row.address.toString() },
 	{ name: 'status', label: 'Status', field: (row:HubBrands) => row.status ? 'Ativo' : 'Inativo', align: 'center' },
-	{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
+	//{ name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
 
 ]
 /*

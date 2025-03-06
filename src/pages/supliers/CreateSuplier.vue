@@ -325,7 +325,7 @@ const updateMask = () => {
 };
 
 const submit = async () => {
-  await ShowLoading.hide('Criando...');
+  ShowLoading.show('Criando...');
 
   try {
     const store = new EC(

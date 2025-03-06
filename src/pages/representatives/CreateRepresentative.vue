@@ -56,7 +56,7 @@ const loading = ref(false)
 
 
 const submit = async () => {
-  await ShowLoading.show('Criando...');
+  ShowLoading.show('Criando...');
 	try {
 		const representative = new Representative(
 			name.value,

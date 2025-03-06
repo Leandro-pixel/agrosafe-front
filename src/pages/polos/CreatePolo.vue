@@ -255,7 +255,7 @@ const hubStore = useHubStore()
 
 
 const submit = async () => {
-  await ShowLoading.hide('Criando...');
+   ShowLoading.show('Criando...');
 	try {
 		const polo = new Polo(
 			businessName.value,
