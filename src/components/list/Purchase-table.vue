@@ -174,7 +174,7 @@ const detectSearchType = () => {
 { name: 'criado', required: true, label: 'data criação', field: (row:CashFlow) => row.createdAt, align: 'left' },
 { name: 'originalAmount', required: true, label: 'Valor', field: (row:CashFlow) => row.getFormattedOriginalAmount(), align: 'left' },
 { name: 'status', required: true, label: 'Status', field: (row:CashFlow) => row.statuses[0], align: 'left' },
-{ name: 'transactionType', required: true, label: 'Forma de pagamento', field: (row:CashFlow) => row.transactionType, align: 'left' },
+{ name: 'transactionType', required: true, label: 'Parcelas', field: (row:CashFlow) => row.installmentCount, align: 'left' },
 ]
 
 

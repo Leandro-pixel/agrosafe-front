@@ -64,6 +64,7 @@ const columnsRep: QTableColumn[] = [
 	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
 	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
 	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
+  { name: 'status', required: true, label: 'Status', field: (row:HubBrands) => row.status? 'Ativo':'Inativo', align: 'left' },
 ]
 
 const onNameClick = (id: any, name: any) => {

@@ -171,7 +171,7 @@ const rows = ref([] as Array<Withdrawal>);
 { name: 'createdAt', required: true, label: 'data criação', field: (row:Withdrawal) => row.createdAt, align: 'left' },
 { name: 'anticipationType', required: true, label: 'Tipo', field: (row:Withdrawal) => row.anticipationType == 'punctualAdvance'? 'Pontual':row.anticipationType == 'split'? 'Split': 'Automática', align: 'left' },
 { name: 'establishmentId', required: true, label: 'ID-EC', field: (row:Withdrawal) => row.establishmentId, align: 'left' },
-{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceive(), align: 'left' },
+{ name: 'amountToReceive', required: true, label: 'Valor a receber', field: (row:Withdrawal) => row.getFormattedAmountToReceiveWithFee(), align: 'left' },
 { name: 'paidStatus', required: true, label: 'Status de pagamento', field: (row:Withdrawal) => row.paidStatus? 'Efetuado': 'Pendente', align: 'left' },
 { name: 'pixKey', required: true, label: 'Chave pix', field: (row:Withdrawal) => row.pixKey, align: 'left' },
 { name: 'actions', label: 'Ações', align: 'center', field: 'actions' }
@@ -182,12 +182,12 @@ const details = async (id: any, name: any, status: string) => {
 }
 
 const pay = async (props: any, status: boolean) => {
-  console.log('veio aquiaqui' + props);
+      loading.value = true;
 
   await withdralStore
     .payWithdrawal(props, status)
     .then(() => {
-      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
+      refresh.value = !refresh.value;
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
