@@ -25,8 +25,8 @@
                 fit="fill"
                 :src="
                   leftDrawerOpen
-                    ? config.getConfig.secondaryLogoUrl
-                    : config.getConfig.logoUrl
+                    ? 'icons/icone_brands.png'
+                    : 'icons/logo_brands.png'
                 "
                 class="logo__img"
               />
@@ -418,7 +418,6 @@
 
 <script setup lang="ts">
 import api from 'src/lib/api';
-import { useConfigStore } from 'src/stores/useConfigStore';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
@@ -430,7 +429,6 @@ import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
 import { RepDataStore } from 'src/models/repUserData';
 
 const pageName = ref('Dashboard');
-const config = useConfigStore();
 const leftDrawerOpen = ref(false);
 const selectedItem = ref<string | null>(null);
 const router = useRouter();

@@ -7,7 +7,7 @@ export default class Config {
 	constructor (
     public primary = '',
     public secondary = '',
-    public logoUrl = '/icons/logo_brands.png',
+    public logoUrl = 'icons/logo_brands.png',
     public tenantName = 'BrandsCard',
     public secondaryLogoUrl = 'icons/icone_brands.png',
     public SmsMessage = '',
