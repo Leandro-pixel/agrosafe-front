@@ -9,7 +9,7 @@
         >
           Clientes
         </span>
-        <PrimaryButton flat @click="openMessageSender" class=" ">
+        <PrimaryButton flat @click="openMessageSender" class=" " v-if="implementHierarchy('sysAdmin')" >
           <div class="column flex-center q-gutter-y-sm">
             <q-icon name="message" color="primary" />
             <span>+Convidar Cliente</span>
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { useConfigStore } from 'src/stores/useConfigStore';
-import { ShowDialog } from 'src/utils/utils';
+import { implementHierarchy, ShowDialog} from 'src/utils/utils';
 import { ref } from 'vue';
 
 const config = useConfigStore();

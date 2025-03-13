@@ -117,6 +117,15 @@ static formatDateToBR = (dateString: string): string => {
 		return formattedValue
 	}
 
+  static strToCurrency(creditBalance: string): string {
+    const numberValue = parseFloat(creditBalance); // Converte para número
+    const currencyFormatter = new Intl.NumberFormat('pt-BR', {  // Usando a localidade brasileira
+      style: 'currency',
+      currency: 'BRL',
+    });
+    return currencyFormatter.format(numberValue); // Formata o número como moeda
+  }
+
 	static brlToCents = (value:string): number => {
 		value = value.replace(/\D/g, '')
 		return parseInt(value) * 100

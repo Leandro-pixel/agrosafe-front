@@ -1,44 +1,55 @@
 import { Formatter } from 'src/utils/formatter'
-import { Address } from './address'
 import { Validator } from 'src/utils/validator'
 
-export class Customer {
-	constructor (
-		public name = '',
-		public email = '',
-		public document = '',
-		public phone = '',
-		public address = new Address()
-	) {}
+export class ECCustomer {
+  constructor(
+    public id: number = 0,
+    public userId: number = 0,
+    public establishmentId: number = 0,
+    public creditBalance: string = '',
+    public userName: string = '',
+    public userType: string = 'client',
+    public establishmentName: string = '',
+    public createdAt: string = '',
+    public updatedAt: string = ''
+  ) {}
 
-	public toString (): string {
-		return `${this.name}, ${this.email}, ${this.document}, ${this.phone}, ${this.address}`
-	}
+  public toString(): string {
+    return `${this.userName}, ${this.userType}, ${this.establishmentName}, ${this.createdAt}, ${this.updatedAt}`;
+  }
 
-	static fromJson (json: any): Customer {
-		return new Customer(
-			json.name || '',
-			json.email || '',
-			json.document || '',
-			json.phone || '',
-			Address.fromJson(json.address)
-		)
-	}
+  static fromJson(json: any): ECCustomer {
+    return new ECCustomer(
+      json.id || 0,
+      json.userId || 0,
+      json.establishmentId || 0,
+      json.creditBalance || '',
+      json.userName || '',
+      json.userType || 'client',
+      json.establishmentName || '',
+      json.createdAt || '',
+      json.updatedAt || ''
+    );
+  }
 
-	public toJson (): any {
-		return {
-			name: this.name,
-			document: Formatter.clearSymbolsAndLetters(this.document),
-			phone: Formatter.clearSymbolsAndLetters(this.phone),
-			email: this.email
-		}
-	}
+  public toJson(): any {
+    return {
+      id: this.id,
+      userId: this.userId,
+      establishmentId: this.establishmentId,
+      creditBalance: this.creditBalance,
+      userName: this.userName,
+      userType: this.userType,
+      establishmentName: this.establishmentName,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
+  }
 
-
-
-	public isValid (): boolean {
-		return this.name !== '' && Validator.isValidEmail(this.email) && Validator.isValidCPF(this.document) && Validator.isValidPhoneNumber(this.phone)
-	}
+  public isValid(): boolean {
+    // Validação adicional pode ser aplicada conforme necessário.
+    return this.userName !== '' && this.creditBalance !== '';
+  }
 }
 
 
@@ -79,39 +90,41 @@ export class CustomerBrands {
 	}
 
 	// Método ajustado para mapear corretamente os campos do JSON
-	static fromJson(json: any): CustomerBrands {
+	static fromJson(json: Partial<CustomerBrands>): CustomerBrands {
+		// Usa valores padrão quando os campos estão ausentes ou undefined
 		return new CustomerBrands(
-			json.id || 0,
-			json.userType || '',
-			json.name || '',
-			json.cpf || '',
-			json.rg || '',
-			json.currentBalance || '0.00',
-			json.birthDate || null,
-			json.gender || null,
-			json.email || null,
-			json.phone || null,
-			json.fatherName || null,
-			json.motherName || null,
-      json.CCBStatus || null,
-			json.maritalStatus || null,
-			json.street || null,
-			json.number || null,
-			json.complement || null,
-			json.neighborhood || null,
-			json.city || null,
-			json.state || null,
-			json.postalCode || null,
-			json.status || true,
-			json.changePassword || false,
-			json.codeValidation || false,
-			json.deviceId || '',
-			json.deactivationDate || null,
-			json.createdAt || '',
-			json.updatedAt || ''
+			json.id ?? 0,
+			json.userType ?? '',
+			json.name ?? '',
+			json.cpf ?? '',
+			json.rg ?? '',
+			json.currentBalance ?? '0.00',
+			json.birthDate ?? null,
+			json.gender ?? null,
+			json.email ?? null,
+			json.phone ?? null,
+			json.fatherName ?? null,
+			json.motherName ?? null,
+			json.CCBStatus ?? false,
+			json.maritalStatus ?? null,
+			json.street ?? '',
+			json.number ?? '',
+			json.complement ?? null,
+			json.neighborhood ?? '',
+			json.city ?? '',
+			json.state ?? '',
+			json.postalCode ?? '',
+			json.status ?? true,
+			json.changePassword ?? false,
+			json.codeValidation ?? false,
+			json.deviceId ?? '',
+			json.deactivationDate ?? null,
+			json.createdAt ?? '',
+			json.updatedAt ?? ''
 		);
 	}
 
+	// Método de conversão para JSON
 	public toJson(): any {
 		return {
 			id: this.id,
@@ -126,7 +139,7 @@ export class CustomerBrands {
 			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
 			fatherName: this.fatherName,
 			motherName: this.motherName,
-      CCBStatus: this.CCBStatus,
+			CCBStatus: this.CCBStatus,
 			maritalStatus: this.maritalStatus,
 			street: this.street,
 			number: this.number,
@@ -145,12 +158,15 @@ export class CustomerBrands {
 		};
 	}
 
+	// Método de validação, considerando campos opcionais
 	public isValid(): boolean {
+		// Ajustado para validar somente os campos que são necessários
 		return (
 			this.name !== '' &&
-			Validator.isValidEmail(this.email || '') &&
-			Validator.isValidCPF(this.cpf) &&
-			Validator.isValidPhoneNumber(this.phone || '')
+			(this.email ? Validator.isValidEmail(this.email) : true) && // Se o email for informado, valida
+			(this.cpf ? Validator.isValidCPF(this.cpf) : true) && // Se o CPF for informado, valida
+			(this.phone ? Validator.isValidPhoneNumber(this.phone) : true) // Se o telefone for informado, valida
 		);
 	}
 }
+

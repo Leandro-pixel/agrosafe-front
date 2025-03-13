@@ -1,5 +1,5 @@
 import api, { PaginatedResponse } from 'src/lib/api';
-import { CustomerBrands } from 'src/models/customer';
+import { CustomerBrands, ECCustomer } from 'src/models/customer';
 import { Limit } from 'src/models/interfaces/limit';
 import { Formatter } from 'src/utils/formatter';
 
@@ -57,7 +57,47 @@ export class CustomerRepository {
     }
   }
 
-  async fetchBrandsUsers (limit?: number, offset?: number, establishmentId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+  async fetchBrandsUsers (limit?: number, offset?: number, searchByType?: string,searchValueBy?: string,): Promise<PaginatedResponse> {
+		const params = Object.fromEntries(
+      Object.entries({
+        [searchByType || '']: searchValueBy,
+        [limit || '']: limit,
+        [offset || '']: offset,
+      }).filter(([, value]) => value !== undefined)
+    );
+    console.log('parametros' + params)
+		try {
+			const data = await api.requestGet('/user', params)
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
+				totalItems: data.totalItems
+			}
+      /*
+       if (Array.isArray(data.data)) {
+        // Verificar o conteúdo antes de aplicar createDynamicObject
+        const mappedData = data.data.map((item: any) => {
+          const dynamicItem = createDynamicObject(item);
+          return dynamicItem;
+        });
+
+        const json: PaginatedResponse = {
+          data: mappedData,
+          totalItems: data.totalItems
+        };
+        return json;
+      } else {
+        console.error('data.data não é um array:', data.data);
+        throw new Error('Dados de resposta inesperados');
+      }
+      */
+      console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
+			return json
+		} catch (error) {
+			throw new Error('Erro ao buscar usuários')
+		}
+	}
+
+  async fetchECUsers (limit?: number, offset?: number, establishmentId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
@@ -68,12 +108,12 @@ export class CustomerRepository {
 		}).filter(([, value]) => value !== undefined && value !== ''))
     console.log('parametros' + params)
 		try {
-			const data = await api.requestGet('/user', params)
+			const data = await api.requestGet('/establishment/customers', params)
 			const json: PaginatedResponse = {
-				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
+				data: data.data.map((item: any) => ECCustomer.fromJson(item)),
 				totalItems: data.totalItems
 			}
-      console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
+      console.log(data.data.map((item: any) => ECCustomer.fromJson(item)))
 			return json
 		} catch (error) {
 			throw new Error('Erro ao buscar usuários')
