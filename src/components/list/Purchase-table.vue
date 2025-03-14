@@ -46,9 +46,18 @@
           v-if="enable == true"
         />
       </Div>
-
+      <q-select
+  v-if="cards.length > 0"
+  v-model="cardId2"
+  :options="cards.map(card => ({ label: getCardType(card.cardId), value: card.cardId }))"
+  label="Escolha um cartão"
+  outlined
+  emit-value
+  map-options
+  @update:model-value="onRequest()"
+/>
       <PrimaryTable
-        @request="onRequest"
+        @request="onRequest()"
         v-model:pagination="pagination"
         :rows="rows"
         :loading="loading"
@@ -114,17 +123,15 @@ import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { useCachSflowStore } from 'src/stores/useCashFlowStore';
 import { CashFlow } from 'src/models/cashFlow';
 import { Validator } from 'src/utils/validator';
-/*
-const selectedDate = ref('');
-const showDatePicker = ref(false);
-const dateRange = ref({ from: '', to: '' });
-*/
-//const router = useRouter()
+import { useCustomerStore } from 'src/stores/useCustomerStore';
+import { CustomerBrands } from 'src/models/customer';
+import { useUserCardsStore } from 'src/stores/useUserCardsStore';
+import { UserCard } from 'src/models/userCard';
+import { Store } from 'src/models/store';
+import { useStoreStore } from 'src/stores/useStoreStore';
 const searchValue = ref();
-const selectedIdType = ref('');
 const rows = ref([] as Array<CashFlow>);
 const cashFlowStore = useCachSflowStore();
-// Recebe o ID da rota como propriedade
 const props = defineProps<{
   searchBy?: Array<{
     id?: number;
@@ -132,19 +139,22 @@ const props = defineProps<{
     status?: boolean;
   }>;
 }>();
-/*
-const updateDateRange = () => {
-  if (dateRange.value.from && dateRange.value.to) {
-    selectedDate.value = `${dateRange.value.from} até ${dateRange.value.to}`;
-  }
-};
-*/
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);
 const searchByType = ref('');
 const userType = ref('');
 const enable = ref(false);
+const userStore = useCustomerStore()
+const cardStore = useUserCardsStore()
+const client = ref([] as Array<CustomerBrands>)
+const cards = ref([] as Array<UserCard>)
+const EC = ref([] as Array<Store>);
+const storeStore = useStoreStore();
+const cardId2 = ref<number | null>(null);
+const clientId = ref<number | null>(null);
+const ECId = ref<number | null>(null);
+
 
 console.log('propriedades:' + props);
 // Índice do span ativo
@@ -221,15 +231,14 @@ const details = async (id: any, name: any, status: string) => {
 };
 
 const onRequest = async () => {
+
   console.log('veio aquiaqui' + searchByType.value);
   loading.value = true;
   await cashFlowStore
     .fetchCashFlow(
-      searchByType.value,
-      searchValueBy.value,
-      selectedIdType.value,
-      searchValue.value,
-      undefined
+      ECId.value,
+      cardId2.value,
+      clientId.value
     )
     .then(() => {
       console.log('veio aquiaqui2' + cashFlowStore.getTransactions);
@@ -243,19 +252,38 @@ const onRequest = async () => {
     });
 };
 
-const searchEC = async () => {
+const searchCards = async () => {
   loading.value = true;
-  await cashFlowStore
-    .fetchCashFlow(
-      searchByType.value,
-      searchValueBy.value,
-      selectedIdType.value,
-      searchValue.value,
-      undefined
+  await cardStore
+    .fetchUserCards(
+      client.value[0].id
     )
     .then(() => {
-      rows.value = cashFlowStore.getTransactions;
-      pagination.value.rowsNumber = cashFlowStore.totalItemsInDB;
+      cards.value = cardStore.getCards;
+      cardId2.value = cards.value[0].cardId
+      clientId.value = client.value[0].id
+      onRequest()
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+const searchEC = async () => {
+  loading.value = true;
+
+  await storeStore
+    .fetchStores(
+      null,
+      null,
+      searchValueBy.value,
+    searchValue.value,
+  )
+    .then(() => {
+      EC.value = storeStore.getStores;
+      ECId.value = parseInt(EC.value[0].id)
+      onRequest()
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
@@ -264,22 +292,29 @@ const searchEC = async () => {
 };
 
 const searchUser = async () => {
-  loading.value = true;
-  await cashFlowStore
-    .fetchCashFlow(
-      searchByType.value,
-      searchValueBy.value,
-      selectedIdType.value,
-      searchValue.value,
-      undefined
-    )
-    .then(() => {
-      rows.value = cashFlowStore.getTransactions;
-      pagination.value.rowsNumber = cashFlowStore.totalItemsInDB;
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
+ await userStore.fetchBrandsUsers(
+  null,
+  null,
+  searchValueBy.value,
+  searchValue.value,
+)
+  .then(() => {
+    client.value = userStore.getUsers
+    searchCards()
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
+}
+const getCardType = (id: number): string => {
+  switch (id) {
+    case 1:
+      return 'Beautycard';
+    case 2:
+      return 'Autocard';
+      case 2:
+      return 'Foodcard';
+    default:
+      return 'desconhecido';
+  }
 };
 </script>

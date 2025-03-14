@@ -92,23 +92,4 @@ const onRequestRep = async (props:any) => {
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
 }
-/*
-const activateHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Ativar representante', `Deseja realmente ATIVAR o representante "${hub.fantasyName}"?`, 'warning')) return
-	loading.value = true
-	await hubStore.activateHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
-
-const disableHub = async (hub:Hub) => {
-	if (!await ShowDialog.showConfirm('Desativar representante', `Deseja realmente DESATIVAR o representante "${hub.fantasyName}"?`, 'negative')) return
-	loading.value = true
-	await hubStore.disableHub(hub.id)
-		.then(() => { refresh.value = !refresh.value })
-		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
-}
-*/
 </script>

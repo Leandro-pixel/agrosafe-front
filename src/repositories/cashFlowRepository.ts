@@ -3,24 +3,23 @@ import { CashFlow } from 'src/models/cashFlow';
 
 export class CashFlowRepository {
   async fetchTransactions(
-    searchByType?: string,
-    searchValueBy?: string,
-    idType?: string,
-    idValue?: number,
-    statuses?: Array<any>
+    establishmentId?: number,
+    cardId?: number,
+    userId?: number
   ): Promise<PaginatedResponse> {
 
 
     const params = Object.fromEntries(
       Object.entries({
-        [searchByType || '']: searchValueBy,
-        [idType || '']: idValue,
-        statuses: statuses && statuses.length > 0 ? statuses : undefined,
-      }).filter(([, value]) => value !== undefined)
+        userId,
+        cardId,
+        establishmentId,
+      }).filter(([, value]) => value != null) // Remove `null` e `undefined`
     );
 
+
     try {
-      console.log('agora veio aqui T' + params);
+      console.log('agora veio aqui T' + establishmentId, cardId,userId);
       const data = await api.requestGet(
         '/transaction/purchase',
         params

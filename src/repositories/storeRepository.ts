@@ -69,16 +69,18 @@ export class StoreRepository {
   async fetchStores(
     limit?: number,
     offset?: number,
-    filter?: string
+    searchByType?: string,
+    searchValueBy?: string
   ): Promise<PaginatedResponse> {
     const supplierStatus = false;
+
     const params = Object.fromEntries(
       Object.entries({
         limit,
         offset,
-        filter,
+        [searchByType || '']: searchValueBy,
         supplierStatus
-      }).filter(([, value]) => value !== undefined)
+      }).filter(([, value]) => value !== null)
     );
     try {
       console.log('agora veio aqui');

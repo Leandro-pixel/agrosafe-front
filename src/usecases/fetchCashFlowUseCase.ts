@@ -8,18 +8,14 @@ class FetchCashFlowUseCase {
   }
 
   async execute(
-    searchByType?: string,
-      searchValueBy?: string,
-    idType?: string,
-    idValue?: number,
-    statuses?: Array<any>
+    establishmentId?: number,
+    cardId?: number,
+    userId?: number
   ): Promise<PaginatedResponse> {
     return this.cashFlowRepository.fetchTransactions(
-      searchByType,
-        searchValueBy,
-      idType,
-      idValue,
-      statuses
+      establishmentId,
+      cardId,
+      userId,
     );
   }
 }

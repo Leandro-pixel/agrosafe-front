@@ -1,60 +1,48 @@
 <template>
   <q-layout>
     <q-page class="column">
-      <Div class="row q-gutter-md items-center">
-        <Span>Documento</Span>
+      <div class="row q-gutter-md items-center">
+      <q-select
+          v-model="searchValueBy"
+          filled
+          dense
+          :options="[
+            { label: 'CPF', value: 'cpf' },
+            { label: 'celular', value: 'phone' },
+            { label: 'E-mail', value: 'email' },
+            { label: 'Nome', value: 'name' },
+          ]"
+          label="Buscar por..."
+          outlined
+          map-options
+          emit-value
+        />
         <q-input
-  v-model="searchValueBy"
-  placeholder="Digite CPF, CNPJ ou telefone"
-  outlined
-  dense
-  filled
-  @update:model-value="detectSearchType"
-  />
-  <Span>ID</Span>
-  <q-select
-  v-model="selectedIdType"
-  filled
-  dense
-  :options ="[
-    { label: 'Estabelecimento', value: 'establishmentId' },
-    { label: 'Cliente', value: 'userId' },
-    { label: 'Cartão', value: 'cardId' }
-  ]"
-  label="Selecione o tipo de ID"
+          v-if="searchValueBy != ''"
+          v-model="searchValue"
+          placeholder="Digite aqui..."
+          @update:model-value="validateSearchType"
+          outlined
+          dense
+          filled
+          emit-value
+        />
+        <PrimaryButton
+          @click="searchUser"
+          label="Pesquisar"
+          v-if="enable == true"
+        />
+      </div>
+      <q-select
+  v-if="cards.length > 0"
+  v-model="cardId"
+  :options="cards.map(card => ({ label: getCardType(card.cardId), value: card.cardId }))"
+  label="Escolha um cartão"
   outlined
   emit-value
   map-options
+  @update:model-value="searchUser"
 />
-        <q-input   v-if="selectedIdType != ''" filled
-        v-model="searchValue" dense placeholder="Digite o ID" outlined />
-
-        <q-input
-  v-model="selectedDate"
-  filled
-  dense
-  readonly
-  placeholder="Selecione uma data"
->
-  <template v-slot:append>
-    <q-icon name="event" class="cursor-pointer" @click="showDatePicker = true" />
-  </template>
-
-  <q-popup-proxy v-model="showDatePicker">
-    <q-date
-      mask="YYYY-MM-DD"
-      v-model="dateRange"
-      range
-      @update:model-value="updateDateRange"
-    />
-  </q-popup-proxy>
-</q-input>
-
-
-
-<PrimaryButton @click="onRequest" label="Pesquisar" />
-
-      </Div>
       <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
@@ -119,6 +107,10 @@ import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Invoice } from 'src/models/invoices';
 import { useInvoiceStore } from 'src/stores/useInvoiceStore';
 import { Validator } from 'src/utils/validator';
+import { CustomerBrands } from 'src/models/customer';
+import { UserCard } from 'src/models/userCard';
+import { useUserCardsStore } from 'src/stores/useUserCardsStore';
+import { useCustomerStore } from 'src/stores/useCustomerStore';
 
 //const router = useRouter()
 const invoice = ref([] as Array<Invoice>);
@@ -136,35 +128,29 @@ const props = defineProps<{
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);
-const searchByType = ref('')
-const selectedDate = ref('');
-const showDatePicker = ref(false);
-const dateRange = ref({ from: '', to: '' });
+//const selectedDate = ref('');
+//const dateRange = ref({ from: '', to: '' });
 const searchValue = ref();
-const selectedIdType = ref('');
 
+//const searchByType = ref('');
+//const userType = ref('');
+const enable = ref(false);
+const userStore = useCustomerStore()
+const cardStore = useUserCardsStore()
+const client = ref([] as Array<CustomerBrands>)
+const cards = ref([] as Array<UserCard>)
+const cardId = ref<number | null>(null);
+const clientId = ref<number | null>(null);
+/*
 const updateDateRange = () => {
   if (dateRange.value.from && dateRange.value.to) {
     selectedDate.value = `${dateRange.value.from} até ${dateRange.value.to}`;
   }
 };
-
+*/
 
 const searchValueBy = ref('')
 
-const detectSearchType = () => {
-  const value = searchValueBy.value.replace(/\D/g, '') // Remove caracteres não numéricos
-
-  if (Validator.isValidCPF(value)) {
-    searchByType.value = 'cpf'
-  } else if (Validator.isValidCNPJ(value)) {
-    searchByType.value = 'cnpj'
-  } else if (Validator.isValidPhoneNumber(value)) {
-    searchByType.value = 'phone'
-  } else {
-    searchByType.value = ''
-  }
-}
 console.log('propriedades:' + props)
 // Índice do span ativo
 
@@ -187,15 +173,48 @@ const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-const onRequest = async (props: any) => {
+
+const validateSearchType = () => {
+  if (searchValueBy.value == 'cpf') {
+    enable.value = Validator.isValidCPF(searchValue.value);
+    console.log('Valid CPF:', enable.value);
+  } else if (searchValueBy.value == 'phone') {
+    enable.value = Validator.isValidPhoneNumber(searchValue.value);
+  } else if (searchValueBy.value == 'cnpj') {
+    enable.value = Validator.isValidCNPJ(searchValue.value);
+  } else if (searchValueBy.value == 'email') {
+    enable.value = Validator.isValidEmail(searchValue.value);
+  } else {
+    enable.value = false;
+  }
+};
+
+const onRequest = async () => {
   console.log('veio aquiaqui' + props);
   loading.value = true;
   await invoiceStore
-    .fetchInvoice()
+    .fetchInvoice(clientId.value, cardId.value)
     .then(() => {
 
       invoice.value = invoiceStore.getinvoices;
-      pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
+      //pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
+const searchCards = async () => {
+  loading.value = true;
+  await cardStore
+    .fetchUserCards(
+      client.value[0].id
+    )
+    .then(() => {
+      cards.value = cardStore.getCards;
+      cardId.value = cards.value[0].cardId
+      clientId.value = client.value[0].id
+      onRequest()
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
@@ -203,5 +222,31 @@ const onRequest = async (props: any) => {
     });
 };
 
+const searchUser = async () => {
+ await userStore.fetchBrandsUsers(
+  null,
+  null,
+  searchValueBy.value,
+  searchValue.value,
+)
+  .then(() => {
+    client.value = userStore.getUsers
+    searchCards()
+  })
+  .catch((error:any) => NotifyError.error(error.message))
+  .finally(() => { loading.value = false })
+}
+const getCardType = (id: number): string => {
+  switch (id) {
+    case 1:
+      return 'Beautycard';
+    case 2:
+      return 'Autocard';
+      case 2:
+      return 'Foodcard';
+    default:
+      return 'desconhecido';
+  }
+};
 
 </script>
