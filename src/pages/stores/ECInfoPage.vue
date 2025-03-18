@@ -65,7 +65,7 @@ const items1 = ref(
   [
     { label: 'Credenciais', show: true },
     { label: 'Clientes', show: true },
-    { label: 'Limites', show: implementHierarchy('sysAdmin') },
+    { label: 'Limites', show: implementHierarchy('polo') },
     { label: 'Movimentações', show: true },
     { label: 'Antecipações', show: implementHierarchy('sysAdmin') },
   ].filter((item) => item.show) // Remove os que têm show = false
@@ -132,7 +132,7 @@ const datas = async () => {
           parseFloat(response.outstandingCredit)
         ),
       },
-      ...(implementHierarchy('sysAdmin')
+      ...(implementHierarchy('polo')
         ? [
             {
               icon: 'redeem',

@@ -151,7 +151,7 @@
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">
-                      Ativação / Desativação
+                      Polo
                     </div>
                   </q-btn>
                 </q-item>
@@ -186,7 +186,7 @@
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">
-                      Ativação / Desativação
+                      Representante
                     </div>
                   </q-btn>
                 </q-item>

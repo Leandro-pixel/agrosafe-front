@@ -62,12 +62,15 @@ console.log('propriedades:' + prop)
 // Índice do span ativo
 
 
-  const columns: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:ECCustomer) => row.userId, align: 'center' },
-{ name: 'userName', required: true, label: 'Name', field: (row:ECCustomer) => row.userName, align: 'left' },
-{ name: 'criado', required: true, label: 'data criação', field: (row:ECCustomer) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
-{ name: 'email', required: true, label: 'Créditos', field: (row:ECCustomer) => Formatter.strToCurrency(row.creditBalance), align: 'left' },
-]
+const columns: QTableColumn[] = [
+  { name: 'id', label: 'ID', field: (row: ECCustomer) => row.userId, align: 'center' },
+  { name: 'userName', required: true, label: 'Name', field: (row: ECCustomer) => row.userName, align: 'left' },
+  { name: 'criado', required: true, label: 'Data Criação', field: (row: ECCustomer) => Formatter.formatDateToBR(row.createdAt), align: 'left' },
+    ...(implementHierarchy('polo')
+      ?[{ name: 'creditos', required: true, label: 'Créditos', field: (row: ECCustomer) => Formatter.strToCurrency(row.creditBalance), align: 'left' as const }]
+      : []
+),
+];
 
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);

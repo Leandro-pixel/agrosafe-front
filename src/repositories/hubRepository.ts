@@ -25,7 +25,7 @@ export class HubRepository {
 
   async createRep (rep: Representative): Promise<Representative> {
 		try {
-			const response = await api.requestPostWithApiKey('/employee', rep.toJson())
+			const response = await api.requestPostWithApiKey('/employee/representative', rep.toJson())
 			return Representative.fromJson(response) as Representative
 		} catch (error) {
 			throw new Error('Erro ao salvar polo')
