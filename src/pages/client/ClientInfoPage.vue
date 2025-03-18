@@ -21,10 +21,8 @@
       </div>
       <infor v-if="activeIndex === 0" :info-array="infoList"></infor>
       <InfoList v-if="activeIndex === 1" :info-array="limitInfo"></InfoList>
-
-      <PurchaseTable v-if="activeIndex === 2" class="q-mt-md"/>
-
-  <InvoiceTable v-if="activeIndex === 3" class="q-mt-md"/>
+      <ClientPurchaseTable :client-id="id1" v-if="activeIndex === 2" class="q-mt-md"/>
+      <ClientInvoiceTable :client-id="id1" v-if="activeIndex === 3" class="q-mt-md"/>
 
     </q-page>
   </q-layout>
@@ -38,8 +36,8 @@ import { Formatter } from 'src/utils/formatter';
 import { NotifyError} from 'src/utils/utils';
 import { useHubStore } from 'src/stores/useHubStore';
 import { onMounted } from 'vue';
-import InvoiceTable from 'src/components/list/Invoice-table.vue';
-import PurchaseTable from 'src/components/list/Purchase-table.vue';
+import ClientInvoiceTable from 'src/components/list/client-Invoice-table.vue';
+import ClientPurchaseTable from 'src/components/list/Client-Purchase-table.vue';
 
 onMounted(() => {
   datas();
@@ -60,7 +58,7 @@ const route = useRoute();
 //const router = useRouter();
 
 const name = route.query.name || 'Nome não disponível';
-const id1 = route.params.id || 'id não disponível';
+const id1 = Number(route.params.id) || 0;
 
 // Dados dos spans
 const items1 = ['Informações', 'Limites', 'Movimentações', 'Faturas'];

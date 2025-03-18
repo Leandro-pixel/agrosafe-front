@@ -35,9 +35,9 @@ export const useStoreStore = defineStore('store', {
     async disableEC(ecId: string) {
       return await disableStoreUseCase.execute(ecId);
     },
-    async fetchStores(limit: number, offset: number, searchByType?: string, searchValueBy?: string) {
+    async fetchStores(limit: number, offset: number, searchByType?: string, searchValueBy?: string,employeeId?: number) {
       console.log('veio aqui')
-      const response = await fetchStoresUseCase.execute(limit, offset, searchByType, searchValueBy);
+      const response = await fetchStoresUseCase.execute(limit, offset, searchByType, searchValueBy, employeeId);
       console.log('voltou')
       this.stores = response.data;
       this.totalItemsInDB = response.totalItems;

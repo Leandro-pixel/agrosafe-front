@@ -7,9 +7,9 @@ class FetchStoresUseCase {
 		this.storeRepository = storeRepository
 	}
 
-	async execute (limit:number, offset:number, searchByType?: string, searchValueBy?: string): Promise<PaginatedResponse> {
+	async execute (limit:number, offset:number, searchByType?: string, searchValueBy?: string, employeeId?: number): Promise<PaginatedResponse> {
     console.log('veio aqui2')
-		return this.storeRepository.fetchStores(limit, offset, searchByType, searchValueBy)
+		return this.storeRepository.fetchStores(limit, offset, searchByType, searchValueBy, employeeId)
 	}
   async executeFindOne (id?: number, supplierStatus?: boolean){
 		return this.storeRepository.fetchOne(id, supplierStatus)

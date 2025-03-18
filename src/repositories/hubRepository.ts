@@ -102,14 +102,15 @@ export class HubRepository {
         }
       }
 
-  async fetchHubsBrands (limit?: number, offset?: number,employeeType?: string, filter?: string, ): Promise<PaginatedResponse> {
+  async fetchHubsBrands (limit?: number, offset?: number,employeeType?: string,searchByType?: string, searchValueBy?: string, employeeId?: number ): Promise<PaginatedResponse> {
     //const type = 'polo'
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
       employeeType,
-			filter
-		}).filter(([, value]) => value !== undefined))
+      [searchByType || '']: searchValueBy,
+			employeeId
+		}).filter(([, value]) => value != null))
 
 		try {
 			const data = await api.requestGet('/employee', params)

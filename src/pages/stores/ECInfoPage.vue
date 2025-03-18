@@ -20,7 +20,7 @@
 <infor v-if="activeIndex === indexedItems.find(i => i.label === 'Credenciais')?.indexReal" :info-array="infoList" />
   <EstablishmentClientTable :id="Number(id1)" v-if="activeIndex === indexedItems.find(i => i.label === 'Clientes')?.indexReal"/>
 <InfoList v-if="activeIndex === indexedItems.find(i => i.label === 'Limites')?.indexReal" :info-array="limitInfo" />
-<PurchaseTable v-if="activeIndex === indexedItems.find(i => i.label === 'Movimentações')?.indexReal" class="q-mt-md" />
+  <EstablishmentPurchaseTable :ECID="Number(id1)" v-if="activeIndex === indexedItems.find(i => i.label === 'Movimentações')?.indexReal" class="q-mt-md"/>
 <WithdrawalTable v-if="activeIndex === indexedItems.find(i => i.label === 'Antecipações')?.indexReal" />
     </q-page>
   </q-layout>
@@ -34,9 +34,9 @@ import { useStoreStore } from 'src/stores/useStoreStore';
 import { Formatter } from 'src/utils/formatter';
 import { implementHierarchy, NotifyError } from 'src/utils/utils';
 import { onMounted } from 'vue';
-import PurchaseTable from 'src/components/list/Purchase-table.vue';
 import WithdrawalTable from 'src/components/list/Withdrawal-table.vue';
 import EstablishmentClientTable from 'src/components/list/Establishment-client-table.vue';
+import EstablishmentPurchaseTable from 'src/components/list/Establishment-Purchase-table.vue';
 
 onMounted(() => {
   datas();

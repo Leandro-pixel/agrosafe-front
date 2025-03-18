@@ -20,9 +20,10 @@
         </span>
       </div>
       <infor v-if="activeIndex === 0" :info-array="infoList"></infor>
-      <EstablishmentTable v-if="activeIndex === 2"/>
-      <RepresentativeTable v-if="activeIndex === 1"/>
-      <PurchaseTable v-if="activeIndex === 3" class="q-mt-md"/>
+      <OwnerEstablishmentTable v-if="activeIndex === 2" :id1="Number(id1)"/>
+      <EstablishmentTable v-if="activeIndex === 3" :id1="Number(id1)"/>
+      <RepresentativeTable v-if="activeIndex === 1" :id1="Number(id1)"/>
+      <PurchaseTable v-if="activeIndex === 4" class="q-mt-md"/>
 
 
     </q-page>
@@ -38,8 +39,9 @@ import { NotifyError} from 'src/utils/utils';
 import { useHubStore } from 'src/stores/useHubStore';
 import { onMounted } from 'vue';
 import PurchaseTable from 'src/components/list/Purchase-table.vue';
-import EstablishmentTable from 'src/components/list/Establishment-table.vue';
 import RepresentativeTable from 'src/components/list/Representative-table.vue';
+import OwnerEstablishmentTable from 'src/components/list/OwnerEstablishment-table.vue';
+import EstablishmentTable from 'src/components/list/Establishment-table.vue';
 
 onMounted(() => {
   datas();
@@ -60,10 +62,10 @@ const route = useRoute();
 //const router = useRouter();
 
 const name = route.query.name || 'Nome não disponível';
-const id1 = route.params.id || 'Nome não disponível';
+const id1 = route.params.id || null;
 
 // Dados dos spans
-const items1 = ['Credenciais', 'Representantes','Estabelecimentos', 'Movimentações'];
+const items1 = ['Credenciais', 'Representantes','Proprietários ECs','Estabelecimentos', 'Movimentações'];
 
 // Índice do span ativo
 const activeIndex = ref<number>(0);

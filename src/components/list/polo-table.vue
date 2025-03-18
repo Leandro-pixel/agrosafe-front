@@ -38,7 +38,7 @@
     v-model:pagination="pagination"
     :rows="reps"
     :loading="loading"
-    :columns="columnsRep"
+    :columns="columns"
     :refresh="refresh"
   >
     <template #top-left> </template>
@@ -92,12 +92,12 @@ console.log('propriedades:' + props1.id1)
 const reps = ref([] as Array<Hub>)
 
 
-const columnsRep: QTableColumn[] = [
+  const columns: QTableColumn[] = [
 	{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
-	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
-	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
-	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
-  { name: 'status', required: true, label: 'Status', field: (row:HubBrands) => row.status? 'Ativo':'Inativo', align: 'left' },
+	{ name: 'name', label: 'Nome completo', align: 'left', field: (row:HubBrands) => row.name },
+	{ name: 'email', label: 'E-mail', align: 'left', field: 'email' },
+	{ name: 'telefone', label: 'Telefone', align: 'left', field: (row:HubBrands) => row.phone },
+	{ name: 'status', label: 'Status', field: (row:HubBrands) => row.status ? 'Ativo' : 'Inativo', align: 'center' },
 ]
 
 const onNameClick = (id: any, name: any) => {
@@ -110,7 +110,7 @@ const onRequest = async () => {
 	loading.value = true
 
 
-	await hubStore.fetchHubsBrands(null, null,'representative',selectedSearchType.value, searchValueBy.value, props1.id1)
+	await hubStore.fetchHubsBrands(null, null,'polo',selectedSearchType.value, searchValueBy.value, props1.id1)
 		.then(() => {
 			reps.value = hubStore.hubs
 			pagination.value.rowsNumber = hubStore.totalItemsInDB

@@ -1,6 +1,38 @@
 <template>
   <q-layout>
     <q-page class="column">
+      <div class="q-gutter-md items-start">
+        <span>Selecione um tipo de busca</span>
+
+        <div class="row q-gutter-md items-center">
+          <q-select
+            v-model="selectedSearchType"
+            filled
+            dense
+            :options="[
+              { label: 'CPF', value: 'cpf' },
+              { label: 'CNPJ', value: 'cnpj' },
+              { label: 'celular', value: 'phone' },
+              { label: 'E-mail', value: 'email' },
+              { label: 'Nome', value: 'tradeName' },
+              { label: 'RG', value: 'rg' },
+            ]"
+            label="Buscar por..."
+            outlined
+            map-options
+            emit-value
+          />
+          <q-input
+            v-if="selectedSearchType != ''"
+            v-model="searchValueBy"
+            placeholder="Digite aqui..."
+            outlined
+            dense
+            filled
+          />
+          <PrimaryButton @click="onRequest" label="Pesquisar" />
+        </div>
+      </div>
       <PrimaryTable
     @request="onRequest"
     v-model:pagination="pagination"
@@ -89,11 +121,11 @@ const props = defineProps<{
   }>;
 }>();
 
-
+const selectedSearchType = ref('');
+const searchValueBy = ref('');
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);;
-const filter = ref('');
 const rows = ref([] as Array<Supplier>);
 const suplierStore = useSuplierStore();
 console.log('propriedades:' + props)
@@ -122,22 +154,15 @@ const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-const onRequest = async (props: any) => {
+const onRequest = async () => {
   loading.value = true;
-  const { page, rowsPerPage } = props.pagination;
-
-  const offset = page - 1;
-  const limit = rowsPerPage;
-  const filterWithoutSymbols = Formatter.clearSymbols(filter.value);
 
   await suplierStore
-    .fetchSupliers(limit, offset, filterWithoutSymbols)
+    .fetchSupliers(null, null,selectedSearchType.value, searchValueBy.value)
     .then(() => {
       rows.value = suplierStore.getSuplier;
       pagination.value.rowsNumber = suplierStore.totalItemsInDB;
 
-      pagination.value.page = page;
-      pagination.value.rowsPerPage = rowsPerPage;
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {

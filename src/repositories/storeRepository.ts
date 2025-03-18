@@ -70,17 +70,17 @@ export class StoreRepository {
     limit?: number,
     offset?: number,
     searchByType?: string,
-    searchValueBy?: string
+    searchValueBy?: string,
+    employeeId?: number
   ): Promise<PaginatedResponse> {
     const supplierStatus = false;
 
     const params = Object.fromEntries(
       Object.entries({
-        limit,
-        offset,
         [searchByType || '']: searchValueBy,
-        supplierStatus
-      }).filter(([, value]) => value !== null)
+        supplierStatus,
+        employeeId
+      }).filter(([, value]) => value != null )
     );
     try {
       console.log('agora veio aqui');

@@ -20,10 +20,9 @@
         </span>
       </div>
       <infor v-if="activeIndex === 0" :info-array="infoList"></infor>
-      <EstablishmentTable v-if="activeIndex === 1"/>
-      <PurchaseTable v-if="activeIndex === 2" class="q-mt-md"/>
-
-
+      <EstablishmentTable v-if="activeIndex === 1" class="q-mt-md" :id1="Number(id1)"/>
+      <OwnerEstablishmentTable v-if="activeIndex === 2" :id1="Number(id1)"/>
+      <PurchaseTable v-if="activeIndex === 3" class="q-mt-md"/>
     </q-page>
   </q-layout>
 </template>
@@ -37,6 +36,7 @@ import { NotifyError} from 'src/utils/utils';
 import { useHubStore } from 'src/stores/useHubStore';
 import { onMounted } from 'vue';
 import PurchaseTable from 'src/components/list/Purchase-table.vue';
+import OwnerEstablishmentTable from 'src/components/list/OwnerEstablishment-table.vue';
 import EstablishmentTable from 'src/components/list/Establishment-table.vue';
 
 onMounted(() => {
@@ -60,7 +60,7 @@ const name = route.query.name || 'Nome não disponível';
 const id1 = route.params.id || 'Nome não disponível';
 
 // Dados dos spans
-const items1 = ['Credenciais','Estabelecimentos', 'Movimentações'];
+const items1 = ['Credenciais','Estabelecimentos', 'Proprietário ECs', 'Movimentações'];
 
 // Índice do span ativo
 const activeIndex = ref<number>(0);

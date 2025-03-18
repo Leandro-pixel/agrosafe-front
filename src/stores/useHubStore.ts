@@ -46,8 +46,8 @@ export const useHubStore = defineStore('hub', {
       return await fetchHubsUseCase.executeOneRep(id)
    },
 
-    async fetchHubsBrands (limit: number, offset: number,type: string, filter: string) {
-			const response = await fetchHubsUseCase.executeBrands(limit, offset,type, filter)
+    async fetchHubsBrands (limit: number, offset: number,type: string,searchByType?: string, searchValueBy?: string, employeeId?: number) {
+			const response = await fetchHubsUseCase.executeBrands(limit, offset,type, searchByType, searchValueBy, employeeId)
 			this.hubs = response.data
 			this.totalItemsInDB = response.totalItems
 		},

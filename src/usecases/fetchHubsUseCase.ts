@@ -20,8 +20,8 @@ class FetchHubsUseCase {
   async executeOneRep (id?: number) {
 		return await this.hubRepository.fetchOneRep(id, false, false)
 	}
-  async executeBrands (limit: number, offset: number,type: string, filter: string): Promise<PaginatedResponse> {
-		return await this.hubRepository.fetchHubsBrands(limit, offset,type, filter)
+  async executeBrands (limit: number, offset: number,type: string,searchByType?: string, searchValueBy?: string, employeeId?: number): Promise<PaginatedResponse> {
+		return await this.hubRepository.fetchHubsBrands(limit, offset,type,searchByType, searchValueBy, employeeId)
 	}
 }
 

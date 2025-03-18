@@ -14,7 +14,7 @@
               { label: 'CNPJ', value: 'cnpj' },
               { label: 'celular', value: 'phone' },
               { label: 'E-mail', value: 'email' },
-              { label: 'Nome', value: 'name' },
+              { label: 'Nome', value: 'tradeName' },
               { label: 'RG', value: 'rg' },
             ]"
             label="Buscar por..."
@@ -127,12 +127,13 @@ import { EC, Store } from 'src/models/store';
 const router = useRouter();
 
 // Recebe o ID da rota como propriedade
-const props = defineProps<{
+const props1 = defineProps<{
   searchBy?: Array<{
     id?: number;
     cpf?: string;
     status?: boolean;
   }>;
+  id1?: number;
 }>();
 
 const selectedSearchType = ref('');
@@ -142,7 +143,7 @@ const loading = ref(false);
 const refresh = ref(false);
 //const filter = ref('');
 
-console.log('propriedades:' + props);
+console.log('propriedades:' + props1);
 const rows = ref([] as Array<Store>);
 const storeStore = useStoreStore();
 
@@ -188,7 +189,7 @@ const onRequest = async () => {
   loading.value = true;
 
   await storeStore
-    .fetchStores(null, null, selectedSearchType.value, searchValueBy.value)
+    .fetchStores(null, null, selectedSearchType.value, searchValueBy.value, props1.id1)
     .then(() => {
       rows.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;

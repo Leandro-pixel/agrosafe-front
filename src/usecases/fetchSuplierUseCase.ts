@@ -14,9 +14,9 @@ class FetchSuplierUseCase {
   async executeFindOne (id?: number, supplierStatus?: boolean){
 		return this.suplierRepository.fetchOne(id, supplierStatus)
 	}
-  async executeSuplier (limit:number, offset:number, filter:string): Promise<PaginatedResponse> {
+  async executeSuplier (limit:number, offset:number, searchByType?: string, searchValueBy?: string): Promise<PaginatedResponse> {
     console.log('veio aqui2')
-		return this.suplierRepository.fetchSuplier(limit, offset, filter, 'true')
+		return this.suplierRepository.fetchSuplier(limit, offset, searchByType, searchValueBy, 'true')
 	}
 }
 

@@ -23,9 +23,7 @@ export class SuplierRepository {
       }).filter(([, value]) => value !== undefined)
     );
     try {
-      console.log('agora veio aqui');
       const data = await api.requestGet('/establishment/find', params);
-      console.log('aaaaaaaaaaaa', data);
       return Establishment.fromJson(data);
     } catch (error) {
       throw new Error('Erro ao buscar lojas');
@@ -36,7 +34,8 @@ export class SuplierRepository {
   async fetchSuplier(
     limit?: number,
     offset?: number,
-    filter?: string,
+    searchByType?: string,
+    searchValueBy?: string,
     supplierStatus?: string,
   ): Promise<PaginatedResponse> {
 
@@ -44,9 +43,9 @@ export class SuplierRepository {
       Object.entries({
         limit,
         offset,
-        filter,
-        supplierStatus
-      }).filter(([, value]) => value !== undefined)
+        supplierStatus,
+        [searchByType || '']: searchValueBy,
+      }).filter(([, value]) => value !== null)
     );
     try {
       console.log('agora veio aqui');

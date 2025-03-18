@@ -59,6 +59,16 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/stores/ECInfoPage.vue'),
             props: true,
           },
+          {
+            path: 'proprietarios',
+            component: () => import('pages/stores/SearchECOwnerPage.vue'),
+            props: true,
+          },
+          {
+            path: 'proprietarios/:id',
+            component: () => import('pages/stores/ECOwnerInfoPage.vue'),
+            props: true,
+          },
         ],
       },
       {

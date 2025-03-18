@@ -1,39 +1,6 @@
 <template>
   <q-layout>
     <q-page class="column">
-      <div class="row q-gutter-md items-center">
-        <span>Selecione uma busca:</span>
-      <q-select
-          v-model="searchValueBy"
-          filled
-          dense
-          :options="[
-            { label: 'CPF', value: 'cpf' },
-            { label: 'celular', value: 'phone' },
-            { label: 'E-mail', value: 'email' },
-            { label: 'Nome', value: 'name' },
-          ]"
-          label="Buscar por..."
-          outlined
-          map-options
-          emit-value
-        />
-        <q-input
-          v-if="searchValueBy != ''"
-          v-model="searchValue"
-          placeholder="Digite aqui..."
-          @update:model-value="validateSearchType"
-          outlined
-          dense
-          filled
-          emit-value
-        />
-        <PrimaryButton
-          @click="searchUser"
-          label="Pesquisar"
-          v-if="enable == true"
-        />
-      </div>
       <q-select
   v-if="cards.length > 0"
   v-model="cardId"
@@ -42,7 +9,7 @@
   outlined
   emit-value
   map-options
-  @update:model-value="searchUser"
+  @update:model-value="searchCards"
 />
       <PrimaryTable
   @request="onRequest"
@@ -107,22 +74,19 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Invoice } from 'src/models/invoices';
 import { useInvoiceStore } from 'src/stores/useInvoiceStore';
-import { Validator } from 'src/utils/validator';
-import { CustomerBrands } from 'src/models/customer';
 import { UserCard } from 'src/models/userCard';
 import { useUserCardsStore } from 'src/stores/useUserCardsStore';
-import { useCustomerStore } from 'src/stores/useCustomerStore';
+import { onMounted } from 'vue';
 
+onMounted(() => {
+  searchCards(); // Busca os cartões assim que o componente for carregado
+});
 //const router = useRouter()
 const invoice = ref([] as Array<Invoice>);
 const invoiceStore = useInvoiceStore();
 // Recebe o ID da rota como propriedade
 const props = defineProps<{
-  searchBy?: Array<{
-    id?: number;
-    cpf?: string;
-    status?: boolean;
-  }>;
+  clientId?: number
 }>();
 
 
@@ -131,17 +95,12 @@ const loading = ref(false);
 const refresh = ref(false);
 //const selectedDate = ref('');
 //const dateRange = ref({ from: '', to: '' });
-const searchValue = ref();
 
 //const searchByType = ref('');
 //const userType = ref('');
-const enable = ref(false);
-const userStore = useCustomerStore()
 const cardStore = useUserCardsStore()
-const client = ref([] as Array<CustomerBrands>)
 const cards = ref([] as Array<UserCard>)
 const cardId = ref<number | null>(null);
-const clientId = ref<number | null>(null);
 /*
 const updateDateRange = () => {
   if (dateRange.value.from && dateRange.value.to) {
@@ -150,7 +109,6 @@ const updateDateRange = () => {
 };
 */
 
-const searchValueBy = ref('')
 
 console.log('propriedades:' + props)
 // Índice do span ativo
@@ -174,27 +132,11 @@ const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-
-const validateSearchType = () => {
-  if (searchValueBy.value == 'cpf') {
-    enable.value = Validator.isValidCPF(searchValue.value);
-    console.log('Valid CPF:', enable.value);
-  } else if (searchValueBy.value == 'phone') {
-    enable.value = Validator.isValidPhoneNumber(searchValue.value);
-  } else if (searchValueBy.value == 'cnpj') {
-    enable.value = Validator.isValidCNPJ(searchValue.value);
-  } else if (searchValueBy.value == 'email') {
-    enable.value = Validator.isValidEmail(searchValue.value);
-  } else {
-    enable.value = false;
-  }
-};
-
 const onRequest = async () => {
   console.log('veio aquiaqui' + props);
   loading.value = true;
   await invoiceStore
-    .fetchInvoice(clientId.value, cardId.value)
+    .fetchInvoice(props.clientId, cardId.value)
     .then(() => {
 
       invoice.value = invoiceStore.getinvoices;
@@ -209,12 +151,11 @@ const searchCards = async () => {
   loading.value = true;
   await cardStore
     .fetchUserCards(
-      client.value[0].id
+      props.clientId
     )
     .then(() => {
       cards.value = cardStore.getCards;
       cardId.value = cards.value[0].cardId
-      clientId.value = client.value[0].id
       onRequest()
     })
     .catch((error: any) => NotifyError.error(error.message))
@@ -223,20 +164,6 @@ const searchCards = async () => {
     });
 };
 
-const searchUser = async () => {
- await userStore.fetchBrandsUsers(
-  null,
-  null,
-  searchValueBy.value,
-  searchValue.value,
-)
-  .then(() => {
-    client.value = userStore.getUsers
-    searchCards()
-  })
-  .catch((error:any) => NotifyError.error(error.message))
-  .finally(() => { loading.value = false })
-}
 const getCardType = (id: number): string => {
   switch (id) {
     case 1:

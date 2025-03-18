@@ -27,9 +27,9 @@ export const useSuplierStore = defineStore('suplier', {
     async disableSuplier(ecId: string) {
       return await disableSuplierUseCase.execute(ecId);
     },
-    async fetchSupliers(limit: number, offset: number, filter: string) {
+    async fetchSupliers(limit: number, offset: number, searchByType?: string, searchValueBy?: string) {
       console.log('veio aqui')
-      const response = await fetchSuplierUseCase.executeSuplier(limit, offset, filter);
+      const response = await fetchSuplierUseCase.executeSuplier(limit, offset, searchByType, searchValueBy);
       console.log('voltou')
       this.supliers = response.data;
       this.totalItemsInDB = response.totalItems;

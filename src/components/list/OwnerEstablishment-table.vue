@@ -1,7 +1,8 @@
 <template>
   <q-layout>
-    <q-page class="column">
+    <q-page class="column q-gutter-md">
       <div class="q-gutter-md items-start">
+
         <span>Selecione um tipo de busca</span>
 
         <div class="row q-gutter-md items-center">
@@ -41,7 +42,7 @@
     :columns="columnsRep"
     :refresh="refresh"
   >
-    <template #top-left> </template>
+<!--
     <template v-slot:body-cell-name="props">
             <q-td >
               <span
@@ -52,6 +53,7 @@
               </span>
             </q-td>
           </template>
+-->
   </PrimaryTable>
     </q-page>
   </q-layout>
@@ -64,13 +66,12 @@ import { Pagination } from 'src/models/pagination';
 import { NotifyError} from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
-import { useHubStore } from 'src/stores/useHubStore';
-import { Hub, HubBrands } from 'src/models/hub';
-import { useRouter } from 'vue-router';
 import PrimaryButton from '../button/PrimaryButton.vue';
+import { useEstablishmentOwnerStore } from 'src/stores/useEstablishmentOwnerStore';
+import { EstablishmentOwner } from 'src/models/establishmentOwner';
 
-const hubStore = useHubStore();
-const router = useRouter()
+const ECOwnerStore = useEstablishmentOwnerStore();
+//const router = useRouter()
 
 // Recebe o ID da rota como propriedade
 const props1 = defineProps<{
@@ -89,31 +90,32 @@ const refresh = ref(false);
 
 console.log('propriedades:' + props1.id1)
 // Índice do span ativo
-const reps = ref([] as Array<Hub>)
+const reps = ref([] as Array<EstablishmentOwner>)
 
 
 const columnsRep: QTableColumn[] = [
-	{ name: 'id', label: 'ID', align: 'center', field: (row:HubBrands) => row.id },
-	{ name: 'name', label: 'Nome completo', align: 'left', field: (rep:HubBrands) => rep.name },
-	{ name: 'email', label: 'E-mail', align: 'left', field: (rep:HubBrands) => rep.email },
-	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:HubBrands) => rep.phone },
-  { name: 'status', required: true, label: 'Status', field: (row:HubBrands) => row.status? 'Ativo':'Inativo', align: 'left' },
+	{ name: 'id', label: 'ID', align: 'center', field: (row:EstablishmentOwner) => row.id },
+	{ name: 'name', label: 'Nome completo', align: 'left', field: (row:EstablishmentOwner) => row.name },
+  { name: 'EC', label: 'proprietário do EC', align: 'center', field: (row:EstablishmentOwner) => row.establishmentId },
+	{ name: 'email', label: 'E-mail', align: 'left', field: (row:EstablishmentOwner) => row.email },
+	{ name: 'telefone', label: 'Telefone', align: 'left', field: (rep:EstablishmentOwner) => rep.phone },
+  { name: 'status', required: true, label: 'Status', field: (row:EstablishmentOwner) => row.status? 'Ativo':'Inativo', align: 'left' },
 ]
-
+/*
 const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
+  router.push({ path: `/lojas/proprietarios/${id}`, query: {name}});
 };
-
+*/
 
 const onRequest = async () => {
 	loading.value = true
 
 
-	await hubStore.fetchHubsBrands(null, null,'representative',selectedSearchType.value, searchValueBy.value, props1.id1)
+	await ECOwnerStore.fetchECOwner(null, null,selectedSearchType.value, searchValueBy.value, props1.id1)
 		.then(() => {
-			reps.value = hubStore.hubs
-			pagination.value.rowsNumber = hubStore.totalItemsInDB
+			reps.value = ECOwnerStore.ECOwner
+			pagination.value.rowsNumber = ECOwnerStore.totalItemsInDB
 
 		})
 		.catch((error:any) => NotifyError.error(error.message))
