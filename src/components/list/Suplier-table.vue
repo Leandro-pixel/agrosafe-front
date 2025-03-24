@@ -75,13 +75,13 @@
                 icon="add_business"
                 flat
                 @click="activateSuplier(props.props.row.id, props.props.row)"
-                label="Ativar loja"
+                label="Ativar fornecedor"
             />
             <PrimaryButton
                 icon="key_off"
                 flat
                 @click="disableSuplier(props.props.row.id)"
-                label="Desativar loja"
+                label="Desativar fornecedor"
             />
             <PrimaryButton
                 icon="key_off"

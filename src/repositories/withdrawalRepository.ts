@@ -4,11 +4,13 @@ import { Withdrawal } from 'src/models/withdrawals';
 export class WithdrawalRepository {
 
 
-  async fetchWithdrawals(
-  ): Promise<PaginatedResponse> {
-    console.log('chegou aqui T');
-    try {
-      const data = await api.requestGet('/establishment/withdrawals');
+  async fetchWithdrawals(establishmentId?:number): Promise<PaginatedResponse> {
+    const params = Object.fromEntries(
+      Object.entries({
+        establishmentId,
+      }).filter(([, value]) => value != null)
+    );    try {
+      const data = await api.requestGet('/establishment/withdrawals', params);
       console.log('aaaaaaaaaaaa T', data);
 
 			const json: PaginatedResponse = {

@@ -86,7 +86,13 @@ const datas = async () => {
     infoList.value = [
     { icon: 'badge', label: 'ID', value: response.id },
     { icon: 'person', label: 'Nome fantasia', value: response.tradeName },
-      { icon: 'description', label: 'Documento', value: response.cpf.length < 1? Formatter.strToCnpj(response.cnpj): Formatter.strToCpf(response.cpf) },
+    {
+  icon: 'description',
+  label: 'Documento',
+  value: response.cnpj?.length === 14
+    ? Formatter.strToCnpj(response.cnpj)
+    : Formatter.strToCpf(response.cpf)
+},
       { icon: 'phone', label: 'Celular', value: response.phone },
       { icon: 'check_circle', label: 'Status', value: response.status ? 'Ativo' : 'Inativo' },
       { icon: 'schedule', label: 'Criado em', value: Formatter.formatDateToBR(response.createdAt) },

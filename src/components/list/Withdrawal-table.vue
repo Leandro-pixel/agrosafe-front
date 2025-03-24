@@ -1,60 +1,38 @@
 <template>
   <q-layout>
     <q-page class="column">
-      <Div class="row q-gutter-md items-center">
-        <Span>Documento</Span>
-        <q-input
-  v-model="searchValueBy"
-  placeholder="Digite CPF, CNPJ ou telefone"
-  outlined
-  dense
-  filled
-  @update:model-value="detectSearchType"
-  />
-  <Span>ID</Span>
-  <q-select
-  v-model="selectedIdType"
-  filled
-  dense
-  :options ="[
-    { label: 'Estabelecimento', value: 'establishmentId' },
-    { label: 'Cliente', value: 'userId' },
-    { label: 'Cartão', value: 'cardId' }
-  ]"
-  label="Selecione o tipo de ID"
-  outlined
-  emit-value
-  map-options
-/>
-        <q-input   v-if="selectedIdType != ''" filled
-        v-model="searchValue" dense placeholder="Digite o ID" outlined />
+      <div class="q-gutter-md items-start">
+        <span>Selecione um tipo de busca</span>
 
-        <q-input
-  v-model="selectedDate"
-  filled
-  dense
-  readonly
-  placeholder="Selecione uma data"
->
-  <template v-slot:append>
-    <q-icon name="event" class="cursor-pointer" @click="showDatePicker = true" />
-  </template>
-
-  <q-popup-proxy v-model="showDatePicker">
-    <q-date
-      mask="YYYY-MM-DD"
-      v-model="dateRange"
-      range
-      @update:model-value="updateDateRange"
-    />
-  </q-popup-proxy>
-</q-input>
-
-
-
-<PrimaryButton @click="onRequest" label="Pesquisar"/>
-
-      </Div>
+        <div class="row q-gutter-md items-center">
+          <q-select
+            v-model="selectedSearchType"
+            filled
+            dense
+            :options="[
+              { label: 'CPF', value: 'cpf' },
+              { label: 'CNPJ', value: 'cnpj' },
+              { label: 'celular', value: 'phone' },
+              { label: 'E-mail', value: 'email' },
+              { label: 'Nome', value: 'tradeName' },
+              { label: 'RG', value: 'rg' },
+            ]"
+            label="Buscar por..."
+            outlined
+            map-options
+            emit-value
+          />
+          <q-input
+            v-if="selectedSearchType != ''"
+            v-model="searchValueBy"
+            placeholder="Digite aqui..."
+            outlined
+            dense
+            filled
+          />
+          <PrimaryButton @click="searchEC" label="Pesquisar" />
+        </div>
+      </div>
       <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
@@ -113,7 +91,9 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Withdrawal } from 'src/models/withdrawals';
 import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
-import { Validator } from 'src/utils/validator';
+//import { Validator } from 'src/utils/validator';
+import { Store } from 'src/models/store';
+import { useStoreStore } from 'src/stores/useStoreStore';
 
 
 const withdralStore = useWithdrawalStore();
@@ -131,35 +111,17 @@ const props = defineProps<{
 const pagination = ref(new Pagination());
 const loading = ref(false);
 const refresh = ref(false);
-const searchByType = ref('')
-const selectedDate = ref('');
-const showDatePicker = ref(false);
-const dateRange = ref({ from: '', to: '' });
-const searchValue = ref();
-const selectedIdType = ref('');
 
-const updateDateRange = () => {
-  if (dateRange.value.from && dateRange.value.to) {
-    selectedDate.value = `${dateRange.value.from} até ${dateRange.value.to}`;
-  }
-};
+const selectedSearchType = ref('');
+const searchValueBy = ref('');
+
+const ecs = ref([] as Array<Store>);
+const storeStore = useStoreStore();
+const ecId = ref(null)
 
 
-const searchValueBy = ref('')
 
-const detectSearchType = () => {
-  const value = searchValueBy.value.replace(/\D/g, '') // Remove caracteres não numéricos
 
-  if (Validator.isValidCPF(value)) {
-    searchByType.value = 'cpf'
-  } else if (Validator.isValidCNPJ(value)) {
-    searchByType.value = 'cnpj'
-  } else if (Validator.isValidPhoneNumber(value)) {
-    searchByType.value = 'phone'
-  } else {
-    searchByType.value = ''
-  }
-}
 
 console.log('propriedades:' + props)
 // Índice do span ativo
@@ -195,17 +157,39 @@ const pay = async (props: any, status: boolean) => {
     });
 };
 
-const onRequest = async (props: any) => {
-  console.log('veio aquiaqui' + props);
+const onRequest = async () => {
   loading.value = true;
 
   await withdralStore
-    .fetchWithdrawal()
+    .fetchWithdrawal(ecId.value)
     .then(() => {
       console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
       rows.value = withdralStore.getWithdrawals;
       pagination.value.rowsNumber = withdralStore.totalItemsInDB;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+const searchEC = async () => {
+  loading.value = true;
+
+  await storeStore
+    .fetchStores(null, null, selectedSearchType.value, searchValueBy.value)
+    .then(() => {
+      ecs.value = storeStore.getStores;
+      pagination.value.rowsNumber = storeStore.totalItemsInDB;
+      if(storeStore.totalItemsInDB > 0){
+        ecId.value = ecs.value[0].id;
+        onRequest()
+      } else {
+        () => NotifyError.error('Estabelecimento não encontrado')
+        onRequest()
+      }
+
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {

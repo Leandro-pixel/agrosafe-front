@@ -353,7 +353,7 @@ const submit = async () => {
     );
     const response = await storeStore.createEC(store);
     await ShowLoading.hide('');
-    ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
+    ShowDialog.show('Sucesso!', 'O fornecedor foi criado com sucesso!');
     console.log(response);
   } catch (error: any) {
     await ShowLoading.hide('');

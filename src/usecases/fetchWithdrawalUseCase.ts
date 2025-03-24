@@ -7,10 +7,8 @@ class FetchWithdrawalUseCase {
     this.withdrawalRepository = withdrawalRepository;
   }
 
-  async execute(
-  ): Promise<PaginatedResponse> {
-    return this.withdrawalRepository.fetchWithdrawals(
-    );
+  async execute(establishmentId?:number): Promise<PaginatedResponse> {
+    return this.withdrawalRepository.fetchWithdrawals(establishmentId);
   }
   async pay(establishmentId: number, status: boolean) {
      this.withdrawalRepository.payWithdrawals(establishmentId, status);

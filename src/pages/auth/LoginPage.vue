@@ -1,28 +1,20 @@
-<template>
+      <template>
   <q-layout>
-    <q-page-container
-      class="row items-center justify-center text-center bg-accent"
-      style="height: 100vh"
-    >
-      <q-card class="login__cards default-box-shadow big-border-radius">
-        <!-- Card background -->
-        <q-card-section class="login__card-back bg-primary text-white">
-          <div class="text-h4">
-            Seja bem-vindo à
-            <div class="text-accent">
-              {{ configStore.getConfig.tenantName }}!
-            </div>
-          </div>
-        </q-card-section>
-        <q-card-actions class="login__card flex-grow justify-center">
-          <!--<q-img fit="fill" :src="configStore.getConfig.logoUrl" class="login__logo q-mb-md" />-->
-          <q-form ref="myForm" @submit="submit" style="width: 60%">
-            <div class="login__form">
+    <q-page-container class="page_padding custom_center flex bg-page window-height relative-position">
+
+      <div class="flex column  justify-center items-center z-max "> <!-- div do box para logar-->
+        <q-img
+          src="icons/logo_brands.png"
+          fit="contain"
+          class="custom_logo"
+        />
+        <q-card class="login__cards default-box-shadow big-border-radius  ">
+
+          <q-card-actions class="login__card flex-grow justify-center">
+            <q-form ref="myForm" @submit="submit" style="width: 60%">
               <q-input
-                :error="invalidCredentials"
-                outlined
-                no-error-icon
-                class="login__form__input q-mb-md"
+              standard
+                class="q-mb-md"
                 v-model="email"
                 label="E-mail"
                 autocomplete="username"
@@ -30,10 +22,8 @@
                 lazy-rules
               />
               <q-input
-                :error="invalidCredentials"
-                outlined
-                no-error-icon
-                class="login__form__input q-mb-md"
+              standard
+                class="q-mb-md"
                 v-model="password"
                 label="Senha"
                 :type="isPwd ? 'password' : 'text'"
@@ -50,44 +40,33 @@
                   />
                 </template>
               </q-input>
+
               <div class="row q-mb-md justify-between">
-                <span
-                  class="text-blue cursor-pointer"
-                  @click="goToForgotPassword()"
-                  >Esqueci minha senha</span
-                >
-                <q-checkbox
-                  dense
-                  v-model="rememberMe"
-                  label="Lembrar e-mail"
-                  color="primary"
-                  size="xs"
-                />
+                <span class="text-blue cursor-pointer" @click="goToForgotPassword()">Esqueci minha senha</span>
+                <q-checkbox v-model="rememberMe" label="Lembrar e-mail" color="primary" />
               </div>
-            </div>
-            <PrimaryButton
-              :loading="loading"
-              label="Entrar"
-              :btn-type="'submit'"
-              rounded
-              class="full-width"
-            />
-            <!--
-          <div class="q-mt-xl">Foi convidado?</div>
-          <PrimaryButton @click="router.push('/cadastrar')" label="Cadastre-se" :btn-type="'button'" outlined size="sm"/>
-        -->
-          </q-form>
-        </q-card-actions>
-      </q-card>
+
+              <PrimaryButton :loading="loading" label="Entrar" :btn-type="'submit'" rounded class="full-width" />
+            </q-form>
+          </q-card-actions>
+        </q-card>
+      </div>
+      <!-- Lado esquerdo - Imagem -->
+        <q-img
+          src="images/login_background.jpg"
+          fit="cover"
+          class="corner-image  absolute-bottom-right"
+        />
     </q-page-container>
   </q-layout>
 </template>
+
 
 <script setup lang="ts">
 import api from 'src/lib/api';
 import { onMounted, ref } from 'vue';
 import { NotifyError, ShowDialog } from 'src/utils/utils';
-import { useConfigStore } from 'src/stores/useConfigStore';
+//import { useConfigStore } from 'src/stores/useConfigStore';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { UnauthorizedError } from 'src/lib/errors/unauthorizedError';
@@ -103,7 +82,7 @@ const password = ref('');
 const isPwd = ref(true);
 const loading = ref(false);
 const rememberMe = ref(false);
-const configStore = useConfigStore();
+//const configStore = useConfigStore();
 const router = useRouter();
 const invalidCredentials = ref(false);
 //const user = ref(UserData);

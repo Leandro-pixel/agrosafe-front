@@ -1,6 +1,9 @@
 <template>
   <q-layout>
     <q-page class="column">
+      <q-inner-loading :showing="loading">
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
       <q-select
   v-if="cards.length > 0"
   v-model="cardId"
@@ -11,8 +14,11 @@
   map-options
   @update:model-value="searchCards"
 />
+<div v-if="cards.length <= 0" class="text-h6 q-ma-md text-center full-width">O usuário não tem cartão!</div>
+
       <PrimaryTable
-        @request="onRequest()"
+      v-if="cards.length > 0"
+        @request="searchCards()"
         v-model:pagination="pagination"
         :rows="rows"
         :loading="loading"
@@ -180,10 +186,17 @@ const searchCards = async () => {
     )
     .then(() => {
       cards.value = cardStore.getCards;
-      cardId.value = cards.value[0].cardId
+
+      if(cardStore.totalItemsInDB > 0){
+        cardId.value = cards.value[0].cardId
       onRequest()
+      } else {
+        () => NotifyError.error('o usuário não tem um cartão')
+      }
     })
-    .catch((error: any) => NotifyError.error(error.message))
+    .catch(
+      (error: any) => NotifyError.error(error.message)
+    )
     .finally(() => {
       loading.value = false;
     });
