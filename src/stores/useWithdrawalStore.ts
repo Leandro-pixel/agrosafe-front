@@ -15,8 +15,8 @@ export const useWithdrawalStore = defineStore('withdrawals', {
     getWithdrawals: (state) => state.withdrawls,
   },
   actions: {
-    async fetchWithdrawal(establishmentId?:number) {
-      const response = await fetchWithdrawalUseCase.execute(establishmentId);
+    async fetchWithdrawal(limit: number, offset: number,establishmentId?:number) {
+      const response = await fetchWithdrawalUseCase.execute(limit, offset, establishmentId);
       console.log('voltou');
       this.withdrawls = response.data;
       this.totalItemsInDB = response.totalItems;

@@ -5,6 +5,8 @@ export class InvoiceRepository {
 
 
   async fetchInvoices(
+    limit: number,
+    offset: number,
     userId?: number,
     cardId?: number
   ): Promise<PaginatedResponse> {
@@ -12,6 +14,8 @@ export class InvoiceRepository {
     try {
       const params = Object.fromEntries(
         Object.entries({
+          limit,
+          offset,
           userId,
           cardId,
         }).filter(([, value]) => value != null) // Remove `null` e `undefined`

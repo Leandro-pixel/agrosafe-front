@@ -30,7 +30,7 @@
             dense
             filled
           />
-          <PrimaryButton @click="onRequest" label="Pesquisar" />
+          <PrimaryButton @click="onRequest(pagination)" label="Pesquisar" />
         </div>
       </div>
       <PrimaryTable
@@ -105,12 +105,10 @@ const onNameClick = (id: any, name: any) => {
   router.push({ path: `/polos/ativacao/${id}`, query: {name}});
 };
 
-
-const onRequest = async () => {
+const onRequest = async (props: any) => {
 	loading.value = true
-
-
-	await hubStore.fetchHubsBrands(null, null,'polo',selectedSearchType.value, searchValueBy.value, props1.id1)
+  if (!props.pagination) {
+    await hubStore.fetchHubsBrands(null, null,'polo',selectedSearchType.value, searchValueBy.value, props1.id1)
 		.then(() => {
 			reps.value = hubStore.hubs
 			pagination.value.rowsNumber = hubStore.totalItemsInDB
@@ -118,5 +116,22 @@ const onRequest = async () => {
 		})
 		.catch((error:any) => NotifyError.error(error.message))
 		.finally(() => { loading.value = false })
+  } else{
+    const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = (page - 1) * rowsPerPage;
+  const limit = rowsPerPage;
+  console.log('offset e limit', offset, limit);
+	await hubStore.fetchHubsBrands(limit, offset,'polo',selectedSearchType.value, searchValueBy.value, props1.id1)
+		.then(() => {
+			reps.value = hubStore.hubs
+			pagination.value.rowsNumber = hubStore.totalItemsInDB
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+		})
+		.catch((error:any) => NotifyError.error(error.message))
+		.finally(() => { loading.value = false })
+  }
 }
 </script>

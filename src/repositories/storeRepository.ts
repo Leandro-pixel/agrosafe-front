@@ -78,6 +78,8 @@ export class StoreRepository {
     const params = Object.fromEntries(
       Object.entries({
         [searchByType || '']: searchValueBy,
+        limit,
+        offset,
         supplierStatus,
         employeeId
       }).filter(([, value]) => value != null )

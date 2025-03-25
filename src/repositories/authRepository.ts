@@ -76,7 +76,7 @@ export class AuthRepository implements AuthRepositoryContract {
 
       console.log(passwordDTO.toJson())
       // Envia o DTO para a API
-      return await api.requestPost('/sms/reset-password', passwordDTO.toJson());
+      return await api.requestPost('/sms/reset/password', passwordDTO.toJson());
 
     } catch (error) {
       // Em caso de erro, lança uma mensagem apropriada

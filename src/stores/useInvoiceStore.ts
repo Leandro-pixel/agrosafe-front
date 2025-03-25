@@ -16,10 +16,12 @@ export const useInvoiceStore = defineStore('invoices', {
   },
   actions: {
     async fetchInvoice(
+      limit: number,
+       offset: number,
       userId?: number,
     cardId?: number
     ) {
-      const response = await fetchInvoiceUseCase.execute(userId, cardId);
+      const response = await fetchInvoiceUseCase.execute(limit, offset, userId, cardId);
       console.log('voltou');
       this.invoices = response.data;
       this.totalItemsInDB = response.totalItems;

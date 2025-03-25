@@ -30,7 +30,7 @@
             dense
             filled
           />
-          <PrimaryButton @click="onRequest" label="Pesquisar" />
+          <PrimaryButton @click="onRequest(pagination)" label="Pesquisar" />
         </div>
       </div>
       <PrimaryTable
@@ -113,7 +113,7 @@ import { useSuplierStore } from 'src/stores/useSuplierStore';
 
 const router = useRouter()
 // Recebe o ID da rota como propriedade
-const props = defineProps<{
+const properties = defineProps<{
   searchBy?: Array<{
     id?: number;
     cpf?: string;
@@ -128,7 +128,7 @@ const loading = ref(false);
 const refresh = ref(false);;
 const rows = ref([] as Array<Supplier>);
 const suplierStore = useSuplierStore();
-console.log('propriedades:' + props)
+console.log('propriedades:' + properties)
 // Índice do span ativo
 
 
@@ -154,11 +154,11 @@ const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
 }
 
-const onRequest = async () => {
+const onRequest = async (props: any) => {
   loading.value = true;
-
-  await suplierStore
-    .fetchSupliers(null, null,selectedSearchType.value, searchValueBy.value)
+  if (!props.pagination) {
+    await suplierStore
+    .fetchSupliers(null, null, selectedSearchType.value, searchValueBy.value)
     .then(() => {
       rows.value = suplierStore.getSuplier;
       pagination.value.rowsNumber = suplierStore.totalItemsInDB;
@@ -168,6 +168,26 @@ const onRequest = async () => {
     .finally(() => {
       loading.value = false;
     });
+  } else{
+    const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = (page - 1) * rowsPerPage;
+  const limit = rowsPerPage;
+  console.log('offset e limit', offset, limit);
+  await suplierStore
+    .fetchSupliers(limit, offset,selectedSearchType.value, searchValueBy.value)
+    .then(() => {
+      rows.value = suplierStore.getSuplier;
+      pagination.value.rowsNumber = suplierStore.totalItemsInDB;
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+  }
 };
 const activateSuplier = async (id: string, supplier: Supplier) => {
   if (

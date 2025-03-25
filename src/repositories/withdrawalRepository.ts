@@ -4,9 +4,11 @@ import { Withdrawal } from 'src/models/withdrawals';
 export class WithdrawalRepository {
 
 
-  async fetchWithdrawals(establishmentId?:number): Promise<PaginatedResponse> {
+  async fetchWithdrawals(limit: number, offset: number, establishmentId?:number): Promise<PaginatedResponse> {
     const params = Object.fromEntries(
       Object.entries({
+        limit,
+        offset,
         establishmentId,
       }).filter(([, value]) => value != null)
     );    try {

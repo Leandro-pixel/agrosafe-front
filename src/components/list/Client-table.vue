@@ -29,7 +29,7 @@
             dense
             filled
           />
-          <PrimaryButton @click="onRequest" label="Pesquisar" />
+          <PrimaryButton @click="onRequest(pagination)" label="Pesquisar" />
         </div>
       </div>
       <PrimaryTable
@@ -133,7 +133,7 @@ import { Formatter } from 'src/utils/formatter';
 const router = useRouter();
 const selectedSearchType = ref('');
 // Recebe o ID da rota como propriedade
-const props = defineProps<{
+const properties = defineProps<{
   searchBy?: Array<{
     id?: number;
     cpf?: string;
@@ -141,27 +141,12 @@ const props = defineProps<{
   }>;
 }>();
 const searchValueBy = ref('');
-/*
-const detectSearchType = () => {
-  const value = searchValueBy.value.replace(/\D/g, '') // Remove caracteres não numéricos
-
-  if (Validator.isValidCPF(value)) {
-    searchByType.value = 'cpf'
-  } else if (Validator.isValidCNPJ(value)) {
-    searchByType.value = 'cnpj'
-  } else if (Validator.isValidPhoneNumber(value)) {
-    searchByType.value = 'phone'
-  } else {
-    searchByType.value = ''
-  }
-}
-*/
 const pagination = ref(new Pagination());
 const rows = ref([] as Array<CustomerBrands>);
 const loading = ref(false);
 const userStore = useCustomerStore();
 const refresh = ref(false);
-console.log('propriedades:' + props);
+console.log('propriedades:' + properties);
 // Índice do span ativo
 
 const columns: QTableColumn[] = [
@@ -238,23 +223,54 @@ const onNameClick = (id: any, name: any) => {
   router.push({ path: `/clientes/${id}`, query: { name } });
 };
 
-const onRequest = async () => {
+const onRequest = async (props: any) => {
   console.log('chegou aqui1');
-
-  loading.value = true;
-
-  await userStore
-    .fetchBrandsUsers(null, null, selectedSearchType.value, searchValueBy.value)
+  if (!props.pagination) {
+    await userStore
+    .fetchBrandsUsers(
+      null,
+      null,
+      selectedSearchType.value,
+      searchValueBy.value
+    )
     .then(() => {
-      console.log('chegou aqui1');
-
       rows.value = userStore.getUsers;
       pagination.value.rowsNumber = userStore.totalItemsInDB;
+
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
       loading.value = false;
     });
+  } else{
+  loading.value = true;
+  const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = (page - 1) * rowsPerPage;
+  const limit = rowsPerPage;
+  console.log('offset', offset);
+  await userStore
+    .fetchBrandsUsers(
+      limit,
+      offset,
+      selectedSearchType.value,
+      searchValueBy.value
+    )
+    .then(() => {
+      console.log('chegou aqui1');
+      console.log('Usuários recebidos:', userStore.getUsers.length);
+      console.log('Total de usuários no banco:', userStore.totalItemsInDB);
+      rows.value = userStore.getUsers;
+      pagination.value.rowsNumber = userStore.totalItemsInDB;
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+  }
 };
 
 const openMessageSender = async (phone: string) => {

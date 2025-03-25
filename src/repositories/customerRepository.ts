@@ -61,9 +61,9 @@ export class CustomerRepository {
 		const params = Object.fromEntries(
       Object.entries({
         [searchByType || '']: searchValueBy,
-        [limit || '']: limit,
-        [offset || '']: offset,
-      }).filter(([, value]) => value !== undefined)
+        limit,
+        offset,
+      }).filter(([, value]) => value != null)
     );
     console.log('parametros' + params)
 		try {
@@ -72,24 +72,6 @@ export class CustomerRepository {
 				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
 				totalItems: data.totalItems
 			}
-      /*
-       if (Array.isArray(data.data)) {
-        // Verificar o conteúdo antes de aplicar createDynamicObject
-        const mappedData = data.data.map((item: any) => {
-          const dynamicItem = createDynamicObject(item);
-          return dynamicItem;
-        });
-
-        const json: PaginatedResponse = {
-          data: mappedData,
-          totalItems: data.totalItems
-        };
-        return json;
-      } else {
-        console.error('data.data não é um array:', data.data);
-        throw new Error('Dados de resposta inesperados');
-      }
-      */
       console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
 			return json
 		} catch (error) {

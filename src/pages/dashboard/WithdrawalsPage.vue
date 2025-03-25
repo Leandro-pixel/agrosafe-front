@@ -15,47 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import {  NotifyError } from 'src/utils/utils';
-import { Pagination } from 'src/models/pagination';
-import { Withdrawal } from 'src/models/withdrawals';
-import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
-import { onMounted } from 'vue';
 import WithdrawalTable from 'src/components/list/Withdrawal-table.vue';
 
-onMounted(() => {
-  console.log('foi montado');
-  loading.value = true;
-  onRequest({ pagination: pagination.value });
-});
-
-const pagination = ref(new Pagination());
-//const filter = ref('');
-const rows = ref([] as Array<Withdrawal>);
-//const establishmentId = ref(0);
-const userId = ref(0);
-const withdralStore = useWithdrawalStore();
-const loading = ref(false);
-//const router = useRouter();
-
-
-
-const onRequest = async (props: any) => {
-  console.log('veio aquiaqui' + userId.value + props);
-
-  await withdralStore
-    .fetchWithdrawal()
-    .then(() => {
-      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
-
-      rows.value = withdralStore.getWithdrawals;
-      pagination.value.rowsNumber = withdralStore.totalItemsInDB;
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
 </script>
 
 <style scoped>

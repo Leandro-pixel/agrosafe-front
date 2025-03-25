@@ -8,10 +8,12 @@ class FetchInvoiceUseCase {
   }
 
   async execute(
+    limit: number,
+    offset: number,
     userId?: number,
     cardId?: number
   ): Promise<PaginatedResponse> {
-    return this.invoiceRepository.fetchInvoices(userId, cardId );
+    return this.invoiceRepository.fetchInvoices(limit, offset, userId, cardId );
   }
 }
 

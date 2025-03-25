@@ -30,7 +30,7 @@
             dense
             filled
           />
-          <PrimaryButton @click="onRequest" label="Pesquisar" />
+          <PrimaryButton @click="onRequest(pagination)" label="Pesquisar" />
         </div>
       </div>
       <PrimaryTable
@@ -185,21 +185,41 @@ const onNameClick = (id: any, name: any) => {
   router.push({ path: `/lojas/estabelecimentos/${id}`, query: { name } });
 };
 
-const onRequest = async () => {
+const onRequest = async (props: any) => {
   loading.value = true;
-
-  await storeStore
+  if (!props.pagination) {
+    await storeStore
     .fetchStores(null, null, selectedSearchType.value, searchValueBy.value, props1.id1)
     .then(() => {
       rows.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;
-
 
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
       loading.value = false;
     });
+  } else{
+    loading.value = true;
+  const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = (page - 1) * rowsPerPage;
+  const limit = rowsPerPage;
+  console.log('offset e limit', offset, limit);
+  await storeStore
+    .fetchStores(limit, offset, selectedSearchType.value, searchValueBy.value, props1.id1)
+    .then(() => {
+      rows.value = storeStore.getStores;
+      pagination.value.rowsNumber = storeStore.totalItemsInDB;
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+  }
 };
 const activateStore = async (ec: EC, id: string) => {
   if (

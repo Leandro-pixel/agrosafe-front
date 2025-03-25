@@ -157,11 +157,11 @@ const pay = async (props: any, status: boolean) => {
     });
 };
 
-const onRequest = async () => {
+const onRequest = async (props: any) => {
   loading.value = true;
-
-  await withdralStore
-    .fetchWithdrawal(ecId.value)
+  if (!props.pagination) {
+    await withdralStore
+    .fetchWithdrawal(null,null,ecId.value)
     .then(() => {
       console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
@@ -172,6 +172,28 @@ const onRequest = async () => {
     .finally(() => {
       loading.value = false;
     });
+  } else{
+    const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = page - 1;
+  const limit = rowsPerPage;
+  console.log('offset e limit', offset, limit);
+  await withdralStore
+    .fetchWithdrawal(limit, offset, ecId.value)
+    .then(() => {
+      console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
+
+      rows.value = withdralStore.getWithdrawals;
+      pagination.value.rowsNumber = withdralStore.totalItemsInDB;
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+  }
 };
 
 const searchEC = async () => {
@@ -184,10 +206,10 @@ const searchEC = async () => {
       pagination.value.rowsNumber = storeStore.totalItemsInDB;
       if(storeStore.totalItemsInDB > 0){
         ecId.value = ecs.value[0].id;
-        onRequest()
+        onRequest(pagination)
       } else {
         () => NotifyError.error('Estabelecimento não encontrado')
-        onRequest()
+        onRequest(pagination)
       }
 
     })

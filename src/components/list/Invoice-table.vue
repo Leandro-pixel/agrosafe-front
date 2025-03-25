@@ -117,7 +117,7 @@ import { useCustomerStore } from 'src/stores/useCustomerStore';
 const invoice = ref([] as Array<Invoice>);
 const invoiceStore = useInvoiceStore();
 // Recebe o ID da rota como propriedade
-const props = defineProps<{
+const properties = defineProps<{
   searchBy?: Array<{
     id?: number;
     cpf?: string;
@@ -152,7 +152,7 @@ const updateDateRange = () => {
 
 const searchValueBy = ref('')
 
-console.log('propriedades:' + props)
+console.log('propriedades:' + properties)
 // Índice do span ativo
 
 
@@ -190,20 +190,40 @@ const validateSearchType = () => {
   }
 };
 
-const onRequest = async () => {
-  console.log('veio aquiaqui' + props);
+const onRequest = async (props: any) => {
   loading.value = true;
-  await invoiceStore
-    .fetchInvoice(clientId.value, cardId.value)
+  if (!props.pagination) {
+    await invoiceStore
+    .fetchInvoice(null, null, clientId.value, cardId.value)
     .then(() => {
 
       invoice.value = invoiceStore.getinvoices;
-      //pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
+      pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
       loading.value = false;
     });
+  } else{
+    const { page, rowsPerPage } = props.pagination;
+  console.log('Página atual:', page);
+  console.log('Linhas por página:', rowsPerPage);
+  const offset = (page - 1) * rowsPerPage;
+  const limit = rowsPerPage;
+  console.log('offset e limit', offset, limit);
+  await invoiceStore
+    .fetchInvoice(limit, offset, clientId.value, cardId.value)
+    .then(() => {
+      invoice.value = invoiceStore.getinvoices;
+      pagination.value.rowsNumber = invoiceStore.totalItemsInDB;
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+  }
 };
 const searchCards = async () => {
   loading.value = true;
@@ -215,7 +235,7 @@ const searchCards = async () => {
       cards.value = cardStore.getCards;
       cardId.value = cards.value[0].cardId
       clientId.value = client.value[0].id
-      onRequest()
+      onRequest(pagination)
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {
