@@ -30,6 +30,8 @@ export function translateStatusToColor (status: string): string {
 		return 'positive'
   case 'client':
 		return 'positive'
+  case 'completed':
+		return 'positive'
 	case UserStatus.INACTIVE:
 	case 'Inativo':
 		return 'red'
