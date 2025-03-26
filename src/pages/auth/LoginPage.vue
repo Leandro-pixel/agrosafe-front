@@ -2,7 +2,7 @@
   <q-layout>
     <q-page-container class="page_padding custom_center flex bg-page window-height relative-position">
 
-      <div class="flex column  justify-center items-center z-max "> <!-- div do box para logar-->
+      <div class="flex column  justify-center items-center custom_z "> <!-- div do box para logar-->
         <q-img
           src="icons/logo_brands.png"
           fit="contain"

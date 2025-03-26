@@ -141,6 +141,7 @@ console.log('propriedades:' + properties)
   (row.cnpj && row.cnpj.length > 0)
     ? Formatter.strToCnpj(row.cnpj)
     : (row.cpf ? Formatter.strToCpf(row.cpf) : ''),},
+    {name: 'e-mail',label: 'E-mail',align: 'left',field: (row: Supplier) => row.email,},
   {name: 'status',label: 'Status',field: (row: Supplier) => (row.status ? 'Ativo' : 'Inativo'),align: 'left',},
   { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];

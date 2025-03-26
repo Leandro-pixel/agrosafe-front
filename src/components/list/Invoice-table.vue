@@ -70,9 +70,9 @@
             <q-td >
               <span
                 class="text-primary hoverable"
-                @click="onCashClick( props.props.row.id, props.props.row.name)"
+                @click="onNameClick( props.props.row.userId, props.props.row.userName)"
               >
-                {{ props.props.row.name }}
+                {{ props.props.row.userName }}
               </span>
             </q-td>
           </template>
@@ -83,7 +83,7 @@
         <PrimaryButton
                 icon="add_business"
                 flat
-                @click="details(props.props.row.id, props.props.row.name, 'true')"
+                @click="details(props.props.row.userId, props.props.row.name, 'true')"
                 label="Detalhes"
             />
       </q-td>
@@ -112,6 +112,7 @@ import { CustomerBrands } from 'src/models/customer';
 import { UserCard } from 'src/models/userCard';
 import { useUserCardsStore } from 'src/stores/useUserCardsStore';
 import { useCustomerStore } from 'src/stores/useCustomerStore';
+import { useRouter } from 'vue-router';
 
 //const router = useRouter()
 const invoice = ref([] as Array<Invoice>);
@@ -149,7 +150,7 @@ const updateDateRange = () => {
   }
 };
 */
-
+const router = useRouter();
 const searchValueBy = ref('')
 
 console.log('propriedades:' + properties)
@@ -157,18 +158,19 @@ console.log('propriedades:' + properties)
 
 
 const columns: QTableColumn[] = [
-{ name: 'id', label: 'ID', field: (row:Invoice) => row.id, align: 'center' },
+{ name: 'id', label: 'ID(fatura)', field: (row:Invoice) => row.id, align: 'center' },
+{ name: 'userId', label: 'ID(usuário)', field: (row:Invoice) => row.userId, align: 'center' },
+{ name: 'userName', label: 'Nome', field: (row:Invoice) => row.userName, align: 'center' },
 { name: 'createdAt', required: true, label: 'data criação', field: (row:Invoice) => row.createdAt, align: 'left' },
 { name: 'paymentDate', required: true, label: 'Data de pagamento', field: (row:Invoice) => row.paymentDate, align: 'left' },
 { name: 'balanceWithFee', required: true, label: 'Valor com Taxa', field: (row:Invoice) => row.getFormattedBalanceWithFee(), align: 'left' }
 ]
 
 
-const onCashClick = (id: any, name: any) => {
+const onNameClick = (id: any, name: any) => {
   console.log('name:', id + name);
-  //router.push({ path: `/representantes/ativacao/${id}`, query: {name}});
+  router.push({ path: `/clientes/${id}`, query: { name } });
 };
-
 
 const details = async (id: any, name: any, status: string) => {
   console.log(id, name, status)
