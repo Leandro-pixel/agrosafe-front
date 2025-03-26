@@ -20,6 +20,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/CashFlowPage.vue'),
       },
       {
+        path: '/dashboard/movimentacoes/split',
+        component: () => import('pages/dashboard/SplitPage.vue'),
+      },
+      {
         path: '/dashboard/cobrancas',
         component: () => import('pages/dashboard/ChargePage.vue'),
       },

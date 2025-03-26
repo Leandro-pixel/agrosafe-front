@@ -139,7 +139,7 @@ const ecData = async () => {
   await ecRepository
     .fetchEmployeeEstablishmentData()
     .then(() => {
-      router.push('/dashboard/movimentacoes');
+      router.push('/dashboard/movimentacoes/split');
     })
     .catch((error: any) => NotifyError.error(error.message))
     .finally(() => {

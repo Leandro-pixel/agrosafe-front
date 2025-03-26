@@ -200,7 +200,7 @@ const searchEC = async () => {
   loading.value = true;
 
   await storeStore
-    .fetchStores(null, null, selectedSearchType.value, searchValueBy.value)
+    .fetchStores(null, null,true, selectedSearchType.value, searchValueBy.value)
     .then(() => {
       ecs.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;

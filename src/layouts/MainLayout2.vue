@@ -62,16 +62,16 @@
                   <q-btn
                     flat
                     @click="
-                      handleButtonClick('/dashboard/cobrancas', 'Dashboard')
+                      handleButtonClick('/dashboard/movimentacoes/split', 'Dashboard')
                     "
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Cobranças</div>
+                    <div class="items-start flex width-full">Splits</div>
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
                   <q-btn
                     flat
                     @click="
@@ -106,16 +106,6 @@
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('justEC')">
-                  <q-btn
-                    flat
-                    @click="handleButtonClick('/dashboard/saque', 'Dashboard')"
-                    class="full-width text-white no-wrap"
-                    style="text-transform: none"
-                  >
-                    <div class="items-start flex width-full">Sacar Saldo</div>
-                  </q-btn>
-                </q-item>
               </q-list>
             </q-expansion-item>
 
@@ -224,7 +214,7 @@
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md">
+            <div class="row full-width flex-center q-ma-md" v-if="implementHierarchy('representative')">
               <q-separator class="separators" />
             </div>
             <!-- Item de menu com opções expansíveis para Polos -->
@@ -237,7 +227,7 @@
                 'text-white custom-icon-size': selectedItem !== 'Lojas',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('store')"
+              v-if="implementHierarchy('representative')"
             >
               <q-list style="padding-left: 5%">
                 <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
@@ -456,7 +446,7 @@ const userData = async () => {
   if (userType == 'establishmentOwner') {
     const ecStore = new EmployeeEstablishmentStore();
     await ecStore.loadFromLocalStorage();
-    type.value = 'Estabelecimento';
+    type.value = 'Fornecedor';
 
   } else if (userType == 'polo') {
     const poloStore = new PoloDataStore();

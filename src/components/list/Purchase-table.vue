@@ -317,6 +317,7 @@ const searchEC = async () => {
     .fetchStores(
       null,
       null,
+      false,
       searchValueBy.value,
     searchValue.value,
   )

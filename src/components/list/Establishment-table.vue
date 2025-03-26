@@ -189,7 +189,7 @@ const onRequest = async (props: any) => {
   loading.value = true;
   if (!props.pagination) {
     await storeStore
-    .fetchStores(null, null, selectedSearchType.value, searchValueBy.value, props1.id1)
+    .fetchStores(null, null,false, selectedSearchType.value, searchValueBy.value, props1.id1)
     .then(() => {
       rows.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;
@@ -208,7 +208,7 @@ const onRequest = async (props: any) => {
   const limit = rowsPerPage;
   console.log('offset e limit', offset, limit);
   await storeStore
-    .fetchStores(limit, offset, selectedSearchType.value, searchValueBy.value, props1.id1)
+    .fetchStores(limit, offset,false, selectedSearchType.value, searchValueBy.value, props1.id1)
     .then(() => {
       rows.value = storeStore.getStores;
       pagination.value.rowsNumber = storeStore.totalItemsInDB;

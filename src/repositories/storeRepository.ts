@@ -69,11 +69,12 @@ export class StoreRepository {
   async fetchStores(
     limit?: number,
     offset?: number,
+    supplierStatus?: boolean,
     searchByType?: string,
     searchValueBy?: string,
     employeeId?: number
   ): Promise<PaginatedResponse> {
-    const supplierStatus = false;
+  
 
     const params = Object.fromEntries(
       Object.entries({
