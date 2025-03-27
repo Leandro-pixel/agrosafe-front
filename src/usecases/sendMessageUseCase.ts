@@ -15,8 +15,8 @@ class SendMessageUseCase {
 		return await this.customerRepository.ccbStatus(id, status)
 	}
 
-  async executeBureauMessage (phone: string){
-		return await this.customerRepository.sendBureauMessage(phone,'BrandsCard: Sua avaliação avançou para a próxima etapa, agora basta acessar seu e-mail e assinar os termos que enviamos para você e seus créditos estarão liberados!', 'Quase lá!')
+  async executeBureauMessage (phone: string,message: string, title: string){
+		return await this.customerRepository.sendBureauMessage(phone,message, title)
 	}
 
   async executeTransaction (phone: string, desc: string, amount: number){

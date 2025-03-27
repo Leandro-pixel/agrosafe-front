@@ -134,7 +134,7 @@ await userStore.fetchBrandsUsers(limit, offset, props.filter)
 
 const openMessageSender = async (phone : string) => {
   loading.value = true
-  await userStore.sendBureauMessage(phone)
+  await userStore.sendBureauMessage(phone,'','')
   .then(() => {
     console.log('chegou aqui1')
 

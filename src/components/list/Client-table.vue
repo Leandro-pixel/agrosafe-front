@@ -105,8 +105,14 @@
                 <PrimaryButton
                   icon="notifications"
                   flat
-                  @click="openMessageSender(props.props.row.phone)"
-                  label="Bureau"
+                  @click="openMessageSender(props.props.row.phone, 'BrandsCard: Sua avaliação avançou para a próxima etapa, agora basta acessar seu e-mail e assinar os termos que enviamos para você e seus créditos estarão liberados!','Quase lá!')"
+                  label="Aceito"
+                />
+                <PrimaryButton
+                  icon="notifications"
+                  flat
+                  @click="openMessageSender(props.props.row.phone,'BrandsCard: Infelizmente após a análise concluimos que atualmente você não se encontra nos padrões de ilegibilidade da BrandsCard','Não aceito')"
+                  label="Recusado"
                 />
               </q-td>
             </q-list>
@@ -273,10 +279,10 @@ const onRequest = async (props: any) => {
   }
 };
 
-const openMessageSender = async (phone: string) => {
+const openMessageSender = async (phone: string,message: string, title: string) => {
   loading.value = true;
   await userStore
-    .sendBureauMessage(phone)
+    .sendBureauMessage(phone, message, title)
     .then(() => {
       console.log('chegou aqui1');
     })
