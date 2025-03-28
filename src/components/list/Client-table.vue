@@ -111,7 +111,7 @@
                 <PrimaryButton
                   icon="notifications"
                   flat
-                  @click="openMessageSender(props.props.row.phone,'BrandsCard: Infelizmente após a análise concluimos que atualmente você não se encontra nos padrões de ilegibilidade da BrandsCard','Não aceito')"
+                  @click="openMessageSender(props.props.row.phone,'Infelizmente neste momento não conseguimos aprova-lo como cliente ou estabelecimento na Brandscard. Dica: faca seu cadastro novamente em 06 meses para tentarmos aprova-lo. Agradecemos seu interesse e esperamos em breve estarmos juntos. Brandscard – muito além do limite.','Não aceito')"
                   label="Recusado"
                 />
               </q-td>
