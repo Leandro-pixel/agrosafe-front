@@ -210,7 +210,7 @@ const onRequest = async (props: any) => {
     const { page, rowsPerPage } = props.pagination;
   console.log('Página atual:', page);
   console.log('Linhas por página:', rowsPerPage);
-  const offset = (page - 1) * rowsPerPage;
+  const offset = page - 1;
   const limit = rowsPerPage;
   console.log('offset e limit', offset, limit);
   await invoiceStore

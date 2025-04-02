@@ -4,7 +4,7 @@
 
       <div class="flex column  justify-center items-center custom_z "> <!-- div do box para logar-->
         <q-img
-          src="icons/logo_brands.png"
+          src="logos/logo_brands.png"
           fit="contain"
           class="custom_logo"
         />

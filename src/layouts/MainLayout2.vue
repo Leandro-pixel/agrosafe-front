@@ -23,7 +23,7 @@
             <div class="row full-width flex-center q-ma-md q-pb-md">
               <q-img
                 fit="fill"
-                :src="leftDrawerOpen ? '/icons/icone_brands.png' : '/icons/logo_brands.png'"
+                :src="leftDrawerOpen ? 'logos/icone_brands.png' : 'logos/logo_brands.png'"
                 class="logo__img"
               />
             </div>
