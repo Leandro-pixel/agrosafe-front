@@ -33,7 +33,8 @@ export class PoloRepository {
       // Retorna os dados
       return poloDataStoreInstance.data
     } catch (error) {
-      throw new Error('Erro ao buscar dados')
+      console.warn('Erro 400 ignorado. Avançando sem erro.')
+        return null // Retorna nulo ou outro valor padrão
     }
   }
 

@@ -10,15 +10,12 @@ class FetchCashFlowUseCase {
   async execute(
     establishmentId?: number,
     cardId?: number,
-    userId?: number,
-    statuses?: Array<any>
+    userId?: number
   ): Promise<PaginatedResponse> {
-    console.log('veio aqui user2' + userId);
     return this.cashFlowRepository.fetchTransactions(
       establishmentId,
       cardId,
       userId,
-      statuses
     );
   }
 }

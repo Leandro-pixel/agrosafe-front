@@ -1,10 +1,25 @@
 {
-  "extends": "@quasar/app-vite/tsconfig-preset",
+  "extends": "./.quasar/tsconfig.json",
   "compilerOptions": {
     "noImplicitAny": false,
     "strict": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "src/*": ["src/*"]
+    },
+    "types": [ "node"]
   },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.test.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  //"exclude": ["node_modules"]
+
+
   "exclude": [
     "./dist",
     "./.quasar",
@@ -13,4 +28,5 @@
     "./src-cordova",
     "./quasar.config.*.temporary.compiled*"
   ]
+    
 }

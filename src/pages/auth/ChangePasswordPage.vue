@@ -43,7 +43,7 @@ import { Validator } from 'src/utils/validator'
 import { ref } from 'vue'
 //import { useRouter } from 'vue-router'
 import PrimaryButton from 'src/components/button/PrimaryButton.vue'
-import { NotifyError } from 'src/utils/utils'
+import { NotifyError, ShowLoading } from 'src/utils/utils'
 import { useAuthStore } from 'src/stores/useAuthStore';
 
 const currentPassword = ref('')
@@ -55,13 +55,17 @@ const showPassword2 = ref(false)
 //const router = useRouter()
 
 const submit = async () => {
+  await ShowLoading.hide('Alterando...');
 	loading.value = true
 	await store.changePassword(currentPassword.value, newPassword.value)
-		.then(() => {
+		.then( async () => {
 			//router.push('/conta')
+      await ShowLoading.hide('');
 			NotifyError.success('Senha alterada com sucesso!')
 		})
 		.catch((error:any) => NotifyError.error(error.message))
-		.finally(() => { loading.value = false })
+		.finally(async () => {
+      await ShowLoading.hide('');
+      loading.value = false })
 }
 </script>

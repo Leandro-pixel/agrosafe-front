@@ -26,8 +26,8 @@ export const useStoreStore = defineStore('store', {
     async activateStore(storeId: string) {
       return await activateStoreUseCase.execute(storeId);
     },
-    async activateEC(ecId: string) {
-      return await activateStoreUseCase.execute(ecId);
+    async activateEC(ecId: string, status: boolean) {
+      return await activateStoreUseCase.executeEC(ecId, status);
     },
     async disableStore(storeId: string) {
       return await disableStoreUseCase.execute(storeId);
@@ -35,9 +35,22 @@ export const useStoreStore = defineStore('store', {
     async disableEC(ecId: string) {
       return await disableStoreUseCase.execute(ecId);
     },
-    async fetchStores(limit: number, offset: number, filter: string) {
+    async fetchStores(limit: number, offset: number,supplierStatus?: boolean, searchByType?: string, searchValueBy?: string,employeeId?: number) {
       console.log('veio aqui')
-      const response = await fetchStoresUseCase.execute(limit, offset, filter);
+      const response = await fetchStoresUseCase.execute(limit, offset,supplierStatus, searchByType, searchValueBy, employeeId);
+      console.log('voltou')
+      this.stores = response.data;
+      this.totalItemsInDB = response.totalItems;
+    },
+
+    async fetchOneStore(id?: number, supplierStatus?: boolean) {
+      console.log('veio aqui')
+      return await fetchStoresUseCase.executeFindOne(id, supplierStatus);
+    },
+
+    async fetchSuplier(limit: number, offset: number, filter: string) {
+      console.log('veio aqui sup')
+      const response = await fetchStoresUseCase.executeSuplier(limit, offset, filter);
       console.log('voltou')
       this.stores = response.data;
       this.totalItemsInDB = response.totalItems;

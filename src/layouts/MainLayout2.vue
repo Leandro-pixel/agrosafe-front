@@ -10,7 +10,7 @@
         :model-value="true"
         :mini="leftDrawerOpen"
       >
-        <div class="column fit no-wrap bg-primary q-pt-md">
+        <div class="column fit bg-primary q-pt-md">
           <div class="desktop-hide flex justify-end q-pr-md width-full">
             <PrimaryButton
               dense
@@ -23,11 +23,7 @@
             <div class="row full-width flex-center q-ma-md q-pb-md">
               <q-img
                 fit="fill"
-                :src="
-                  leftDrawerOpen
-                    ? config.getConfig.secondaryLogoUrl
-                    : config.getConfig.logoUrl
-                "
+                :src="leftDrawerOpen ? 'logos/icone_brands.png' : 'logos/logo_brands.png'"
                 class="logo__img"
               />
             </div>
@@ -58,7 +54,7 @@
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Segmentos</div>
+                    <div class="items-start flex width-full">Analíticos</div>
                   </q-btn>
                 </q-item>
 
@@ -66,16 +62,16 @@
                   <q-btn
                     flat
                     @click="
-                      handleButtonClick('/dashboard/cobrancas', 'Dashboard')
+                      handleButtonClick('/dashboard/movimentacoes/split', 'Dashboard')
                     "
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Cobranças</div>
+                    <div class="items-start flex width-full">Splits</div>
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
                   <q-btn
                     flat
                     @click="
@@ -88,16 +84,28 @@
                   </q-btn>
                 </q-item>
 
-                <q-item class="q-pl-xs" v-if="implementHierarchy('justEC')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
                   <q-btn
                     flat
-                    @click="handleButtonClick('/dashboard/saque', 'Dashboard')"
+                    @click="handleButtonClick('/dashboard/antecipacoes', 'Dashboard')"
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div class="items-start flex width-full">Sacar Saldo</div>
+                    <div class="items-start flex width-full">Pagamentos</div>
                   </q-btn>
                 </q-item>
+
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/faturas', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Faturas</div>
+                  </q-btn>
+                </q-item>
+
               </q-list>
             </q-expansion-item>
 
@@ -129,31 +137,100 @@
                     style="text-transform: none"
                   >
                     <div class="items-start flex width-full">
-                      Ativação / Desativação
+                      Polo
                     </div>
                   </q-btn>
                 </q-item>
               </q-list>
             </q-expansion-item>
 
-            <div class="row full-width flex-center q-ma-md">
+            <div
+              class="row full-width flex-center q-ma-md"
+              v-if="implementHierarchy('polo')"
+            >
               <q-separator class="separators" />
             </div>
 
+            <q-expansion-item
+              icon="handshake"
+              label="Representantes"
+              indicator-color="secondary"
+              expand-icon="null"
+              :class="{
+                'text-accent': selectedItem === 'Representative',
+                'text-white ': selectedItem !== 'Representative',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('polo')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/representantes/ativacao', 'Representative')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Representante
+                    </div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <div class="row full-width flex-center q-ma-md"
+             v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-separator class="separators" />
+            </div>
+
+            <q-expansion-item
+              icon="shopping_bag"
+              label="Fornecedores"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Fornecedores',
+                'text-white custom-icon-size': selectedItem !== 'Fornecedores',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/fornecedor/fornecedores', 'Fornecedores')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Fornecedores
+                    </div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <div class="row full-width flex-center q-ma-md" v-if="implementHierarchy('representative')">
+              <q-separator class="separators" />
+            </div>
             <!-- Item de menu com opções expansíveis para Polos -->
             <q-expansion-item
               icon="store"
-              label="Lojas"
+              label="Segmentos"
               expand-icon="null"
               :class="{
                 'text-accent custom-icon-size': selectedItem === 'Lojas',
                 'text-white custom-icon-size': selectedItem !== 'Lojas',
               }"
               style="padding-left: 5%"
-              v-if="implementHierarchy('store')"
+              v-if="implementHierarchy('representative')"
             >
               <q-list style="padding-left: 5%">
-                <q-item class="q-pl-xs" v-if="implementHierarchy('polo')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
                   <q-btn
                     flat
                     @click="
@@ -167,21 +244,58 @@
                     </div>
                   </q-btn>
                 </q-item>
-                <q-item class="q-pl-xs" v-if="implementHierarchy('store')">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
                   <q-btn
                     flat
-                    @click="handleButtonClick('/lojas/clientes', 'Lojas')"
+                    @click="
+                      handleButtonClick('/lojas/proprietarios', 'Lojas')
+                    "
                     class="full-width text-white no-wrap"
                     style="text-transform: none"
                   >
-                    <div style="text-align: left; width: 100%">Clientes</div>
+                    <div class="items-start flex width-full">
+                      Proprietários
+                    </div>
+                  </q-btn>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <div class="row full-width flex-center q-ma-md" v-if="implementHierarchy('sysAdmin')">
+              <q-separator class="separators" />
+            </div>
+            <!-- Item de menu com opções expansíveis para Polos -->
+            <q-expansion-item
+              icon="group"
+              label="Clientes"
+              expand-icon="null"
+              :class="{
+                'text-accent custom-icon-size': selectedItem === 'Clientes',
+                'text-white custom-icon-size': selectedItem !== 'Clientes',
+              }"
+              style="padding-left: 5%"
+              v-if="implementHierarchy('sysAdmin')"
+            >
+              <q-list style="padding-left: 5%">
+                <q-item class="q-pl-xs" v-if="implementHierarchy('representative')">
+                  <q-btn
+                    flat
+                    @click="
+                      handleButtonClick('/clientes', 'Clientes')
+                    "
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">
+                      Clientes
+                    </div>
                   </q-btn>
                 </q-item>
               </q-list>
             </q-expansion-item>
 
             <div class="row full-width flex-center q-ma-md">
-              <q-separator class="separators" />
+              <q-separator class="separators"  />
             </div>
 
             <!-- Item de menu com opções expansíveis para Lojas -->
@@ -304,7 +418,6 @@
 
 <script setup lang="ts">
 import api from 'src/lib/api';
-import { useConfigStore } from 'src/stores/useConfigStore';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
@@ -313,9 +426,9 @@ import { implementHierarchy } from 'src/utils/utils';
 import { SupStore } from 'src/models/supUserData';
 import { PoloDataStore } from 'src/models/poloUserData';
 import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
+import { RepDataStore } from 'src/models/repUserData';
 
 const pageName = ref('Dashboard');
-const config = useConfigStore();
 const leftDrawerOpen = ref(false);
 const selectedItem = ref<string | null>(null);
 const router = useRouter();
@@ -324,6 +437,7 @@ const type = ref('');
 
 onMounted(() => {
   console.log('foi montado');
+  name.value = localStorage.getItem('userName');
   userData();
 });
 
@@ -332,21 +446,19 @@ const userData = async () => {
   if (userType == 'establishmentOwner') {
     const ecStore = new EmployeeEstablishmentStore();
     await ecStore.loadFromLocalStorage();
-    const ecEmployee = ecStore.data.employee;
-    name.value = ecEmployee.name;
-    type.value = 'Estabelecimento';
+    type.value = 'Fornecedor';
 
   } else if (userType == 'polo') {
     const poloStore = new PoloDataStore();
     await poloStore.loadFromLocalStorage();
-    const poloEmployee = poloStore.data.employee;
-    name.value = poloEmployee.name;
     type.value = 'Polo'
+  } else if (userType == 'representative') {
+    const repStore = new RepDataStore();
+    await repStore.loadFromLocalStorage();
+    type.value = 'Representante'
   } else {
     const supStore = new SupStore();
     await supStore.loadFromLocalStorage();
-    const supportEmployee = supStore.data.employee;
-    name.value = supportEmployee.name
     type.value = 'Suporte'
   }
 };

@@ -1,16 +1,23 @@
-import { UserData, User } from 'src/models/user'
+import { User } from 'src/models/user'
 import api, { PaginatedResponse } from '../lib/api'
 
 export class UserRepository {
-	async fetchUserData () {
-		try {
-			const data = await api.requestGet('/profile')
+	async fetchUserData(id?: number,viewPersonalData?: boolean,seeUser?: boolean) {
+      const params = Object.fromEntries(
+        Object.entries({
+          id,
+          viewPersonalData,
+          seeUser
+        }).filter(([, value]) => value !== undefined)
+      );
+      try {
+        const data = await api.requestGet('/profile', params); // Busca os dados da API
 
-			return UserData.fromJson(data)
-		} catch (error) {
-			throw new Error('Erro ao buscar dados')
-		}
-	}
+        return data; // Retorna os dados para uso imediato ou para outra lógica
+      } catch (error) {
+        throw new Error('Erro ao buscar dados do suporte');
+      }
+    }
 
   async fetchUsers (limit?: number, offset?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({

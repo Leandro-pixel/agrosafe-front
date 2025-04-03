@@ -11,6 +11,14 @@ class SendMessageUseCase {
 		return await this.customerRepository.inviteCustomer(phone, message)
 	}
 
+  async executeCCB (id: string, status: string): Promise<boolean>{
+		return await this.customerRepository.ccbStatus(id, status)
+	}
+
+  async executeBureauMessage (phone: string,message: string, title: string){
+		return await this.customerRepository.sendBureauMessage(phone,message, title)
+	}
+
   async executeTransaction (phone: string, desc: string, amount: number){
 		return await this.customerRepository.sendTransactions(phone, desc, amount)
 	}

@@ -49,22 +49,12 @@
             <q-input
               dense
               outlined
-              v-model.trim="cpf"
-              label="Documento - CPF"
-              mask="###.###.###-##"
-              lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidCPF(val) || 'CPF inválido']"
-            />
-            <q-input
-              dense
-              outlined
-              v-model.trim="cnpj"
-              label="Documento - CNPJ"
-              mask="##.###.###/####-##"
-              lazy-rules
-              class="half-width"
-              :rules="[(val:string) => Validator.isValidCNPJ(val) || 'CNPJ inválido']"
+              v-model.trim="document"
+              label="CPF/CNPJ"
+              @update:model-value="updateMask"
+              :mask="currentMask"
+              :rules="[validateDocument]"
             />
           </div>
         </q-step>
@@ -116,10 +106,24 @@
               class="half-width"
               :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"
             />
+
+            <q-checkbox
+  v-model="splitstatus"
+  label="O estabelecimento deseja split ?"
+  color="primary"
+/>
+
+
+            <q-checkbox
+  v-model="antecipationType"
+  label="O estabelecimento deseja antecipação automática?"
+  color="primary"
+/>
+
             <q-input
               dense
               outlined
-              v-model.trim="poloId"
+              v-model.trim="poloID"
               label="ID do polo"
               lazy-rules
               class="half-width"
@@ -129,26 +133,34 @@
           </div>
         </q-step>
 
-      <q-step :name="3" title="Endereço" icon="place" :done="step > 2" caption="Obrigatório" class="column justify-content">
-        <p class="text-h6 text-bold">Informações do endereço</p>
-        <div>
-          <q-input dense outlined v-model.trim="address.zipCode.code" label="Cep" lazy-rules
-          :rules="[(val: string) => !val || val.length === 10 || 'CEP inválido']"  mask="##.###-###"
-            class="half-width" />
-          <q-input dense outlined v-model.trim="address.city" label="Cidade"
-            class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
-          <q-input dense outlined v-model.trim="address.uf" label="Estado"
-            class="half-width"  :rules="[ (val: string) => !!val ]" lazy-rules/>
+        <q-step
+          :name="3"
+          title="Endereço"
+          icon="place"
+          :done="step > 2"
+          caption="Obrigatório"
+          class="column justify-content"
+        >
+          <p class="text-h6 text-bold">Informações do endereço</p>
+          <div>
+            <q-input dense outlined v-model.trim="address.zipCode.code" label="Cep" lazy-rules
+            :rules="[(val: string) => val.length === 10 ]" mask="##.###-###"
+            class="half-width" @blur="AddressUtils.getAddress(address.zipCode, address)" />
+            <q-input dense outlined v-model.trim="address.city" label="Cidade"
+            class="half-width" :readonly="address.zipCode.code.length === 10" :rules="[ (val: string) => !!val ]" lazy-rules/>
+            <q-input dense outlined v-model.trim="address.uf" label="Estado"
+            class="half-width" :readonly="!!address.zipCode" :rules="[ (val: string) => !!val ]" lazy-rules/>
           <q-input dense outlined v-model.trim="address.neighborhood" label="Bairro"
             class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
           <q-input dense outlined v-model.trim="address.street" label="Rua"
             class="half-width" :rules="[ (val: string) => !!val ]" lazy-rules/>
           <q-input dense outlined v-model.trim="address.number" label="Número"
             class="half-width" hide-bottom-space :readonly="useNumber"
-            :rules="[ (val: string) => useNumber || !isNaN(Number(val)) ]"/>
+            :rules="[ (val: string) => useNumber || Validator.isValidNumber(val) ]"/>
           <q-checkbox class="q-ml-md" v-model.trim="useNumber" @update:model-value="updateAddressNumber()" label="Casa sem número"/>
-        </div>
-      </q-step>
+
+          </div>
+        </q-step>
 
         <q-step :name="4" title="Criar Loja" icon="check">
           <p class="text-h6 text-bold q-mb-md">Conclusão</p>
@@ -156,8 +168,9 @@
             <p><strong>Nome da empresa:</strong> {{ businessName }}</p>
             <p><strong>Nome fantasia:</strong> {{ tradeName }}</p>
             <p><strong>Nome do proprietário:</strong> {{ employeeName }}</p>
-            <p><strong>CPF:</strong> {{ cpf }}</p>
-            <p><strong>CNPJ:</strong> {{ cnpj }}</p>
+            <p>
+              <strong>{{ documentType }}:</strong> {{ document }}
+            </p>
             <p>
               <strong>E-mail do estabelecimento:</strong>
               {{ establishmentEmail }}
@@ -166,15 +179,21 @@
               <strong>Telefone do estabelecimento:</strong>
               {{ establishmentPhone }}
             </p>
+
+            <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não'  }}</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
-            <p><strong>CEP:</strong> {{ address.zipCode }}</p>
+
+            <p><strong>CEP:</strong> {{ address.zipCode.code }}</p>
           <p><strong>Cidade:</strong> {{ address.city }}</p>
           <p><strong>Estado:</strong> {{ address.uf }}</p>
           <p><strong>Bairro:</strong> {{ address.neighborhood }}</p>
           <p><strong>Rua:</strong> {{ address.street }}</p>
           <p><strong>Número:</strong> {{ address.number }}</p>
-            <p v-if="implementHierarchy('sysAdmin')" ><strong>ID do polo</strong> {{ poloId }}</p>
+
+            <p v-if="implementHierarchy('sysAdmin')">
+              <strong>ID do polo</strong> {{ poloID }}
+            </p>
           </div>
           <div class="text-h6 text-center">
             Você confirma que todos os dados fornecidos estão corretos?
@@ -195,106 +214,111 @@
 </template>
 
 <script setup lang="ts">
-//import { Address } from 'src/models/address'
+import { Address } from 'src/models/address';
 //import { Hub } from 'src/models/hub'
-import { implementHierarchy, NotifyError, ShowDialog } from 'src/utils/utils';
+import { AddressUtils, implementHierarchy, NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils';
 import { Validator } from 'src/utils/validator';
 import { EC } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
 //import {  useRouter } from 'vue-router'
 import { ref } from 'vue';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
-import { Address } from 'src/models/address';
-//import { Formatter } from 'src/utils/formatter';
-const address = ref(new Address())
+
+
 const step = ref(1);
 const businessName = ref('');
 const tradeName = ref('');
 const cpf = ref('');
 const cnpj = ref('');
+const document = ref('');
 const establishmentEmail = ref('');
 const establishmentPhone = ref('');
 const employeeEmail = ref('');
 const employeePhone = ref('');
 const employeeName = ref('');
-const poloId = ref(0);
-const useNumber = ref(false)
+const city = ref('');
+const state = ref('');
+const neighborhood = ref('');
+const street = ref('');
+const number = ref('');
+const postalCode = ref('');
+const complement = ref('');
+const poloID = ref(0);
+const splitstatus = ref(false);
+const address = ref(new Address());
+const useNumber = ref(false);
+const currentMask = ref('###.###.###-##');
+const documentType = ref('cpf');
+const antecipationType = ref(false);
 const storeStore = useStoreStore();
-//const route = useRoute()
-//const router = useRouter()
 
 const updateAddressNumber = () => {
-	if (useNumber.value) {
-		address.value.number = 'S/N'
-	} else {
-		address.value.number = ''
-	}
-}
-/*
-const amount = ref('');
-const initialLimit = ref('');
-const maximumLimit = ref('');
-const poloId = ref(0);
-const intAmount = ref(0);
-const intInitialLimit = ref(0);
-const intMaximumLimit = ref(0);
-
-const formatCurrency = (witchField: string): void => {
-
-  if (witchField == 'amount'){
-    const cleanedValue = Formatter.clearSymbolsAndLetters(amount.value);
-    intAmount.value = parseFloat(cleanedValue);
-    if (!isNaN(intAmount.value)) {
-      amount.value = Formatter.formatNumberToBRCurrency(intAmount.value);
+  if (useNumber.value) {
+    address.value.number = '';
   } else {
-    console.error('Valor inválido');
-    amount.value = '';
-  }
-
-  } else if(witchField == 'initialLimit'){
-    const cleanedValue = Formatter.clearSymbolsAndLetters(initialLimit.value);
-    intInitialLimit.value = parseFloat(cleanedValue);
-    if (!isNaN(intInitialLimit.value)) {
-      initialLimit.value = Formatter.formatNumberToBRCurrency(intInitialLimit.value);
-  } else {
-    console.error('Valor inválido');
-    initialLimit.value = '';
-  }
-  } else {
-    const cleanedValue = Formatter.clearSymbolsAndLetters(maximumLimit.value);
-    intMaximumLimit.value = parseFloat(cleanedValue);
-    if (!isNaN(intMaximumLimit.value)) {
-      maximumLimit.value = Formatter.formatNumberToBRCurrency(intMaximumLimit.value);
-  } else {
-    console.error('Valor inválido');
-    maximumLimit.value = '';
-  }
+    address.value.number = '';
   }
 };
-*/
+
+const validateDocument = () => {
+  const cleanedVal = document.value.replace(/\D/g, '');
+  if (cleanedVal.length <= 11) {
+    return Validator.isValidCPF(cleanedVal) || 'CPF inválido';
+  } else if (cleanedVal.length === 14) {
+    return Validator.isValidCNPJ(cleanedVal) || 'CNPJ inválido';
+  } else {
+    return 'Documento inválido';
+  }
+};
+
+const updateMask = () => {
+  const cleanedValue = document.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+  if (cleanedValue.length >= 12) {
+    currentMask.value = '##.###.###/####-##'; // Máscara de CNPJ
+    cnpj.value = document.value;
+    cpf.value = '';
+    documentType.value = 'cnpj';
+  } else {
+    currentMask.value = '###.###.###-###'; // Máscara de CPF
+    cpf.value = document.value;
+    cnpj.value = '';
+    documentType.value = 'cpf';
+  }
+};
+
 
 const submit = async () => {
+  ShowLoading.show('Criando...');
+
   try {
     const store = new EC(
       businessName.value,
       tradeName.value,
       cpf.value,
       cnpj.value,
+      antecipationType.value.toString(),
       establishmentEmail.value,
       establishmentPhone.value,
       employeeEmail.value,
       employeePhone.value,
       employeeName.value,
-      poloId.value,
-      address.value
+      address.value,
+      city.value,
+      state.value,
+      neighborhood.value,
+      street.value,
+      number.value,
+      postalCode.value,
+      complement.value,
+      poloID.value.toString(),
+      splitstatus.value.toString()
     );
-    console.log(store)
     const response = await storeStore.createEC(store);
-
+    await ShowLoading.hide('');
     ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
     console.log(response);
-    //router.push(`/lojas/${HashIds.encryptId(response.id as string)}`)
   } catch (error: any) {
+    await ShowLoading.hide('');
     NotifyError.error(error.message);
   }
 };
@@ -315,10 +339,18 @@ const checkFormValidation = () => {
     Validator.isValidEmail(employeeEmail.value)
   ) {
     step.value = 3;
-  } else if (step.value === 3) {
+
+  } else if (
+    step.value === 3  &&
+    address.value.zipCode &&
+    address.value.city &&
+    address.value.uf &&
+    address.value.neighborhood &&
+    address.value.street &&
+    address.value.number
+  ) {
     step.value = 4;
-  }
-    else if(step.value === 4){
+  } else if (step.value === 4) {
     submit();
   } else {
     NotifyError.error('Preencha todos os campos obrigatórios.');
@@ -343,9 +375,9 @@ const getButtonColor = () => {
     return 'primary';
   } else if (step.value === 3) {
     return 'primary';
-  } else if(step.value === 4) {
+  } else if (step.value === 4) {
     return 'primary';
-  } else{
+  } else {
     return 'grey';
   }
 };

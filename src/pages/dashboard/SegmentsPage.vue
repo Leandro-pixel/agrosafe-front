@@ -12,13 +12,13 @@
       <div class="flex">
         <div class="row flex-center q-mb-lg q-gutter-md">
           <q-img
-            src="src/assets/cards/cartao_brands.png"
+            src="cards/cartao_brands.png"
             fit="fill"
             class="logo__img"
             style="width: 15rem; height: 10rem"
           />
           <q-img
-            src="src/assets/cards/cartao_brands.png"
+            src="cards/cartao_brands.png"
             fit="fill"
             class="logo__img"
             style="width: 15rem; height: 10rem"

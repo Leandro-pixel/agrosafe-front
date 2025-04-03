@@ -2,58 +2,79 @@ import { Formatter } from 'src/utils/formatter';
 
 export class CashFlow {
   constructor(
-    public id: number = 0,
-    public establishmentId: number = 0,
-    public financingInstallmentId: number | null = null,
-    public userCardId: number = 0,
-    public description: string = '',
-    public transactionType: string = '',
-    public amount: number = 0, // Mantém como número
-    public status: string = '',
+    public hash: string = '',
+    public originalAmount: number = 0,
     public installmentCount: number = 0,
-    public expirationDate: string = '', // Data formatada
-    public createdAt: string = '', // Data formatada
-    public updatedAt: string = '' // Data formatada
+    public statuses: string[] = [],
+    public captureFee: number = 0,
+    public splitAmount: number = 0,
+    public cardFee: number = 0,
+    public availableWithdrawalAmount: number = 0,
+    public billingFeeAmountToPay: number = 0,
+    public advanceFee: number = 0,
+    public description: string = '',
+    public businessName: string = '',
+    public tradeName: string = '',
+    public userName: string = '',
+    public transactionType: string = '',
+    public months: number[] = [],
+    public years: number[] = [],
+    public createdAt: string = ''
   ) {}
 
   static fromJson(json: any): CashFlow | undefined {
     if (!json) return;
 
     return new CashFlow(
-      json.id,
-      json.establishmentId,
-      json.financingInstallmentId,
-      json.userCardId,
-      json.description,
-      json.transactionType,
-      json.amount, // Usa o valor como está no JSON (double)
-      json.status,
+      json.hash,
+      parseFloat(json.originalAmount),
       json.installmentCount,
-      Formatter.formatIsoDateToBR(json.expirationDate), // Formata a data para o padrão brasileiro
-      Formatter.formatIsoDateToBR(json.createdAt),
-      Formatter.formatIsoDateToBR(json.updatedAt)
+      json.statuses,
+      parseFloat(json.captureFee),
+      parseFloat(json.splitAmount),
+      parseFloat(json.cardFee),
+      parseFloat(json.availableWithdrawalAmount),
+      parseFloat(json.billingFeeAmountToPay),
+      parseFloat(json.advanceFee),
+      json.description,
+      json.businessName,
+      json.tradeName,
+      json.userName,
+      json.transactionType,
+      json.months,
+      json.years,
+      Formatter.formatIsoDateToBR(json.createdAt)
     );
   }
 
   public toJson() {
     return {
-      id: this.id,
-      establishmentId: this.establishmentId,
-      financingInstallmentId: this.financingInstallmentId,
-      userCardId: this.userCardId,
-      description: this.description,
-      transactionType: this.transactionType,
-      amount: this.amount, // Mantém como número
-      status: this.status,
+      hash: this.hash,
+      originalAmount: this.originalAmount.toFixed(2),
       installmentCount: this.installmentCount,
-      expirationDate: Formatter.dateToTimestampBR(this.expirationDate), // Converte de volta para timestamp
-      createdAt: Formatter.dateToTimestampBR(this.createdAt),
-      updatedAt: Formatter.dateToTimestampBR(this.updatedAt)
+      statuses: this.statuses,
+      captureFee: this.captureFee.toFixed(2),
+      splitAmount: this.splitAmount.toFixed(2),
+      cardFee: this.cardFee.toFixed(2),
+      availableWithdrawalAmount: this.availableWithdrawalAmount.toFixed(2),
+      billingFeeAmountToPay: this.billingFeeAmountToPay.toFixed(2),
+      advanceFee: this.advanceFee.toFixed(2),
+      description: this.description,
+      businessName: this.businessName,
+      tradeName: this.tradeName,
+      userName: this.userName,
+      transactionType: this.transactionType,
+      months: this.months,
+      years: this.years,
+      createdAt: Formatter.dateToTimestampBR(this.createdAt)
     };
   }
 
-  // Formata o amount para exibição como moeda brasileira
-  public getFormattedAmount(): string {
-    return Formatter.formatNumberToBRCurrency(this.amount);
+  public getFormattedOriginalAmount(): string {
+    return Formatter.formatDoubleToCurrency(this.originalAmount);
+  }
+
+  public getFormattedAvailableWithdrawalAmount(): string {
+    return Formatter.formatNumberToBRCurrency(this.availableWithdrawalAmount);
   }
 }

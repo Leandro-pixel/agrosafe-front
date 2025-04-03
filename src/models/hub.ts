@@ -95,33 +95,72 @@ export class HubBrands {
 
 export class Polo {
 	constructor (
-		public name = '',
-		public email = '',
-		public phone = '',
-		public employeeType = '',
+		public businessName: string = '',
+		public tradeName: string = '',
+		public cpf: string = '',
+		public cnpj: string = '',
+		public establishmentEmail: string = '',
+		public establishmentPhone: string = '',
+		public employeeEmail: string = '',
+		public employeePhone: string = '',
+		public employeeName: string = '',
+		public address: Address = new Address(),
+		public city: string = address.city,
+		public state: string = address.uf,
+		public neighborhood: string = address.neighborhood,
+		public street: string = address.street,
+		public number: string = address.number,
+		public postalCode: string = address.zipCode.getCodeWithoutSymbols(),
+		public complement: string = address.complement,
+		public employeeId: string = '',
+		public isPolo: string = 'false'
 	) {}
 
 	public static fromJson (json: any): Polo | undefined {
 		if (!json) return
 		return new Polo(
-			json.name,
-			json.email,
-			json.phone,
-			json.employeeType,
+			json.businessName,
+			json.tradeName,
+			json.cpf,
+			json.cnpj,
+			json.establishmentEmail,
+			json.establishmentPhone,
+			json.employeeEmail,
+			json.employeePhone,
+			json.employeeName,
+			// Mapeamento direto dos campos do endereço
+			json.city,
+			json.neighborhood,
+			json.street,
+			json.number,
+			json.postalCode,
+			json.complement,
+			json.employeeId,
+			json.isPolo
 		)
-	}
-
-	public toString (): string {
-		return `${this.name}, ${this.email}, ${this.phone}, ${this.employeeType}`
 	}
 
 	public toJson () {
 		return {
-			name: this.name,
-			email: this.email,
-			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
-			employeeType: this.employeeType,
-		}
+			businessName: this.businessName,
+			tradeName: this.tradeName,
+			cpf: Formatter.clearSymbolsAndLetters(this.cpf),
+			cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
+			establishmentEmail: this.establishmentEmail,
+			establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
+			employeeEmail: this.employeeEmail,
+			employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
+			employeeName: this.employeeName,
+			// Mapeamento direto dos campos de endereço
+			city: this.address.city,
+      state: this.address.uf,
+			neighborhood: this.address.neighborhood,
+			street: this.address.street,
+			number: this.address.number,
+			postalCode: this.address.zipCode.getCodeWithoutSymbols(),
+			complement: this.address.complement,
+			isPolo: this.isPolo
+		};
 	}
 }
 

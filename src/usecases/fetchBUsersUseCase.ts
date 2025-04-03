@@ -6,9 +6,15 @@ class FetchBUsersUseCase {
 		this.repository = repository
 	}
 
-  async executeBrands (limit: number, offset: number,ecId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
-		return await this.repository.fetchBrandsUsers(limit, offset,ecId, email, hubId, storeId)
+  async executeBrands (limit: number, offset: number,searchByType?: string,searchValueBy?: string,): Promise<PaginatedResponse> {
+		return await this.repository.fetchBrandsUsers(limit, offset,searchByType, searchValueBy)
 	}
+
+  async executeECUsers (limit: number, offset: number,ecId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+		return await this.repository.fetchECUsers(limit, offset,ecId, email, hubId, storeId)
+	}
+
+
 }
 
 export default FetchBUsersUseCase

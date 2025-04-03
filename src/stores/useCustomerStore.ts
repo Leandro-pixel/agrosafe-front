@@ -28,6 +28,14 @@ export const useCustomerStore = defineStore('customer', {
 			return await sendMessageUseCase.execute(phone, message)
 		},
 
+    async activateCustomer (id: string, status: string): Promise<boolean>{
+			return await sendMessageUseCase.executeCCB(id, status)
+		},
+
+    async sendBureauMessage (phone: string,message: string, title: string){
+			return await sendMessageUseCase.executeBureauMessage(phone, message, title)
+		},
+
     async sendTransaction (phone: string, desc: string, amount: number){
 			return await sendMessageUseCase.executeTransaction(phone, desc, amount)
 		},
@@ -35,9 +43,15 @@ export const useCustomerStore = defineStore('customer', {
 		async checkLimit (cpf: string): Promise<Limit[]> {
 			return await checkLimitUseCase.execute(cpf)
 		},
-    async fetchBrandsUsers (limit: number, offset: number,ecId?: string, email?: string, hubId?: string, storeId?: string) {
+    async fetchBrandsUsers (limit: number, offset: number,searchByType?: string, searchValueBy?: string) {
       console.log('chegou aqui')
-			const response = await fetchUsersUseCase.executeBrands(limit, offset,ecId, email, hubId, storeId)
+			const response = await fetchUsersUseCase.executeBrands(limit, offset,searchByType,searchValueBy)
+			this.users = response.data
+			this.totalItemsInDB = response.totalItems
+		},
+    async fetchECUsers (limit: number, offset: number,ecId?: number, email?: string, hubId?: string, storeId?: string) {
+      console.log('chegou aqui')
+			const response = await fetchUsersUseCase.executeECUsers(limit, offset,ecId, email, hubId, storeId)
 			this.users = response.data
 			this.totalItemsInDB = response.totalItems
 		}

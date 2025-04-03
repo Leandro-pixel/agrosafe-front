@@ -17,11 +17,15 @@ const implementHierarchy = (necessaryPermission: string): boolean => {
         atob(localStorage.getItem('userType') || '')
       );
     case 'polo':
-      return ['support', 'admin', 'polo'].includes(
+      return ['support', 'admin', 'polo',].includes(
+        atob(localStorage.getItem('userType') || '')
+      );
+      case 'representative':
+      return ['support', 'admin', 'polo','representative'].includes(
         atob(localStorage.getItem('userType') || '')
       );
     case 'store':
-      return ['support', 'admin', 'polo', 'establishmentOwner'].includes(
+      return ['support', 'admin', 'polo', 'representative','establishmentOwner'].includes(
         atob(localStorage.getItem('userType') || '')
       );
       case 'justEC':
@@ -33,6 +37,7 @@ const implementHierarchy = (necessaryPermission: string): boolean => {
         'support',
         'admin',
         'polo',
+        'representative',
         'establishmentOwner',
         'seller',
       ].includes(atob(localStorage.getItem('userType') || ''));

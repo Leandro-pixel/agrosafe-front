@@ -7,9 +7,16 @@ class FetchStoresUseCase {
 		this.storeRepository = storeRepository
 	}
 
-	async execute (limit:number, offset:number, filter:string): Promise<PaginatedResponse> {
+	async execute (limit:number, offset:number, supplierStatus?: boolean, searchByType?: string, searchValueBy?: string, employeeId?: number): Promise<PaginatedResponse> {
     console.log('veio aqui2')
-		return this.storeRepository.fetchStores(limit, offset, filter)
+		return this.storeRepository.fetchStores(limit, offset, supplierStatus, searchByType, searchValueBy, employeeId)
+	}
+  async executeFindOne (id?: number, supplierStatus?: boolean){
+		return this.storeRepository.fetchOne(id, supplierStatus)
+	}
+  async executeSuplier (limit:number, offset:number, filter:string): Promise<PaginatedResponse> {
+    console.log('veio aqui2')
+		return this.storeRepository.fetchSuplier(limit, offset, filter, 'true')
 	}
 }
 

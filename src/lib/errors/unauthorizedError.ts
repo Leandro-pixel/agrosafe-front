@@ -15,7 +15,7 @@ export class UnauthorizedErrorHandler extends AbstractErrorHandler {
 }
 
 export class UnauthorizedError extends Error {
-	constructor (message = 'Não autorizado') {
+	constructor (message = 'Não autorizado/Credenciais inválidas') {
 		super(message)
 		this.name = 'UnauthorizedError'
 

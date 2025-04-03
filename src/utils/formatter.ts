@@ -21,6 +21,10 @@ export class Formatter {
 		return value.replace(/[^0-9a-zA-Z]/g, '')
 	}
 
+  static formatDoubleToCurrency = (value: number): string => {
+    return `R$${value.toFixed(2).replace('.', ',')}`
+  }
+
 	static formatNumberToBRCurrency = (value: number): string => {
     console.log('chegou aqui' + Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100))
 		return Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value / 100)
@@ -112,6 +116,15 @@ static formatDateToBR = (dateString: string): string => {
 		}
 		return formattedValue
 	}
+
+  static strToCurrency(creditBalance: string): string {
+    const numberValue = parseFloat(creditBalance); // Converte para número
+    const currencyFormatter = new Intl.NumberFormat('pt-BR', {  // Usando a localidade brasileira
+      style: 'currency',
+      currency: 'BRL',
+    });
+    return currencyFormatter.format(numberValue); // Formata o número como moeda
+  }
 
 	static brlToCents = (value:string): number => {
 		value = value.replace(/\D/g, '')

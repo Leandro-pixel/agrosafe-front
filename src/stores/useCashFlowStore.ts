@@ -18,15 +18,12 @@ export const useCachSflowStore = defineStore('cashFlow', {
     async fetchCashFlow(
       establishmentId?: number,
       cardId?: number,
-      userId?: number,
-      statuses?: Array<any>
+      userId?: number
     ) {
-      console.log('veio aqui user' + userId);
       const response = await fetchCashFlowUseCase.execute(
         establishmentId,
         cardId,
-        userId,
-        statuses
+        userId
       );
       console.log('voltou');
       this.transactions = response.data;

@@ -7,6 +7,7 @@ import DisableHubUseCase from 'src/usecases/disableHubUseCase'
 import CreateHubUseCase from 'src/usecases/createHubUseCase'
 import ActivateHubUseCase from 'src/usecases/activateHubUseCase'
 import { ref } from 'vue'
+import { Representative } from 'src/models/representative'
 
 const repository = new HubRepository()
 const fetchHubsUseCase = new FetchHubsUseCase(repository)
@@ -32,8 +33,21 @@ export const useHubStore = defineStore('hub', {
 			this.hubs = response.data
 			this.totalItemsInDB = response.totalItems
 		},
-    async fetchHubsBrands (limit: number, offset: number, filter: string) {
-			const response = await fetchHubsUseCase.executeBrands(limit, offset, filter)
+
+    async fetchOnePolo (id: number) {
+			 return await fetchHubsUseCase.executeOnePolo(id)
+		},
+
+    async fetchOneUser (id: number) {
+      return await fetchHubsUseCase.executeOneUser(id)
+   },
+
+    async fetchOneRep (id: number) {
+      return await fetchHubsUseCase.executeOneRep(id)
+   },
+
+    async fetchHubsBrands (limit: number, offset: number,type: string,searchByType?: string, searchValueBy?: string, employeeId?: number) {
+			const response = await fetchHubsUseCase.executeBrands(limit, offset,type, searchByType, searchValueBy, employeeId)
 			this.hubs = response.data
 			this.totalItemsInDB = response.totalItems
 		},
@@ -42,6 +56,9 @@ export const useHubStore = defineStore('hub', {
 		},
     async createPolo (polo: Polo) {
 			return await createHubUseCase.executePolo(polo)
+		},
+    async createRepresentative (rep: Representative) {
+			return await createHubUseCase.executeRep(rep)
 		},
 		async fetchHubById (id: string) {
 			return await fetchHubByIdUseCase.execute(id)

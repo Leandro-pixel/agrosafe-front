@@ -1,5 +1,5 @@
 import api, { PaginatedResponse } from 'src/lib/api';
-import { CustomerBrands } from 'src/models/customer';
+import { CustomerBrands, ECCustomer } from 'src/models/customer';
 import { Limit } from 'src/models/interfaces/limit';
 import { Formatter } from 'src/utils/formatter';
 
@@ -13,6 +13,31 @@ export class CustomerRepository {
 		}).filter(([, value]) => value !== undefined && value !== ''))
     try {
       return await api.requestPost('/sms/invitation', null,params);
+    } catch (error) {
+      throw new Error('Erro ao enviar mensagem');
+    }
+  }
+
+  async ccbStatus(id: string, status: string) {
+    const params = Object.fromEntries(Object.entries({
+			status,
+		}).filter(([, value]) => value !== undefined && value !== ''))
+    try {
+      return await api.requestPut(`/ccb/status/${id}`, null,params);
+    } catch (error) {
+      throw new Error('Erro ao ativar conta, verifique se o usuário finalizou seu cadastro');
+    }
+  }
+
+  async sendBureauMessage(phone: string,description: string,title: string) {
+
+    const payload = Object.fromEntries(Object.entries({
+			phone,
+      description,
+      title
+		}).filter(([, value]) => value !== undefined && value !== ''))
+    try {
+      return await api.requestPost('/sms', payload);
     } catch (error) {
       throw new Error('Erro ao enviar mensagem');
     }
@@ -32,7 +57,29 @@ export class CustomerRepository {
     }
   }
 
-  async fetchBrandsUsers (limit?: number, offset?: number, establishmentId?: string, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
+  async fetchBrandsUsers (limit?: number, offset?: number, searchByType?: string,searchValueBy?: string,): Promise<PaginatedResponse> {
+		const params = Object.fromEntries(
+      Object.entries({
+        [searchByType || '']: searchValueBy,
+        limit,
+        offset,
+      }).filter(([, value]) => value != null)
+    );
+    console.log('parametros' + params)
+		try {
+			const data = await api.requestGet('/user', params)
+			const json: PaginatedResponse = {
+				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
+				totalItems: data.totalItems
+			}
+      console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
+			return json
+		} catch (error) {
+			throw new Error('Erro ao buscar usuários')
+		}
+	}
+
+  async fetchECUsers (limit?: number, offset?: number, establishmentId?: number, email?: string, hubId?: string, storeId?: string): Promise<PaginatedResponse> {
 		const params = Object.fromEntries(Object.entries({
 			limit,
 			offset,
@@ -45,10 +92,10 @@ export class CustomerRepository {
 		try {
 			const data = await api.requestGet('/establishment/customers', params)
 			const json: PaginatedResponse = {
-				data: data.data.map((item: any) => CustomerBrands.fromJson(item)),
+				data: data.data.map((item: any) => ECCustomer.fromJson(item)),
 				totalItems: data.totalItems
 			}
-      console.log(data.data.map((item: any) => CustomerBrands.fromJson(item)))
+      console.log(data.data.map((item: any) => ECCustomer.fromJson(item)))
 			return json
 		} catch (error) {
 			throw new Error('Erro ao buscar usuários')

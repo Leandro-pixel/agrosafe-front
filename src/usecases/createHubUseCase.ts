@@ -1,4 +1,5 @@
 import { Hub, Polo } from 'src/models/hub'
+import { Representative } from 'src/models/representative'
 import { HubRepository } from 'src/repositories/hubRepository'
 
 class CreateHubUseCase {
@@ -12,6 +13,9 @@ class CreateHubUseCase {
 	}
   async executePolo (polo: Polo) {
 		return await this.hubRepository.createPolo(polo)
+	}
+  async executeRep (rep: Representative) {
+		return await this.hubRepository.createRep(rep)
 	}
 }
 

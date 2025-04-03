@@ -4,6 +4,9 @@ import { InternalError } from './errors/internalError';
 import { BadRequestError } from './errors/badRequestError';
 import { NotFoundError } from './errors/notFoundError';
 import { NotAcceptableError } from './errors/notAcceptableError';
+import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
+import { PoloDataStore } from 'src/models/poloUserData';
+import { SupStore } from 'src/models/supUserData';
 
 const BASE_URL = process.env.BASE_API_URL;
 const API_KEY = process.env.API_KEY;
@@ -75,7 +78,6 @@ const requestPost = async function (
         throw new UnauthorizedError();
       }
     } else if (error.response && error.response.status === 400) {
-      console.log(error.response.data + error.response)
       throw new BadRequestError();
     } else if (error.response && error.response.status === 404) {
       throw new NotFoundError();
@@ -176,17 +178,18 @@ const requestGetWithBody = async function (
   headers = {
     ...headers,
     Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   };
   params = new URLSearchParams(params);
-  console.log('veio para o request' + params);
+  console.log('Conteúdo do body:', JSON.stringify(body));
 
   try {
-    const response = await axios({
-      method: 'get',
-      url: `${BASE_URL}${path}`,
+    const response = await axios.get(
+      `${BASE_URL}${path}`,
+      {
+
       headers,
       params,
-      data: body, // Incluindo o body no campo `data`
     });
 
     console.log('aquii', response.data);
@@ -211,11 +214,55 @@ const requestGetWithBody = async function (
   }
 };
 
+const requestGetCEP = async function (
+  path: string,
+  params?: any,
+
+  headers?: any,
+  retried = 0
+): Promise<DataResponse['data']> {
+  const token = localStorage.getItem('accessToken');
+  headers = {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+  params = new URLSearchParams(params);
+  console.log('veio para o request' + params);
+  try {
+    const response = await axios.get(
+      `${path}`,
+      {
+        headers,
+        params
+      }
+    );
+    console.log('aquii', response.data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const result = await refreshToken();
+      if (result.success && retried < MAX_RETRIES) {
+        return requestGet(path, params, headers, retried + 1);
+      } else {
+        throw new UnauthorizedError();
+      }
+    } else if (error.response && error.response.status === 400) {
+      throw new BadRequestError();
+    } else if (error.response && error.response.status === 404) {
+      throw new NotFoundError();
+    } else if (error.response && error.response.status === 406) {
+      throw new NotAcceptableError();
+    }
+    console.log('veio para o request' + params());
+    throw new InternalError();
+  }
+};
+
+
 
 const requestGet = async function (
   path: string,
   params?: any,
-
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
@@ -333,19 +380,27 @@ const requestDelete = async (
 const requestPut = async function (
   path: string,
   body: any | null,
+  params?: any,
   headers?: any,
   retried = 0
 ): Promise<DataResponse['data']> {
+  params = new URLSearchParams(params);
   const token = localStorage.getItem('accessToken');
   headers = {
     ...headers,
     Authorization: `Bearer ${token}`,
   };
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+
+  console.log(`path ${BASE_URL}${path}${queryString}`);
 
   try {
-    const response = await axios.put(`${BASE_URL}${path}`, body, {
+
+    const response = await axios.put(`${BASE_URL}${path}${queryString}`, body, {
       headers,
     });
+    console.log('aquii', response.data);
+
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -387,7 +442,9 @@ const login = async (email: string, password: string): Promise<void> => {
 
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
-    localStorage.setItem('userType', btoa(response.data.employeeType));
+    localStorage.setItem('userType', btoa(response.data.type));
+    localStorage.setItem('userName', response.data.name);
+
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       throw new UnauthorizedError('Seu e-mail ou senha estão incorretos.');
@@ -400,6 +457,15 @@ const login = async (email: string, password: string): Promise<void> => {
 };
 
 const logout = () => {
+  const employeeEstablishmentStore = new EmployeeEstablishmentStore()
+  employeeEstablishmentStore.clearData()
+
+  const poloStore = new PoloDataStore()
+  poloStore.clearData()
+
+  const supStore = new SupStore()
+  supStore.clearData()
+
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('userType');
@@ -407,6 +473,7 @@ const logout = () => {
 
 export default {
   requestGet,
+  requestGetCEP,
   requestGetWithApiKey,
   requestGetWithBody,
   requestPost,
