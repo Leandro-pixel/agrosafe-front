@@ -340,20 +340,12 @@ const checkFormValidation = () => {
   ) {
     step.value = 3;
 
-  } else if (
-    step.value === 3  &&
-    address.value.zipCode &&
-    address.value.city &&
-    address.value.uf &&
-    address.value.neighborhood &&
-    address.value.street &&
-    address.value.number
+Number(employeePhone.value) &&
+    Validator.isValidEmail(establishmentEmail.value) &&
+    Validator.isValidEmail(employeeEmail.value)
   ) {
-    step.value = 4;
-  } else if (step.value === 4) {
-    submit();
-  } else {
-    NotifyError.error('Preencha todos os campos obrigatórios.');
+    step.value = 3;
+atórios.');
   }
 };
 const getButtonColor = () => {
@@ -382,3 +374,4 @@ const getButtonColor = () => {
   }
 };
 </script>
+
