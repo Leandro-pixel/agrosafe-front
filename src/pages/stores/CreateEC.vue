@@ -158,7 +158,6 @@
             class="half-width" hide-bottom-space :readonly="useNumber"
             :rules="[ (val: string) => useNumber || Validator.isValidNumber(val) ]"/>
           <q-checkbox class="q-ml-md" v-model.trim="useNumber" @update:model-value="updateAddressNumber()" label="Casa sem número"/>
-
           </div>
         </q-step>
 
@@ -183,14 +182,12 @@
             <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não'  }}</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
-
             <p><strong>CEP:</strong> {{ address.zipCode.code }}</p>
           <p><strong>Cidade:</strong> {{ address.city }}</p>
           <p><strong>Estado:</strong> {{ address.uf }}</p>
           <p><strong>Bairro:</strong> {{ address.neighborhood }}</p>
           <p><strong>Rua:</strong> {{ address.street }}</p>
           <p><strong>Número:</strong> {{ address.number }}</p>
-
             <p v-if="implementHierarchy('sysAdmin')">
               <strong>ID do polo</strong> {{ poloID }}
             </p>
@@ -223,7 +220,6 @@ import { useStoreStore } from 'src/stores/useStoreStore';
 //import {  useRouter } from 'vue-router'
 import { ref } from 'vue';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
-
 
 const step = ref(1);
 const businessName = ref('');
@@ -339,13 +335,20 @@ const checkFormValidation = () => {
     Validator.isValidEmail(employeeEmail.value)
   ) {
     step.value = 3;
-
-Number(employeePhone.value) &&
-    Validator.isValidEmail(establishmentEmail.value) &&
-    Validator.isValidEmail(employeeEmail.value)
+  } else if (
+    step.value === 3  &&
+    address.value.zipCode &&
+    address.value.city &&
+    address.value.uf &&
+    address.value.neighborhood &&
+    address.value.street &&
+    address.value.number
   ) {
-    step.value = 3;
-atórios.');
+    step.value = 4;
+  } else if (step.value === 4) {
+    submit();
+  } else {
+    NotifyError.error('Preencha todos os campos obrigatórios.');
   }
 };
 const getButtonColor = () => {
@@ -374,4 +377,3 @@ const getButtonColor = () => {
   }
 };
 </script>
-
