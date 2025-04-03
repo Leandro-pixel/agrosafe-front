@@ -52,7 +52,6 @@ export class EC {
 		public employeeEmail: string = '',
 		public employeePhone: string = '',
 		public employeeName: string = '',
-		public poloId: number = 0,
 		public address: Address = new Address(),
 		public city: string = address.city,
 		public state: string = address.uf,
@@ -79,8 +78,7 @@ export class EC {
 			json.employeeEmail,
 			json.employeePhone,
 			json.employeeName,
-			json.poloId,
-      Address.fromJson(json.address),
+			// Mapeamento direto dos campos do endereço
 			json.city,
 			json.neighborhood,
 			json.street,
