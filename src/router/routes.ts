@@ -23,10 +23,12 @@ const routes: RouteRecordRaw[] = [
         path: '/dashboard/movimentacoes/split',
         component: () => import('pages/dashboard/SplitPage.vue'),
       },
+      /*
       {
         path: '/dashboard/cobrancas',
         component: () => import('pages/dashboard/ChargePage.vue'),
       },
+      */
       {
         path: '/dashboard/antecipacoes',
         component: () => import('pages/dashboard/WithdrawalsPage.vue'),

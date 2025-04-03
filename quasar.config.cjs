@@ -15,7 +15,7 @@ require('dotenv').config()
 module.exports = configure(function (/* ctx */) {
   return {
     eslint:{
-      fix: true,
+     // fix: true,
       warnings: true,
       errors:true,
     },
@@ -58,7 +58,19 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
-        node: 'node20'
+        node: 'node20',
+        chainWebpack (chain) {
+          chain.module
+            .rule('svg')
+            .use('file-loader')
+            .loader('file-loader')
+            .tap(options => {
+              options = {
+                name: 'img/[name].[hash:8].[ext]'
+              }
+              return options
+            })
+          }
       },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'
@@ -68,7 +80,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+       publicPath: '/',
       // analyze: true,
        env: {
         BASE_API_URL: process.env.BASE_API_URL,
