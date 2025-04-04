@@ -10,8 +10,9 @@ export class InvoiceRepository {
     userId?: number,
     cardId?: number
   ): Promise<PaginatedResponse> {
-    console.log('chegou aqui T');
     try {
+      console.log(limit, offset, userId, cardId);
+
       const params = Object.fromEntries(
         Object.entries({
           limit,
@@ -20,9 +21,9 @@ export class InvoiceRepository {
           cardId,
         }).filter(([, value]) => value != null) // Remove `null` e `undefined`
       );
+      console.log('aaaaaaaaaaaa T', params);
 
       const data = await api.requestGet('/invoice', params);
-      console.log('aaaaaaaaaaaa T', data);
 
 			const json: PaginatedResponse = {
 				data: data.data.map((item: any) => Invoice.fromJson(item)),

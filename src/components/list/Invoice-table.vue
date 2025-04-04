@@ -28,6 +28,11 @@
           filled
           emit-value
         />
+        <q-checkbox
+  v-model="filterEnabled"
+  label="Não exibir faturas com valor de R$0,00"
+/>
+
         <PrimaryButton
           @click="searchUser"
           label="Pesquisar"
@@ -47,7 +52,7 @@
       <PrimaryTable
   @request="onRequest"
   v-model:pagination="pagination"
-  :rows="invoice"
+  :rows="invoiceFiltered"
   :loading="loading"
   :columns="columns"
   :refresh="refresh"
@@ -113,7 +118,15 @@ import { UserCard } from 'src/models/userCard';
 import { useUserCardsStore } from 'src/stores/useUserCardsStore';
 import { useCustomerStore } from 'src/stores/useCustomerStore';
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
+const filterEnabled = ref(false);
+
+const invoiceFiltered = computed(() => {
+  return filterEnabled.value
+    ? invoice.value.filter(inv => inv.balanceWithFee !== 0.00)
+    : invoice.value;
+});
 //const router = useRouter()
 const invoice = ref([] as Array<Invoice>);
 const invoiceStore = useInvoiceStore();

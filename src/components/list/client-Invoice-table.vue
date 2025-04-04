@@ -143,7 +143,7 @@ const onRequest = async () => {
   console.log('veio aquiaqui' + props);
   loading.value = true;
   await invoiceStore
-    .fetchInvoice(props.clientId, cardId.value)
+    .fetchInvoice(null, null,props.clientId, cardId.value)
     .then(() => {
 
       invoice.value = invoiceStore.getinvoices;

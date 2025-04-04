@@ -8,8 +8,8 @@ class FetchInvoiceUseCase {
   }
 
   async execute(
-    limit: number,
-    offset: number,
+    limit?: number,
+    offset?: number,
     userId?: number,
     cardId?: number
   ): Promise<PaginatedResponse> {
