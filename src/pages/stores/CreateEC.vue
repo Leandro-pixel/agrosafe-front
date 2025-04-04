@@ -119,6 +119,15 @@
   label="O estabelecimento deseja antecipação automática?"
   color="primary"
 />
+<q-input
+              dense
+              outlined
+              v-model.number="maximumNumberInstallments"
+              label="Máximo de parcelas"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:number) => !!val || 'Campo obrigatório']"
+            />
 
             <q-input
               dense
@@ -182,6 +191,7 @@
             <p><strong>Slipt:</strong> {{ splitstatus ? 'Sim' : 'Não'  }}</p>
             <p><strong>E-mail do proprietário:</strong> {{ employeeEmail }}</p>
             <p><strong>Telefone do proprietário</strong> {{ employeePhone }}</p>
+            <p><strong>Máximo de parcelas</strong> {{ maximumNumberInstallments }}</p>
             <p><strong>CEP:</strong> {{ address.zipCode.code }}</p>
           <p><strong>Cidade:</strong> {{ address.city }}</p>
           <p><strong>Estado:</strong> {{ address.uf }}</p>
@@ -247,6 +257,7 @@ const currentMask = ref('###.###.###-##');
 const documentType = ref('cpf');
 const antecipationType = ref(false);
 const storeStore = useStoreStore();
+const maximumNumberInstallments = ref<number | null>(null);
 
 const updateAddressNumber = () => {
   if (useNumber.value) {
@@ -307,7 +318,9 @@ const submit = async () => {
       postalCode.value,
       complement.value,
       poloID.value.toString(),
-      splitstatus.value.toString()
+      splitstatus.value.toString(),
+      null,
+      maximumNumberInstallments.value
     );
     const response = await storeStore.createEC(store);
     await ShowLoading.hide('');

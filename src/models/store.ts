@@ -41,85 +41,93 @@ export class Store {
 	}
 }
 export class EC {
-	constructor (
-		public businessName: string = '',
-		public tradeName: string = '',
-		public cpf: string = '',
-		public cnpj: string = '',
-		public automaticStatusAnticipation: string = 'false',
-		public establishmentEmail: string = '',
-		public establishmentPhone: string = '',
-		public employeeEmail: string = '',
-		public employeePhone: string = '',
-		public employeeName: string = '',
-		public address: Address = new Address(),
-		public city: string = address.city,
-		public state: string = address.uf,
-		public neighborhood: string = address.neighborhood,
-		public street: string = address.street,
-		public number: string = address.number,
-		public postalCode: string = address.zipCode.getCodeWithoutSymbols(),
-		public complement: string = address.complement,
-		public employeeId: string = '',
-		public splitStatus: string = 'false',
-		public supplierStatus: string = 'false'
-	) {}
+    constructor (
+      public businessName: string = '',
+      public tradeName: string = '',
+      public cpf: string = '',
+      public cnpj: string = '',
+      public automaticStatusAnticipation: string = 'false',
+      public establishmentEmail: string = '',
+      public establishmentPhone: string = '',
+      public employeeEmail: string = '',
+      public employeePhone: string = '',
+      public employeeName: string = '',
+      public address: Address = new Address(),
+      public city: string = address.city,
+      public state: string = address.uf,
+      public neighborhood: string = address.neighborhood,
+      public street: string = address.street,
+      public number: string = address.number,
+      public postalCode: string = address.zipCode.getCodeWithoutSymbols(),
+      public complement: string = address.complement,
+      public employeeId: string = '',
+      public splitStatus: string = 'false',
+      public supplierStatus: string = 'false',
+      public maximumNumberInstallments: number | null = null // 👈 Aqui está!
+    ) {}
 
-	static fromJson (json: any): EC | undefined {
-		if (!json) return
-		return new EC(
-			json.businessName,
-			json.tradeName,
-			json.cpf,
-			json.cnpj,
-			json.automaticStatusAnticipation,
-			json.establishmentEmail,
-			json.establishmentPhone,
-			json.employeeEmail,
-			json.employeePhone,
-			json.employeeName,
-			// Mapeamento direto dos campos do endereço
-			json.city,
-			json.neighborhood,
-			json.street,
-			json.number,
-			json.postalCode,
-			json.complement,
-			json.employeeId,
-			json.splitStatus,
-			json.supplierStatus
-		)
-	}
 
-	public toJson() {
-		const json: any = {
-			businessName: this.businessName,
-			tradeName: this.tradeName,
-			cpf: Formatter.clearSymbolsAndLetters(this.cpf),
-			cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
-			automaticStatusAnticipation: this.automaticStatusAnticipation,
-			establishmentEmail: this.establishmentEmail,
-			establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
-			employeeEmail: this.employeeEmail,
-			employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
-			employeeName: this.employeeName,
-			// Mapeamento direto dos campos de endereço
-			city: this.address.city,
-      state: this.address.uf,
-			neighborhood: this.address.neighborhood,
-			street: this.address.street,
-			number: this.address.number,
-			postalCode: this.address.zipCode.getCodeWithoutSymbols(),
-			complement: this.address.complement,
-			splitStatus: this.splitStatus,
-			supplierStatus: this.supplierStatus
-		};
+    static fromJson(json: any): EC | undefined {
+      if (!json) return;
+      return new EC(
+        json.businessName,
+        json.tradeName,
+        json.cpf,
+        json.cnpj,
+        json.automaticStatusAnticipation,
+        json.establishmentEmail,
+        json.establishmentPhone,
+        json.employeeEmail,
+        json.employeePhone,
+        json.employeeName,
+        // Endereço e outros campos
+        new Address(), // ou Address.fromJson(json.address) se estiver estruturado
+        json.city,
+        json.state,
+        json.neighborhood,
+        json.street,
+        json.number,
+        json.postalCode,
+        json.complement,
+        json.employeeId,
+        json.splitStatus,
+        json.supplierStatus,
+        json.maximumNumberInstallments !== undefined ? Number(json.maximumNumberInstallments) : null // 👈 aqui
+      );
+    }
 
-		// Condicional para incluir `employeeId` apenas se for diferente de 0
-		if (this.employeeId !== '0') {
-			json.employeeId = this.employeeId;
-		}
+    public toJson() {
+      const json: any = {
+        businessName: this.businessName,
+        tradeName: this.tradeName,
+        cpf: Formatter.clearSymbolsAndLetters(this.cpf),
+        cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
+        automaticStatusAnticipation: this.automaticStatusAnticipation,
+        establishmentEmail: this.establishmentEmail,
+        establishmentPhone: Formatter.clearSymbolsAndLetters(this.establishmentPhone),
+        employeeEmail: this.employeeEmail,
+        employeePhone: Formatter.clearSymbolsAndLetters(this.employeePhone),
+        employeeName: this.employeeName,
+        city: this.address.city,
+        state: this.address.uf,
+        neighborhood: this.address.neighborhood,
+        street: this.address.street,
+        number: this.address.number,
+        postalCode: this.address.zipCode.getCodeWithoutSymbols(),
+        complement: this.address.complement,
+        splitStatus: this.splitStatus,
+        supplierStatus: this.supplierStatus,
+      };
 
-		return json;
-	}
+      if (this.employeeId !== '0') {
+        json.employeeId = this.employeeId;
+      }
+
+      if (this.maximumNumberInstallments !== null) {
+        json.maximumNumberInstallments = this.maximumNumberInstallments;
+      }
+
+      return json;
+    }
+
 }
