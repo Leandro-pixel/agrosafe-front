@@ -101,6 +101,14 @@ export class AuthRepository implements AuthRepositoryContract {
 		}
 	}
 
+  async changePasswordBySupport (id: number, seeUser: boolean) {
+		try {
+			return await api.requestPut('/sms/new/password', { id, seeUser })
+		} catch (error) {
+			throw new Error('Erro ao alterar senha')
+		}
+	}
+
 	async activateUser (userId: string) {
 		try {
 			return await api.requestPost('/user/activate', { userId })

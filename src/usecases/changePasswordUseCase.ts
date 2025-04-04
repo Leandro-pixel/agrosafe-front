@@ -8,6 +8,10 @@ class ChangePasswordUseCase {
 	async execute (currentPassword:string, newPassword:string) {
 		return await this.authRepository.changePassword(currentPassword, newPassword)
 	}
+
+  async executeBySupport (userId:number, seeUser:boolean) {
+		return await this.authRepository.changePasswordBySupport(userId, seeUser)
+	}
 }
 
 export default ChangePasswordUseCase

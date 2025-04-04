@@ -106,6 +106,17 @@
                   </q-btn>
                 </q-item>
 
+                <q-item class="q-pl-xs" v-if="implementHierarchy('sysAdmin')">
+                  <q-btn
+                    flat
+                    @click="handleButtonClick('/dashboard/senhas', 'Dashboard')"
+                    class="full-width text-white no-wrap"
+                    style="text-transform: none"
+                  >
+                    <div class="items-start flex width-full">Senhas</div>
+                  </q-btn>
+                </q-item>
+
               </q-list>
             </q-expansion-item>
 

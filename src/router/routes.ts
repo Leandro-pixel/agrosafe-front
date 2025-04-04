@@ -38,6 +38,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/InvoicePage.vue'),
       },
       {
+        path: '/dashboard/senhas',
+        component: () => import('pages/dashboard/PasswordsPage.vue'),
+      },
+      {
         path: '/fornecedor',
         component: () => import('pages/supliers/SuplierPage.vue'),
         children: [

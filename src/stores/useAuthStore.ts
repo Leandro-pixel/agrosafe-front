@@ -74,6 +74,10 @@ export const useAuthStore = defineStore('auth', {
 		async changePassword (currentPassword: string, newPassword: string) {
 			return await changePasswordUseCase.execute(currentPassword, newPassword)
 		},
+
+    async changePasswordBySupport (userId: number, seeUser: boolean) {
+			return await changePasswordUseCase.executeBySupport(userId, seeUser)
+		},
     /*
 		async activateUser (userId: string) {
 			return await activateUserUseCase.execute(userId)
