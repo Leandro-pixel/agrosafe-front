@@ -59,6 +59,15 @@
               </slot>
           </template>
           <template #top-right>
+            <q-btn
+    color="red"
+    icon="file_download"
+    label="Exportar"
+    flat
+    dense
+    @click="exportToPDF"
+    class="q-mr-md"
+  />
               <slot name="top-right">
               </slot>
           </template>
@@ -72,6 +81,8 @@
 <script setup lang="ts">
 import { QTable, QTableColumn } from 'quasar'
 import { onMounted, ref, watch } from 'vue'
+import {jsPDF} from 'jspdf'
+import {autoTable} from 'jspdf-autotable'
 
 defineEmits(['request'])
 const props = defineProps<{
@@ -82,6 +93,36 @@ const props = defineProps<{
       refresh?: boolean,
       visibleColumns?: string[],
 }>()
+
+const exportToPDF = () => {
+  const doc = new jsPDF()
+
+  // Filtro: remove a coluna "ações"
+  const exportColumns = props.columns.filter(col => col.name !== 'actions')
+
+  // Cabeçalhos
+  const headers = [exportColumns.map(col => col.label)]
+
+  // Dados
+  const data = props.rows.map(row =>
+    exportColumns.map(col =>
+      typeof col.field === 'function'
+        ? col.field(row)
+        : row[col.name]
+    )
+  )
+
+  autoTable(doc, {
+    head: headers,
+    body: data,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [22, 160, 133] },
+    margin: { top: 20 },
+  })
+
+  doc.save('tabela.pdf')
+}
+
 
 const pagination = defineModel('pagination') as any
 const filter = ref('')
