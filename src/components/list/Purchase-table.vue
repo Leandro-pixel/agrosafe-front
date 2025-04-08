@@ -323,7 +323,7 @@ const searchEC = async () => {
   )
     .then(() => {
       EC.value = storeStore.getStores;
-      ECId.value = parseInt(EC.value[0].id)
+      ECId.value = parseInt(EC.value[0].id.toString())
       onRequest()
     })
     .catch((error: any) => NotifyError.error(error.message))

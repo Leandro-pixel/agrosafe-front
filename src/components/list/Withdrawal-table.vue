@@ -30,6 +30,10 @@
             dense
             filled
           />
+          <q-checkbox
+  v-model="filterEnabled"
+  label="É um Fornecedor"
+/>
           <PrimaryButton @click="searchEC" label="Pesquisar" />
         </div>
       </div>
@@ -94,8 +98,15 @@ import { useWithdrawalStore } from 'src/stores/useWithdrawalStore';
 //import { Validator } from 'src/utils/validator';
 import { Store } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
+import { computed } from 'vue';
 
+const filterEnabled = ref(false);
 
+const emploeeyFiltered = computed(() => {
+  return filterEnabled.value
+    ? 'supplierestablishmentId'
+    : 'establishmentId';
+});
 const withdralStore = useWithdrawalStore();
 
 // Recebe o ID da rota como propriedade
@@ -114,7 +125,6 @@ const refresh = ref(false);
 
 const selectedSearchType = ref('');
 const searchValueBy = ref('');
-
 const ecs = ref([] as Array<Store>);
 const storeStore = useStoreStore();
 const ecId = ref(null)
@@ -162,7 +172,7 @@ const onRequest = async (props: any) => {
   loading.value = true;
   if (!props.pagination) {
     await withdralStore
-    .fetchWithdrawal(null,null,ecId.value)
+    .fetchWithdrawal(null,null,emploeeyFiltered.value, ecId.value)
     .then(() => {
       console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 
@@ -181,7 +191,7 @@ const onRequest = async (props: any) => {
   const limit = rowsPerPage;
   console.log('offset e limit', offset, limit);
   await withdralStore
-    .fetchWithdrawal(limit, offset, ecId.value)
+    .fetchWithdrawal(limit, offset,emploeeyFiltered.value, ecId.value)
     .then(() => {
       console.log('veio aquiaqui2' + withdralStore.getWithdrawals);
 

@@ -1,45 +1,134 @@
 import { Formatter } from 'src/utils/formatter'
 import { Address } from './address'
-import { Hub } from './hub'
+//import { Hub } from './hub'
+
 
 export class Store {
-	constructor (
-		public id: string = '',
-		public fullName: string = '',
-		public fantasyName: string = '',
-		public document: string = '',
-		public active: boolean = false,
-		public createdAt: number = 0,
-		public address: Address = new Address(),
-		public hub: Hub = new Hub(),
-		public phone: string = ''
-	) {}
+  constructor(
+    public id: number | null = null,
+    public cnpj: string = '',
+    public cpf: string = '',
+    public businessName: string = '',
+    public tradeName: string = '',
+    public automaticStatusAnticipation: boolean = false,
+    public initialValueCard: string = '',
+    public maximumNumberInstallments: number = 6,
+    public cardCreditLimit: string = '',
+    public cardDebitLimit: string = '',
+    public totalBalance: string = '',
+    public amountToReceive: string = '',
+    public availableCreditBalance: string = '',
+    public outstandingCredit: string = '',
+    public splitPercentage: string = '',
+    public issuanceDate: string | null = null,
+    public email: string = '',
+    public phone: string = '',
+    public street: string = '',
+    public number: string = '',
+    public complement: string = '',
+    public neighborhood: string = '',
+    public city: string = '',
+    public state: string = '',
+    public postalCode: string = '',
+    public customerLimit: number = 20,
+    public amountToReceiveWithFee: number = 0.0,
+    public discountedByAnticipationFee: number = 0.0,
+    public captureFee: number = 0.0,
+    public splitDiscount: number = 0.0,
+    public splitStatus: boolean | string = '',
+    public supplierStatus: boolean | string = '',
+    public status: boolean | string = '',
+    public deactivationStatus: boolean | string = '',
+    public deactivationDate: string | null = null,
+    public createdAt: string = '',
+    public updatedAt: string = ''
+  ) {}
 
-	static fromJson (json: any): Store | undefined {
-		if (!json) return
-		return new Store(
-			json.id,
-			json.fullName,
-			json.fantasyName,
-			json.document,
-			Boolean(json.active),
-			json.createdAt,
-			Address.fromJson(json.address),
-			Hub.fromJson(json.hub)
-		)
-	}
+  static fromJson(json: any): Store {
+    return new Store(
+      json.id ?? null,
+      json.cnpj ?? '',
+      json.cpf ?? '',
+      json.businessName ?? '',
+      json.tradeName ?? '',
+      Boolean(json.automaticStatusAnticipation),
+      json.initialValueCard ?? '',
+      json.maximumNumberInstallments ?? 6,
+      json.cardCreditLimit ?? '',
+      json.cardDebitLimit ?? '',
+      json.totalBalance ?? '',
+      json.amountToReceive ?? '',
+      json.availableCreditBalance ?? '',
+      json.outstandingCredit ?? '',
+      json.splitPercentage ?? '',
+      json.issuanceDate ?? null,
+      json.email ?? '',
+      json.phone ?? '',
+      json.street ?? '',
+      json.number ?? '',
+      json.complement ?? '',
+      json.neighborhood ?? '',
+      json.city ?? '',
+      json.state ?? '',
+      json.postalCode ?? '',
+      json.customerLimit ?? 20,
+      Number(json.amountToReceiveWithFee ?? 0),
+      Number(json.discountedByAnticipationFee ?? 0),
+      Number(json.captureFee ?? 0),
+      Number(json.splitDiscount ?? 0),
+      json.splitStatus ?? '',
+      json.supplierStatus ?? '',
+      json.status ?? '',
+      json.deactivationStatus ?? '',
+      json.deactivationDate ?? null,
+      json.createdAt ?? '',
+      json.updatedAt ?? ''
+    );
+  }
 
-	public toJson () {
-		return {
-			hubId: this.hub.id,
-			fullName: this.fullName,
-			fantasyName: this.fantasyName,
-			document: Formatter.clearSymbolsAndLetters(this.document),
-			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
-			address: this.address.toJson()
-		}
-	}
+  public toJson(): any {
+    return {
+      id: this.id,
+      cnpj: Formatter.clearSymbolsAndLetters(this.cnpj),
+      cpf: Formatter.clearSymbolsAndLetters(this.cpf),
+      businessName: this.businessName,
+      tradeName: this.tradeName,
+      automaticStatusAnticipation: this.automaticStatusAnticipation,
+      initialValueCard: this.initialValueCard,
+      maximumNumberInstallments: this.maximumNumberInstallments,
+      cardCreditLimit: this.cardCreditLimit,
+      cardDebitLimit: this.cardDebitLimit,
+      totalBalance: this.totalBalance,
+      amountToReceive: this.amountToReceive,
+      availableCreditBalance: this.availableCreditBalance,
+      outstandingCredit: this.outstandingCredit,
+      splitPercentage: this.splitPercentage,
+      issuanceDate: this.issuanceDate,
+      email: this.email,
+      phone: Formatter.clearSymbolsAndLetters(this.phone),
+      street: this.street,
+      number: this.number,
+      complement: this.complement,
+      neighborhood: this.neighborhood,
+      city: this.city,
+      state: this.state,
+      postalCode: this.postalCode,
+      customerLimit: this.customerLimit,
+      amountToReceiveWithFee: this.amountToReceiveWithFee,
+      discountedByAnticipationFee: this.discountedByAnticipationFee,
+      captureFee: this.captureFee,
+      splitDiscount: this.splitDiscount,
+      splitStatus: this.splitStatus,
+      supplierStatus: this.supplierStatus,
+      status: this.status,
+      deactivationStatus: this.deactivationStatus,
+      deactivationDate: this.deactivationDate,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
+  }
 }
+
 export class EC {
     constructor (
       public businessName: string = '',
@@ -63,7 +152,7 @@ export class EC {
       public employeeId: string = '',
       public splitStatus: string = 'false',
       public supplierStatus: string = 'false',
-      public maximumNumberInstallments: number | null = null // 👈 Aqui está!
+      public maximumNumberInstallments: number | null = null
     ) {}
 
 

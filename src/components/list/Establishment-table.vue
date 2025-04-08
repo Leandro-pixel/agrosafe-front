@@ -170,7 +170,7 @@ const columns: QTableColumn[] = [
   {
     name: 'status',
     label: 'Status',
-    field: (row: Store) => (row.active ? 'Ativo' : 'Inativo'),
+    field: (row: Store) => (row.status ? 'Ativo' : 'Inativo'),
     align: 'left',
   },
   { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },

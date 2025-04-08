@@ -30,10 +30,11 @@
                   <q-input dense class="col-grow" no-error-icon v-model="email" label="E-mail" :rules="[(val:string) => Validator.isValidEmail(val) || 'E-mail inválido']"/>
                   <q-input dense class="col-grow" no-error-icon v-model="document" label="CPF/CNPJ" @update:model-value="updateMask" :mask="currentMask" :rules="[validateDocument]" /> <!-- @input é um watcher-->
                   <q-input dense class="col-grow" no-error-icon v-model.trim="phone" label="Celular" mask="(##)#####-####" lazy-rules :rules="[(val:string) => Validator.isValidPhoneNumber(val) || 'Número inválido']"/>
-                </q-form>
-                <q-item-section class="justify-center items-center">
+                    <q-item-section class="justify-center items-center">
                   <PrimaryButton type="submit" label="Enviar" :loading="loading" rounded />
                 </q-item-section>
+                  </q-form>
+
       </q-card-section>
     </q-card>
       </div>

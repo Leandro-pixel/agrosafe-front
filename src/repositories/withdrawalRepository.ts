@@ -4,12 +4,12 @@ import { Withdrawal } from 'src/models/withdrawals';
 export class WithdrawalRepository {
 
 
-  async fetchWithdrawals(limit: number, offset: number, establishmentId?:number): Promise<PaginatedResponse> {
+  async fetchWithdrawals(limit: number, offset: number,emploeeyFiltred?: string, employeeId?:number): Promise<PaginatedResponse> {
     const params = Object.fromEntries(
       Object.entries({
         limit,
         offset,
-        establishmentId,
+        [emploeeyFiltred || '']: employeeId,
       }).filter(([, value]) => value != null)
     );    try {
       const data = await api.requestGet('/establishment/withdrawals', params);
