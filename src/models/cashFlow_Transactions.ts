@@ -1,6 +1,6 @@
 import { Formatter } from 'src/utils/formatter';
 
-export class CashFlow2 {
+export class Transaction {
   constructor(
     public id: number = 0,
     public establishmentId: number = 0,
@@ -8,13 +8,13 @@ export class CashFlow2 {
     public userCardId: number = 0,
     public description: string = '',
     public transactionType: string = '',
+    public userName: string = '',
+    public businessName: string = '',
     public status: string = '',
     public invoiceNumber: number = 0,
     public month: number = 0,
     public year: number = 0,
     public originalAmount: number = 0, // Convertido de string para número
-    public cashbackAmount: number = 0, // Convertido de string para número
-    public interest: number = 0, // Convertido de string para número
     public installmentCount: number = 0,
     public anticipationStatus: boolean = false,
     public anticipationDate: string | null = null, // Pode ser null
@@ -28,35 +28,36 @@ export class CashFlow2 {
     public updatedAt: string = '' // Data formatada
   ) {}
 
-  static fromJson(json: any): CashFlow2 | undefined {
+  static fromJson(json: any): Transaction | undefined {
     if (!json) return;
 
-    return new CashFlow2(
+    return new Transaction(
       json.id,
       json.establishmentId,
       json.financingInstallmentId,
       json.userCardId,
       json.description,
       json.transactionType,
+      json.userName,
+      json.businessName,
       json.status,
       json.invoiceNumber,
       json.month,
       json.year,
-      parseFloat(json.originalAmount), // Converte de string para número
-      parseFloat(json.cashbackAmount), // Converte de string para número
-      parseFloat(json.interest), // Converte de string para número
+      parseFloat(json.originalAmount),
       json.installmentCount,
       json.anticipationStatus || false,
-      json.anticipationDate, // Permanece como string ou null
-      json.paymentDate, // Permanece como string ou null
-      parseFloat(json.originalInstallment), // Novo campo
-      parseFloat(json.availableWithdrawalAmount), // Novo campo
-      parseFloat(json.billingFeeAmountToPay), // Novo campo
-      parseFloat(json.advanceFee), // Novo campo
-      parseFloat(json.captureFee), // Novo campo
-      Formatter.formatIsoDateToBR(json.createdAt), // Formata a data para o padrão brasileiro
+      json.anticipationDate,
+      json.paymentDate,
+      parseFloat(json.originalInstallment),
+      parseFloat(json.availableWithdrawalAmount),
+      parseFloat(json.billingFeeAmountToPay),
+      parseFloat(json.advanceFee),
+      parseFloat(json.captureFee),
+      Formatter.formatIsoDateToBR(json.createdAt),
       Formatter.formatIsoDateToBR(json.updatedAt)
     );
+
   }
 
   public toJson() {
@@ -72,12 +73,12 @@ export class CashFlow2 {
       month: this.month,
       year: this.year,
       originalAmount: this.originalAmount.toFixed(2),
-      cashbackAmount: this.cashbackAmount.toFixed(2),
-      interest: this.interest.toFixed(2),
       installmentCount: this.installmentCount,
       anticipationStatus: this.anticipationStatus,
       anticipationDate: this.anticipationDate,
       paymentDate: this.paymentDate,
+      userName: this.userName,
+      businessName: this.businessName,
       originalInstallment: this.originalInstallment.toFixed(2), // Novo campo
       availableWithdrawalAmount: this.availableWithdrawalAmount.toFixed(2), // Novo campo
       billingFeeAmountToPay: this.billingFeeAmountToPay.toFixed(2), // Novo campo
@@ -92,9 +93,6 @@ export class CashFlow2 {
     return Formatter.formatNumberToBRCurrency(this.originalAmount);
   }
 
-  public getFormattedCashbackAmount(): string {
-    return Formatter.formatNumberToBRCurrency(this.cashbackAmount);
-  }
 
   public getFormattedOriginalInstallment(): string {
     return Formatter.formatNumberToBRCurrency(this.originalInstallment);

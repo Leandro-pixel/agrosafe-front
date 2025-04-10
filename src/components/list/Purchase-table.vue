@@ -96,22 +96,27 @@
         :columns="columns"
         :refresh="refresh"
       >
-        <template #body-cell-status="props">
-          <q-td>
-            <q-chip
-              :class="
-                'non-selectable bg-' +
-                translateStatusToColor(props.props.row.statuses[0])
-              "
-              size="md"
-              flat
-            >
-              {{
-                props.props.row.statuses[0] == 'pending' ? 'Pendente' : 'Pago'
-              }}
-            </q-chip>
-          </q-td>
-        </template>
+      <template #body-cell-status="props">
+  <q-td>
+    <q-chip
+      :class="{
+        'non-selectable': true,
+        ['bg-' + translateStatusToColor(
+          props.props.row.statuses.every(status => status === 'completed') ? 'completed' : 'pending'
+        )]: true
+      }"
+      size="md"
+      flat
+    >
+      {{
+        props.props.row.statuses.every(status => status === 'completed')
+          ? 'Pago'
+          : 'Pendente'
+      }}
+    </q-chip>
+  </q-td>
+</template>
+
         <template v-slot:body-cell-userName="props">
           <q-td>
             <span
@@ -125,20 +130,34 @@
         <template #body-cell-actions="props">
           <q-btn-dropdown flat color="primary" dropdown-icon="settings">
             <q-list>
-              <q-td class="flex flex-row justify-center items-center gap-2">
+              <div class="flex flex-row justify-center items-center gap-2">
                 <PrimaryButton
                   icon="add_business"
                   flat
-                  @click="
-                    details(props.props.row.id, props.props.row.name, 'true')
-                  "
+                  @click="details(props.props.row.hash, props.props.row.userName, 'true')"
                   label="Detalhes"
                 />
-              </q-td>
+              </div>
             </q-list>
           </q-btn-dropdown>
         </template>
       </PrimaryTable>
+      <q-dialog v-model="showDialog">
+  <q-card>
+    <q-card-section>
+      <div class="text-h6">Detalhes da Transação</div>
+    </q-card-section>
+
+    <q-card-section>
+      <TransactionTable :hash="selectedHashId"/>
+    </q-card-section>
+
+    <q-card-actions >
+      <q-btn flat label="Fechar" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
     </q-page>
   </q-layout>
 </template>
@@ -150,7 +169,6 @@ import { NotifyError } from 'src/utils/utils';
 import PrimaryTable from 'src/components/list/PrimaryTable.vue';
 import { QTableColumn } from 'quasar';
 import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
-//import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { useCachSflowStore } from 'src/stores/useCashFlowStore';
 import { CashFlow } from 'src/models/cashFlow';
@@ -161,6 +179,8 @@ import { useUserCardsStore } from 'src/stores/useUserCardsStore';
 import { UserCard } from 'src/models/userCard';
 import { Store } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
+import TransactionTable from 'src/components/list/Transaction-table.vue';
+
 const searchValue = ref();
 const rows = ref([] as Array<CashFlow>);
 const cashFlowStore = useCachSflowStore();
@@ -186,6 +206,8 @@ const storeStore = useStoreStore();
 const cardId2 = ref<number | null>(null);
 const clientId = ref<number | null>(null);
 const ECId = ref<number | null>(null);
+const showDialog = ref(false);
+const selectedHashId = ref('');
 
 
 console.log('propriedades:' + props);
@@ -224,7 +246,7 @@ const columns: QTableColumn[] = [
     name: 'status',
     required: true,
     label: 'Status',
-    field: (row: CashFlow) => row.statuses[0],
+    field: (row: CashFlow) => row.statuses.every(status => status === 'completed') ? 'completed' : 'pending',
     align: 'left',
   },
   {
@@ -234,6 +256,7 @@ const columns: QTableColumn[] = [
     field: (row: CashFlow) => row.installmentCount,
     align: 'left',
   },
+  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];
 
 const validateSearchType = () => {
@@ -266,9 +289,15 @@ const search = () => {
   }
 };
 
-const details = async (id: any, name: any, status: string) => {
-  console.log(id, name, status);
+const details = async (hash: any, name: any, status: string) => {
+  const selectedRow = rows.value.find(row => row.hash === hash);
+  console.log(name, status)
+  if (selectedRow) {
+    selectedHashId.value = selectedRow.hash ?? 'N/A';
+    showDialog.value = true;
+  }
 };
+
 
 const onRequest = async () => {
 
