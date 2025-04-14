@@ -81,26 +81,34 @@
                 <PrimaryButton
                   icon="add_business"
                   flat
-                  @click="
-                    activateUser(
-                      props.props.row.id,
-                      props.props.row.name,
-                      'true'
-                    )
-                  "
+                  v-if="!props.props.row.status"
+                  @click="activateUser(props.props.row.id, `Deseja realmente ATIVAR do usuário '${props.props.row.name}'?`, true)"
                   label="Ativar"
                 />
                 <PrimaryButton
+                  icon="add_business"
+                  flat
+                  v-if="props.props.row.status"
+                  @click="activateUser(props.props.row.id, `Deseja realmente DESATIVAR do usuário '${props.props.row.name}'?`, false)"
+                  label="Desativar"
+                />
+
+                <PrimaryButton
                   icon="key_off"
                   flat
-                  @click="
-                    disableUser(
-                      props.props.row.id,
-                      props.props.row.name,
-                      'false'
-                    )
-                  "
-                  label="Desativar"
+                  v-if="props.props.row.CCBStatus"
+  @click="activateCCB(props.props.row.id, `Deseja realmente DESATIVAR o CCB do usuário '${props.props.row.name}'?`, 'false')"
+  label="Desativar CCB"
+/>
+
+
+
+                <PrimaryButton
+                  icon="key_off"
+                  flat
+                  v-if="!props.props.row.CCBStatus"
+                      @click="activateCCB(props.props.row.id, `Deseja realmente ATIVAR o CCB do usuário '${props.props.row.name}'?`, 'true')"
+                  label="Ativar CCB"
                 />
                 <PrimaryButton
                   icon="notifications"
@@ -292,11 +300,11 @@ const openMessageSender = async (phone: string,message: string, title: string) =
     });
 };
 
-const activateUser = async (id: any, name: any, status: string) => {
+const activateCCB = async (id: any,desc: string, status: string) => {
   if (
     !(await ShowDialog.showConfirm(
       'Ativar usuário',
-      `Deseja realmente ATIVAR o usuário "${name}"?`,
+      desc,
       'primary'
     ))
   )
@@ -314,6 +322,29 @@ const activateUser = async (id: any, name: any, status: string) => {
     });
 };
 
+const activateUser = async (id: any, desc: string, loginStatus: boolean) => {
+  console.log(loginStatus)
+  if (
+    !(await ShowDialog.showConfirm(
+      'Ativar usuário',
+      desc,
+      'primary'
+    ))
+  )
+    return;
+  loading.value = true;
+  console.log(id);
+  await userStore
+    .activateCustomer(id, null, loginStatus)
+    .then(() => {
+      refresh.value = !refresh.value;
+    })
+    .catch((error: any) => NotifyError.error(error.message))
+    .finally(() => {
+      loading.value = false;
+    });
+};
+/*
 const disableUser = async (id: any, name: any, status: string) => {
   if (
     !(await ShowDialog.showConfirm(
@@ -333,5 +364,7 @@ const disableUser = async (id: any, name: any, status: string) => {
     .finally(() => {
       loading.value = false;
     });
+
 };
+*/
 </script>

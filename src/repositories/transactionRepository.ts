@@ -20,16 +20,13 @@ export class TransactionRepository {
         '/transaction',
         params
       );
-      console.log('aaaaaaaaaaaa T', data);
 
       const json: PaginatedResponse = {
         data: data.data.map((item: any) => Transaction.fromJson(item)),
         totalItems: data.totalItems,
       };
-      console.log('não ta jaisão', json);
       return json;
     } catch (error) {
-      console.log(error)
       throw new Error('transação não encontrada');
     }
   }

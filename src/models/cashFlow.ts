@@ -57,7 +57,7 @@ export class CashFlow {
       splitAmount: this.splitAmount.toFixed(2),
       cardFee: this.cardFee.toFixed(2),
       availableWithdrawalAmount: this.availableWithdrawalAmount.toFixed(2),
-      billingFeeAmountToPay: this.billingFeeAmountToPay.toFixed(2),
+      billingFeeAmountToPay: this.billingFeeAmountToPay,
       advanceFee: this.advanceFee.toFixed(2),
       description: this.description,
       businessName: this.businessName,

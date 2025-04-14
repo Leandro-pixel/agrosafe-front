@@ -18,11 +18,19 @@ export class CustomerRepository {
     }
   }
 
-  async ccbStatus(id: string, status: string) {
+  async ccbStatus(id: string, status?: string, loginStatus?: boolean) {
+    console.log(loginStatus)
+    const rawParams = {
+      status,
+      loginStatus
+    };
+    console.log('rawParams:', rawParams);
     const params = Object.fromEntries(Object.entries({
 			status,
-		}).filter(([, value]) => value !== undefined && value !== ''))
+      loginStatus
+		}).filter(([, value]) => value !== undefined && value !== '' && value !== null))
     try {
+      console.log(params)
       return await api.requestPut(`/ccb/status/${id}`, null,params);
     } catch (error) {
       throw new Error('Erro ao ativar conta, verifique se o usuário finalizou seu cadastro');

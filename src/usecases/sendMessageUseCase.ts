@@ -11,8 +11,8 @@ class SendMessageUseCase {
 		return await this.customerRepository.inviteCustomer(phone, message)
 	}
 
-  async executeCCB (id: string, status: string): Promise<boolean>{
-		return await this.customerRepository.ccbStatus(id, status)
+  async executeCCB (id: string, status?: string, loginStatus?: boolean): Promise<boolean>{
+		return await this.customerRepository.ccbStatus(id, status, loginStatus)
 	}
 
   async executeBureauMessage (phone: string,message: string, title: string){

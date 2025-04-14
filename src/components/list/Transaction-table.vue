@@ -73,6 +73,7 @@ import { translateStatusToColor } from 'src/models/enums/activeStatusEnum';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Transaction } from 'src/models/cashFlow_Transactions';
 import { useTransactionStore } from 'src/stores/useTransactionStore';
+import { Formatter } from 'src/utils/formatter';
 const rows = ref([] as Array<Transaction>);
 const transactionStore = useTransactionStore();
 const props = defineProps<{
@@ -113,7 +114,7 @@ const columns: QTableColumn[] = [
     name: 'originalAmount',
     required: true,
     label: 'Valor',
-    field: (row: Transaction) => row.getFormattedOriginalAmount(),
+    field: (row: Transaction) => Formatter.formatDoubleToCurrency(row.billingFeeAmountToPay),
     align: 'left',
   },
   {
@@ -130,7 +131,6 @@ const columns: QTableColumn[] = [
     field: (row: Transaction) => row.installmentCount,
     align: 'left',
   },
-  { name: 'actions', label: 'Ações', align: 'center', field: 'actions' },
 ];
 
 const onCashClick = (id: any, name: any) => {

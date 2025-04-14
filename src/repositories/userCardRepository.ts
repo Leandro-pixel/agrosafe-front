@@ -19,16 +19,13 @@ export class UserCardRepository {
         '/user/card',
         params
       );
-      console.log('aaaaaaaaaaaa T', data);
 
       const json: PaginatedResponse = {
         data: Array.isArray(data.data) ? data.data.map((item: any) => UserCard.fromJson(item)) : [],
         totalItems: data.totalItems ?? 0,
       };
-      console.log('não ta jaisão');
       return json;
     } catch (error) {
-      console.log(error)
       throw new Error('usuário não encontrado');
     }
   }

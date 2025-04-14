@@ -93,6 +93,9 @@ export class Transaction {
     return Formatter.formatNumberToBRCurrency(this.originalAmount);
   }
 
+  public getFormattedbillingFeeAmountToPay(): string {
+    return Formatter.formatNumberToBRCurrency(this.billingFeeAmountToPay);
+  }
 
   public getFormattedOriginalInstallment(): string {
     return Formatter.formatNumberToBRCurrency(this.originalInstallment);

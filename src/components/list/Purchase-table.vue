@@ -143,7 +143,7 @@
         </template>
       </PrimaryTable>
       <q-dialog v-model="showDialog">
-  <q-card>
+  <q-card >
     <q-card-section>
       <div class="text-h6">Detalhes da Transação</div>
     </q-card-section>
@@ -180,6 +180,7 @@ import { UserCard } from 'src/models/userCard';
 import { Store } from 'src/models/store';
 import { useStoreStore } from 'src/stores/useStoreStore';
 import TransactionTable from 'src/components/list/Transaction-table.vue';
+import { Formatter } from 'src/utils/formatter';
 
 const searchValue = ref();
 const rows = ref([] as Array<CashFlow>);
@@ -239,7 +240,7 @@ const columns: QTableColumn[] = [
     name: 'originalAmount',
     required: true,
     label: 'Valor',
-    field: (row: CashFlow) => row.getFormattedOriginalAmount(),
+    field: (row: CashFlow) => Formatter.formatDoubleToCurrency(row.billingFeeAmountToPay),
     align: 'left',
   },
   {
