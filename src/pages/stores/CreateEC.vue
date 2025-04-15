@@ -324,8 +324,12 @@ const submit = async () => {
     );
     const response = await storeStore.createEC(store);
     await ShowLoading.hide('');
-    ShowDialog.show('Sucesso!', 'A loja foi criada com sucesso!');
+    const dialog = await ShowDialog.showNotification('Sucesso!', 'A loja foi criada com sucesso!');
     console.log(response);
+    if(dialog){
+      window.location.reload()
+    }
+
   } catch (error: any) {
     await ShowLoading.hide('');
     NotifyError.error(error.message);

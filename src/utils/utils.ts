@@ -1,3 +1,4 @@
+import NotificationPopUp from 'src/components/popup/NotificationPopUp.vue';
 import Hashids from 'hashids';
 import { Dialog, Loading, Notify, QSpinnerBall } from 'quasar';
 import ConfirmPopUp from 'src/components/popup/ConfirmPopUp.vue';
@@ -113,6 +114,27 @@ class ShowDialog {
         description,
         iconName,
       },
+    });
+  };
+
+  static showNotification = (
+    title: string,
+    message: string,
+    color?: string
+  ): Promise<boolean> => {
+    return new Promise((resolve) => {
+      Dialog.create({
+        component: NotificationPopUp,
+
+        componentProps: {
+          title,
+          message,
+          color,
+        },
+      })
+        .onOk(() => {
+          resolve(true);
+        })
     });
   };
 
