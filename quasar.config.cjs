@@ -86,6 +86,11 @@ module.exports = configure(function (/* ctx */) {
         BASE_API_URL: process.env.BASE_API_URL,
 				API_KEY: process.env.API_KEY,
       },
+
+      metaVariables: {
+        productName: 'Nome do Meu Projeto',
+        productDescription: 'Descrição do Meu Projeto',
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
