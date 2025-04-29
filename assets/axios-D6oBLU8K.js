@@ -1,0 +1,1 @@
+import{b as s}from"./index-BgvXOS0e.js";import{a}from"./index-B1hcKvQO.js";const i=a.create({baseURL:"https://sua-api.com"}),e=s(({app:o})=>{o.config.globalProperties.$axios=a,o.config.globalProperties.$api=i});export{i as api,e as default};
