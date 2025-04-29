@@ -80,7 +80,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-       publicPath: '/',
+       publicPath: '/agrosafe-front',
       // analyze: true,
        env: {
         BASE_API_URL: process.env.BASE_API_URL,
@@ -88,8 +88,8 @@ module.exports = configure(function (/* ctx */) {
       },
 
       metaVariables: {
-        productName: 'Nome do Meu Projeto',
-        productDescription: 'Descrição do Meu Projeto',
+        productName: 'AgroSafe',
+        productDescription: 'Front do app agrosafe',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
