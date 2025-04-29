@@ -1,40 +1,37 @@
 import { defineStore } from 'pinia'
-import { UserData, User } from 'src/models/user'
-import { UserRepository } from 'src/repositories/userRepository'
-import FetchUserDataUseCase from 'src/usecases/fetchUserDataUseCase'
-import FetchUsersUseCase from 'src/usecases/fetchUsersUseCase'
 import { ref } from 'vue'
+import { ReportRepository } from 'src/repositories/reportRepository'
+import CreateReportUseCase from 'src/usecases/createStoreUseCase'
+import { Report } from 'src/models/representative'
+import { Predict } from 'src/models/predictions'
 
-const repository = new UserRepository()
-const fetchUserDataUseCase = new FetchUserDataUseCase(repository)
-const fetchUsersUseCase = new FetchUsersUseCase(repository)
+const repository = new ReportRepository()
+const reportUseCase = new CreateReportUseCase(repository)
 
-export const useUserStore = defineStore('user', {
+export const useReportStore = defineStore('report', {
 	state: () => ({
-		user: ref(new UserData()),
-		users: [] as Array<User>,
+		reports: ref([] as Predict[]),
+    predict: ref<Predict | null>(null),
 		totalItemsInDB: 0
 	}),
-	getters: {
-		getUser: (state) => state.user,
-		getUsers: (state) => state.users,
+  getters: {
+		getPredict: (state) => state.reports,
+		getPredicts: (state) => state.totalItemsInDB,
 	},
 	actions: {
-		async fetchUserData () {
-			if (this.user.id !== '') return this.user
-			this.user = await fetchUserDataUseCase.execute()
-			return this.user
-		},
-		async fetchUsers (limit: number, offset: number, email?: string, hubId?: string, storeId?: string) {
-			const response = await fetchUsersUseCase.execute(limit, offset, email, hubId, storeId)
-			this.users = response.data
-			this.totalItemsInDB = response.totalItems
-		},
+    async fetchPredict() {
+      const prediction = await reportUseCase.executePredict();
 
-    async fetchBrandsUsers (limit: number, offset: number,ecId: number, email?: string, hubId?: string, storeId?: string) {
-			const response = await fetchUsersUseCase.executeBrands(limit, offset,ecId, email, hubId, storeId)
-			this.users = response.data
-			this.totalItemsInDB = response.totalItems
-		}
+      // Agora estamos lidando com um único objeto de previsão
+      if (prediction) {
+        this.predict = prediction;
+      } else {
+        this.predict = null;
+      }
+    },
+
+    async createReport (rep: Report) {
+			return await reportUseCase.execute(rep)
+		},
 	}
 })

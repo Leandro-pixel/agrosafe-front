@@ -1,18 +1,19 @@
-import { EC, Store } from 'src/models/store'
-import { StoreRepository } from 'src/repositories/storeRepository'
+import { Report } from '@/models/representative'
+import { ReportRepository } from 'src/repositories/reportRepository'
 
-class CreateStoreUseCase {
-	private storeRepository: StoreRepository
-	constructor (storeRepository: StoreRepository) {
-		this.storeRepository = storeRepository
+class CreateReportUseCase {
+	private reportRepository: ReportRepository
+	constructor (reportRepository: ReportRepository) {
+		this.reportRepository = reportRepository
 	}
 
-	async execute (store: Store) {
-		return await this.storeRepository.createStore(store)
+	async execute (rep: Report) {
+		return await this.reportRepository.createReport(rep)
 	}
-  async executeEC (store: EC) {
-		return await this.storeRepository.createEC(store)
+  async executePredict () {
+		return await this.reportRepository.predict()
 	}
 }
 
-export default CreateStoreUseCase
+export default CreateReportUseCase
+

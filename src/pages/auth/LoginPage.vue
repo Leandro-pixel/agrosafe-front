@@ -3,11 +3,7 @@
     <q-page-container class="page_padding custom_center flex bg-page window-height relative-position">
 
       <div class="flex column  justify-center items-center custom_z "> <!-- div do box para logar-->
-        <q-img
-          src="logos/logo_brands.png"
-          fit="contain"
-          class="custom_logo"
-        />
+          <span class="agro_text mt-lg">AgroSafe</span>
         <q-card class="login__cards default-box-shadow big-border-radius  ">
 
           <q-card-actions class="login__card flex-grow justify-center">
@@ -42,7 +38,6 @@
               </q-input>
 
               <div class="row q-mb-md justify-between">
-                <span class="text-blue cursor-pointer" @click="goToForgotPassword()">Esqueci minha senha</span>
                 <q-checkbox v-model="rememberMe" label="Lembrar e-mail" color="primary" />
               </div>
 
@@ -51,12 +46,12 @@
           </q-card-actions>
         </q-card>
       </div>
-      <!-- Lado esquerdo - Imagem -->
+      <!-- Lado esquerdo - Imagem
         <q-img
           src="images/login_background.jpg"
           fit="cover"
           class="corner-image  absolute-bottom-right"
-        />
+        /> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -64,102 +59,21 @@
 
 <script setup lang="ts">
 import api from 'src/lib/api';
-import { onMounted, ref } from 'vue';
+import {  ref } from 'vue';
 import { NotifyError, ShowDialog } from 'src/utils/utils';
-//import { useConfigStore } from 'src/stores/useConfigStore';
 import { useRouter } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { UnauthorizedError } from 'src/lib/errors/unauthorizedError';
 import { Validator } from 'src/utils/validator';
-import { PoloRepository } from 'src/repositories/poloRepository';
-import { EmployeeEstablishmentRepository } from 'src/repositories/ecRepository';
-import { SupRepository } from 'src/repositories/supRepository';
-import { RepRepository } from 'src/repositories/representativeRepository';
-//import { UserData } from 'src/models/user'
 
 const email = ref('');
 const password = ref('');
 const isPwd = ref(true);
 const loading = ref(false);
 const rememberMe = ref(false);
-//const configStore = useConfigStore();
 const router = useRouter();
 const invalidCredentials = ref(false);
-//const user = ref(UserData);
 
-const goToForgotPassword = () => router.push('/recuperar-senha'); //tela de recuperação de senha
-onMounted(() => {
-  //quando a tela for montada ele vai avaliar se é pra trazer o email lembrado
-  email.value = atob(localStorage.getItem('email') || '');
-  email.value ? (rememberMe.value = true) : (rememberMe.value = false);
-});
-
-const witchUser = async () => {
-  const userType = atob(localStorage.getItem('userType'));
-
-  if (userType == 'establishmentOwner') {
-    ecData();
-  } else if (userType == 'polo') {
-    poloData();
-  } else if(userType == 'representative'){
-    repData();
-  } else {
-    supData();
-  }
-};
-
-const poloData = async () => {
-  const poloRepository = new PoloRepository();
-  await poloRepository
-    .fetchPoloUserData()
-    .then(() => {
-      router.push('/dashboard/segmentos');
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
-
-const repData = async () => {
-  const poloRepository = new RepRepository();
-  await poloRepository
-    .fetchRepUserData()
-    .then(() => {
-      router.push('/dashboard/segmentos');
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
-
-const ecData = async () => {
-  const ecRepository = new EmployeeEstablishmentRepository();
-  await ecRepository
-    .fetchEmployeeEstablishmentData()
-    .then(() => {
-      router.push('/dashboard/movimentacoes/split');
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
-
-const supData = async () => {
-  loading.value = true;
-  const supRepository = new SupRepository();
-  await supRepository
-    .fetchUserData()
-    .then(() => {
-      router.push('/dashboard/segmentos');
-    })
-    .catch((error: any) => NotifyError.error(error.message))
-    .finally(() => {
-      loading.value = false;
-    });
-};
 
 const submit = async () => {
   //função do login
@@ -170,7 +84,7 @@ const submit = async () => {
       rememberMe.value
         ? localStorage.setItem('email', btoa(email.value))
         : localStorage.removeItem('email');
-      console.log(witchUser());
+        router.push('/dashboard/segmentos');
     })
     .catch((error: any) => {
       console.log(error.message);

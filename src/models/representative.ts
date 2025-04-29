@@ -1,86 +1,98 @@
-import { Formatter } from 'src/utils/formatter'
+export class ReportDTO {
+  constructor(
+    public userId: string = '', // UUID do usuário
+    public temperaturaMediaDiaria: number = 0, // Temperatura média diária
+    public umidadeRelativaAr: number = 0, // Umidade relativa do ar
+    public precipitacao: number = 0, // Precipitação
+    public indiceUmidadeSolo: number = 0, // Índice de umidade do solo
+    public indiceVegetacao: number = 0, // Índice de vegetação
+    public localizacao: string = '', // Localização
+    public dataHora: string = '', // Data e hora
+    public areaQueimada: number = 0 // Área queimada
+  ) {}
 
+  // Método para transformar um objeto JSON em um ReportDTO
+  public static fromJson(json: any): ReportDTO | undefined {
+    if (!json) return;
+    return new ReportDTO(
+      json.userId,
+      json.temperaturaMediaDiaria,
+      json.umidadeRelativaAr,
+      json.precipitacao,
+      json.indiceUmidadeSolo,
+      json.indiceVegetacao,
+      json.localizacao,
+      json.dataHora,
+      json.areaQueimada
+    );
+  }
 
-export class RepresentativeDTO {
-	constructor (
-		public id = 0,
-		public name = '',  // Ajuste para incluir `name`
-		public employeeType = '', // Ajuste para incluir `employeeType`
-		public establishmentId: string | null = null, // Pode ser null conforme o payload
-		public currentBalance = 0,
-		public amountToReceive = 0,
-		public email = '',
-		public phone = '',
-		public status = false,
-		public changePassword = false,
-		public createdAt = '',
-		public updatedAt = ''
-	) {}
+  // Método para retornar uma string representando o objeto
+  public toString(): string {
+    return `${this.localizacao}, ${this.temperaturaMediaDiaria}°C, ${this.umidadeRelativaAr}% RH, ${this.precipitacao}mm precipitação, Área queimada: ${this.areaQueimada} ha`;
+  }
 
-	public static fromJson (json: any): RepresentativeDTO | undefined {
-		if (!json) return;
-		return new RepresentativeDTO(
-			json.id,
-			json.name,
-			json.employeeType,
-			json.establishmentId,
-			json.currentBalance,
-			json.amountToReceive,
-			json.email,
-			json.phone,
-			json.status,
-			json.changePassword,
-			json.createdAt,
-			json.updatedAt
-		);
-	}
-
-	public toString (): string {
-		return `${this.name}, ${this.employeeType}, ${this.email}, ${this.phone}, ${this.status}`;
-	}
-
-	public toJson () {
-		return {
-			name: this.name,
-			employeeType: this.employeeType,
-			email: this.email,
-			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
-			status: this.status,
-			createdAt: this.createdAt,
-			updatedAt: this.updatedAt
-		};
-	}
+  // Método para retornar os dados do ReportDTO em formato JSON
+  public toJson() {
+    return {
+      userId: this.userId,
+      temperaturaMediaDiaria: this.temperaturaMediaDiaria,
+      umidadeRelativaAr: this.umidadeRelativaAr,
+      precipitacao: this.precipitacao,
+      indiceUmidadeSolo: this.indiceUmidadeSolo,
+      indiceVegetacao: this.indiceVegetacao,
+      localizacao: this.localizacao,
+      dataHora: this.dataHora,
+      areaQueimada: this.areaQueimada,
+    };
+  }
 }
 
-export class Representative {
-	constructor (
-		public name = '',
-		public email = '',
-		public phone = '',
-		public employeeType = '',
-	) {}
+export class Report {
+  constructor(
+    public userId: string = '',
+    public temperaturaMediaDiaria: number = 0,
+    public umidadeRelativaAr: number = 0,
+    public precipitacao: number = 0,
+    public indiceUmidadeSolo: number = 0,
+    public indiceVegetacao: number = 0,
+    public localizacao: string = '',
+    public dataHora: string = '',
+    public areaQueimada: number = 0
+  ) {}
 
-	public static fromJson (json: any): Representative | undefined {
-		if (!json) return
-		return new Representative(
-			json.name,
-			json.email,
-			json.phone,
-			json.employeeType,
-		)
-	}
+  // Método para transformar um objeto JSON em um Report
+  public static fromJson(json: any): Report | undefined {
+    if (!json) return;
+    return new Report(
+      json.userId,
+      json.temperaturaMediaDiaria,
+      json.umidadeRelativaAr,
+      json.precipitacao,
+      json.indiceUmidadeSolo,
+      json.indiceVegetacao,
+      json.localizacao,
+      json.dataHora,
+      json.areaQueimada
+    );
+  }
 
-	public toString (): string {
-		return `${this.name}, ${this.email}, ${this.phone}, ${this.employeeType}`
-	}
+  // Método para retornar uma string representando o objeto
+  public toString(): string {
+    return `${this.localizacao}, ${this.temperaturaMediaDiaria}°C, ${this.umidadeRelativaAr}% RH, ${this.precipitacao}mm precipitação, Área queimada: ${this.areaQueimada} ha`;
+  }
 
-	public toJson () {
-		return {
-			name: this.name,
-			email: this.email,
-			phone: Formatter.clearSymbolsAndLetters(this.phone || ''),
-			employeeType: this.employeeType,
-		}
-	}
+  // Método para retornar os dados do Report em formato JSON
+  public toJson() {
+    return {
+      userId: this.userId,
+      temperaturaMediaDiaria: this.temperaturaMediaDiaria,
+      umidadeRelativaAr: this.umidadeRelativaAr,
+      precipitacao: this.precipitacao,
+      indiceUmidadeSolo: this.indiceUmidadeSolo,
+      indiceVegetacao: this.indiceVegetacao,
+      localizacao: this.localizacao,
+      areaQueimada: this.areaQueimada,
+    };
+  }
 }
-

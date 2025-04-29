@@ -4,10 +4,6 @@ import { InternalError } from './errors/internalError';
 import { BadRequestError } from './errors/badRequestError';
 import { NotFoundError } from './errors/notFoundError';
 import { NotAcceptableError } from './errors/notAcceptableError';
-import { EmployeeEstablishmentStore } from 'src/models/ecUserData';
-import { PoloDataStore } from 'src/models/poloUserData';
-import { SupStore } from 'src/models/supUserData';
-
 const BASE_URL = process.env.BASE_API_URL;
 const API_KEY = process.env.API_KEY;
 const MAX_RETRIES = 3;
@@ -56,11 +52,6 @@ const requestPost = async function (
   console.log('body:' + JSON.stringify(body)); // Adicionando JSON.stringify para visualizar o conteúdo do body
   console.log('params:' + JSON.stringify(params)); // Para verificar os parâmetros no console
   console.log('token:' + token);
-
-  headers = {
-    ...headers,
-    Authorization: `Bearer ${token}`,
-  };
 
   try {
     const response = await axios.post(`${BASE_URL}${path}`, body, {
@@ -423,27 +414,29 @@ const requestPut = async function (
 
 const login = async (email: string, password: string): Promise<void> => {
   console.log(BASE_URL);
+
   try {
-    console.log(`${email}:${password}`);
-    const basicAuth = btoa(`${email}:${password}`);
-    console.log(basicAuth);
+    // Prepare the payload with email and password
+    const loginPayload = {
+      email,
+      password
+    };
+
+    // Send the POST request with the login data in the body
     const response = await axios.post(
-      `${BASE_URL}/signin/employee`,
-      {}, // Corpo da requisição vazio, caso não seja necessário enviar dados
+      `${BASE_URL}/users/login`,
+      loginPayload, // Pass email and password in the body
       {
         headers: {
-          Authorization: `Basic ${basicAuth}`,
-          //'api-key': API_KEY // Descomente se precisar da api-key
+          // No need for Authorization header anymore
+          //'api-key': API_KEY // If needed, uncomment and use the API key header
         },
       }
     );
-    console.log(response.data.accessToken);
-    console.log(response.data.employeeType);
 
-    localStorage.setItem('accessToken', response.data.accessToken);
-    localStorage.setItem('refreshToken', response.data.refreshToken);
-    localStorage.setItem('userType', btoa(response.data.type));
-    localStorage.setItem('userName', response.data.name);
+    // Process response data
+    console.log(response.data.uuid);
+    localStorage.setItem('accessToken', response.data.uuid);
 
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -457,14 +450,7 @@ const login = async (email: string, password: string): Promise<void> => {
 };
 
 const logout = () => {
-  const employeeEstablishmentStore = new EmployeeEstablishmentStore()
-  employeeEstablishmentStore.clearData()
 
-  const poloStore = new PoloDataStore()
-  poloStore.clearData()
-
-  const supStore = new SupStore()
-  supStore.clearData()
 
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');

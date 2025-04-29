@@ -4,10 +4,6 @@ import { Dialog, Loading, Notify, QSpinnerBall } from 'quasar';
 import ConfirmPopUp from 'src/components/popup/ConfirmPopUp.vue';
 import CopyPopUp from 'src/components/popup/CopyPopUp.vue';
 import PopUp from 'src/components/popup/PopUp.vue';
-import SendMessagePopUp from 'src/components/popup/SendMessagePopUp.vue';
-import { Address } from 'src/models/address';
-import ZipCode from 'src/models/valueObjects/zipCode';
-import { useAddressStore } from 'src/stores/useAddressStore';
 
 const implementHierarchy = (necessaryPermission: string): boolean => {
   switch (necessaryPermission) {
@@ -180,60 +176,6 @@ class ShowDialog {
     });
   };
 
-  static showSendMessagePopUp = (
-    title: string,
-    description: string,
-    message = ''
-  ): void => {
-    Dialog.create({
-      component: SendMessagePopUp,
-
-      componentProps: {
-        title,
-        description,
-        message,
-      },
-    });
-  };
-}
-
-class AddressUtils {
-  private static mixAddresses = (
-    addressReceiver: Address,
-    searchedAddress: Address
-  ): void => {
-    addressReceiver.city = searchedAddress.city;
-    addressReceiver.uf = searchedAddress.uf;
-    addressReceiver.neighborhood =
-      addressReceiver.neighborhood || searchedAddress.neighborhood;
-    addressReceiver.street = addressReceiver.street || searchedAddress.street;
-    addressReceiver.number = addressReceiver.number || searchedAddress.number;
-    addressReceiver.zipCode = searchedAddress.zipCode;
-    addressReceiver.complement =
-      addressReceiver.complement || searchedAddress.complement;
-    addressReceiver.ibgeCode =
-      addressReceiver.ibgeCode || searchedAddress.ibgeCode;
-    addressReceiver.ddd = addressReceiver.ddd || searchedAddress.ddd;
-    addressReceiver.siafi = addressReceiver.siafi || searchedAddress.siafi;
-  };
-
-  static getAddress = async (
-    cep: ZipCode,
-    addressReceiver: Address
-  ): Promise<void> => {
-    await ShowLoading.show(
-      `Buscando endereço para o CEP ${cep.getCodeFormatted()}...`
-    );
-    try {
-      const result = await useAddressStore().fetchCep(
-        cep.getCodeWithoutSymbols()
-      );
-      await ShowLoading.hide('Endereço encontrado, carregando dados...');
-      this.mixAddresses(addressReceiver, result);
-    } catch (error: any) {
-      await ShowLoading.hide(error.message);
-    }
-  };
 }
 
 class HashIds {
@@ -249,7 +191,6 @@ export {
   NotifyError,
   ShowLoading,
   ShowDialog,
-  AddressUtils,
   HashIds,
 };
 

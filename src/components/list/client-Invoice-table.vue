@@ -1,3 +1,4 @@
+<!--
 <template>
   <q-layout>
     <q-page class="column">
@@ -82,7 +83,6 @@ import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Invoice } from 'src/models/invoices';
 import { useInvoiceStore } from 'src/stores/useInvoiceStore';
 import { UserCard } from 'src/models/userCard';
-import { useUserCardsStore } from 'src/stores/useUserCardsStore';
 import { onMounted } from 'vue';
 
 onMounted(() => {
@@ -189,3 +189,4 @@ const getCardType = (id: number): string => {
 };
 
 </script>
+-->

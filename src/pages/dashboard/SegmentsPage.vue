@@ -1,148 +1,195 @@
 <template>
   <q-layout>
-    <q-page class="column q-pa-md">
-      <div class="flex justify-between q-mb-lg">
-        <span
-          class="q-pt-sm flex items-center text-h6 text-weight-bold text-primary"
-          style="border-top: 0.25rem solid #401a58"
+    <q-page class="q-pa-md">
+      <q-stepper
+        v-model="step"
+        vertical
+        color="primary"
+        animated
+        transition-duration="500"
+        class="default-box-shadow big-border-radius"
+      >
+        <q-step
+          :name="1"
+          title="Dados"
+          icon="settings"
+          :done="step > 1"
+          caption="Obrigatório"
+          class="column justify-content"
         >
-          Segmentos
-        </span>
-      </div>
-      <div class="flex">
-        <div class="row flex-center q-mb-lg q-gutter-md">
-          <q-img
-            src="cards/cartao_brands.png"
-            fit="fill"
-            class="logo__img"
-            style="width: 15rem; height: 10rem"
-          />
-          <q-img
-            src="cards/cartao_brands.png"
-            fit="fill"
-            class="logo__img"
-            style="width: 15rem; height: 10rem"
-          />
-        </div>
-      </div>
-      <div class="flex">
-        <span
-          v-for="(item, index) in items1"
-          :key="index"
-          class="flex items-center text-h6 q-mr-md"
-          :class="{
-            isActive: activeIndex === index,
-            isNotActive: activeIndex !== index,
-          }"
-          @click="setActive(index)"
-        >
-          {{ item }}
-        </span>
-      </div>
+          <p class="text-h6 text-bold">Informações</p>
+          <div>
+            <q-input
+              dense
+              outlined
+              v-model.trim="name"
+              label="Nome da cidade"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.hasMultipleWords(val) || 'Campo obrigatório']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="temperaturaMediaDiaria"
+              label="Temperatura Média Diaria"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="umidadeRelativaAr"
+              label="Umidade Relativa do Ar"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="precipitacao"
+              label="Precipitação"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="indiceUmidadeSolo"
+              label="Indice Umidade do Solo"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="indiceVegetacao"
+              label="Indice de vegetação"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+            <q-input
+              dense
+              outlined
+              v-model.trim="areaQueimada"
+              label="Area Queimada"
+              lazy-rules
+              class="half-width"
+              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+            />
+          </div>
+        </q-step>
 
-      <SearchableDateTable
-        v-if="activeIndex === 0"
-        :items="tableData"
-        :columns="tableColumns"
-      />
+        <q-step :name="2" title="Criar Polo" icon="check">
+          <p class="text-h6 text-bold q-mb-md">Conclusão</p>
+          <div class="q-pa-md">
+            <p><strong>Nome da cidade:</strong> {{ name }}</p>
+            <p><strong>Temperatura Média Diaria:</strong> {{ temperaturaMediaDiaria }}</p>
+            <p><strong>Umidade Relativa do Ar:</strong> {{ umidadeRelativaAr }}</p>
+            <p><strong>Precipitação:</strong> {{ precipitacao }}</p>
+            <p><strong>Indice Umidade do Solo:</strong> {{ indiceUmidadeSolo }}</p>
+            <p><strong>Indice de vegetação:</strong> {{ indiceVegetacao }}</p>
+            <p><strong>Area Queimada:</strong> {{ areaQueimada }}</p>
 
-      <searchableTable
-        :items="items"
-        :columns="columns"
-        :onToggleActive="onToggleActive"
-        v-if="activeIndex === 1"
-      />
-      <searchableTable
-        :items="items2"
-        :columns="columns"
-        :onToggleActive="onToggleActive"
-        v-if="activeIndex === 2"
-      />
+          </div>
+          <div class="text-h6 text-center">
+            Você confirma que todos os dados fornecidos estão corretos?
+          </div>
+        </q-step>
+
+        <q-stepper-navigation class="text-center">
+          <PrimaryButton v-if="step > 1" flat @click="step--" label="Voltar" />
+          <q-btn
+            @click="checkFormValidation()"
+            :color="getButtonColor()"
+            :label="step === 3 ? 'Confirmar' : 'Continuar'"
+            :loading="loading"
+          />
+        </q-stepper-navigation>
+      </q-stepper>
     </q-page>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import SearchableTable from 'src/components/list/Searchable-table.vue';
 import { ref } from 'vue';
-import SearchableDateTable from 'src/components/list/Searchable-date-table.vue';
+import { useReportStore } from 'src/stores/useUserStore';
+//import { Address } from 'src/models/address'
+import { Report } from 'src/models/representative';
+import { NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils';
+//import { useRouter } from 'vue-router'
+import PrimaryButton from 'src/components/button/PrimaryButton.vue';
+import { Validator } from 'src/utils/validator';
 
-const searchableTable = SearchableTable;
-const activeIndex = ref<number>(0);
-// Dados dos spans
-const items1 = ['Movimentações', 'ECs', 'Clientes'];
+const step = ref(1);
+const name = ref('');
+const temperaturaMediaDiaria = ref(0);
+const umidadeRelativaAr = ref(0);
+const precipitacao = ref(0);
+const indiceUmidadeSolo = ref(0);
+const indiceVegetacao = ref(0);
+const areaQueimada = ref(0);
+const reportStore = useReportStore();
+const loading = ref(false);
 
-// Função para definir o span ativo
-const setActive = (index: number) => {
-  activeIndex.value = index;
+//const router = useRouter()
+
+const submit = async () => {
+  ShowLoading.show('Criando...');
+  const id = localStorage.getItem('accessToken');
+
+  try {
+    const report = new Report(
+      id,
+      temperaturaMediaDiaria.value,
+      umidadeRelativaAr.value,
+      precipitacao.value,
+      indiceUmidadeSolo.value,
+      indiceVegetacao.value,
+      name.value,
+      null,
+      areaQueimada.value,
+    );
+    const response = await reportStore.createReport(report);
+    await ShowDialog.show('Sucesso', 'Relatório criado com sucesso!');
+    await ShowLoading.hide('');
+    console.log(response);
+    //router.push(`/polos/${HashIds.encryptId(response.id as string)}`)
+  } catch (error: any) {
+    await ShowLoading.hide('');
+    NotifyError.error(error.message);
+  }
 };
-
-const items = ref([
-  { id: 1, name: 'bueaty life', CNPJ: '12345678000199', active: true },
-  { id: 2, name: 'fashion hair', CNPJ: '98765432000188', active: false },
-  { id: 3, name: 'natura', CNPJ: '13579246000144', active: true },
-  { id: 4, name: 'body care', CNPJ: '86420973000133', active: false },
-]);
-
-const items2 = ref([
-  { id: 1, name: 'Cliente nome 1', CNPJ: '47481542848', active: true },
-  { id: 2, name: 'Cliente nome 2', CNPJ: '47481542848', active: false },
-  { id: 3, name: 'Cliente nome 3', CNPJ: '47481542848', active: true },
-  { id: 4, name: 'Cliente nome 4', CNPJ: '47481542848', active: false },
-]);
-
-const tableData = [
-  { id: 1000, name: 'Natura', date: '2024-10-10' },
-  { id: 2500, name: 'Beauty hair', date: '2024-10-15' },
-  { id: 3000, name: 'Boticário', date: '2024-11-01' },
-  { id: 4000, name: 'Avon', date: '2024-11-05' },
-];
-
-const tableColumns = [
-  {
-    name: 'id',
-    label: 'Quantia',
-    align: 'left' as const,
-    field: (row: any) => row.id,
-  },
-  {
-    name: 'name',
-    label: 'Nome EC',
-    align: 'left' as const,
-    field: (row: any) => row.name,
-  },
-  {
-    name: 'date',
-    label: 'Data',
-    align: 'left' as const,
-    field: (row: any) => row.date,
-  },
-];
-
-const columns = [
-  {
-    name: 'name',
-    required: true,
-    label: 'Nome',
-    align: 'left' as const,
-    field: (row: any) => row.name,
-  },
-  {
-    name: 'CNPJ',
-    label: 'CNPJ',
-    align: 'left' as const,
-    field: (row: any) => row.CNPJ,
-  },
-  {
-    name: 'actions',
-    label: 'Ações',
-    align: 'left' as const,
-    field: () => '', // Campo obrigatório para evitar erro de tipagem
-  },
-];
-
-const onToggleActive = (row: any) => {
-  row.active = !row.active;
-  console.log(`${row.name} agora está ${row.active ? 'Ativo' : 'Inativo'}`);
+const checkFormValidation = () => {
+  console.log(Validator.isValidNumber(areaQueimada.value.toString()))
+  if (
+    step.value === 1 &&
+    name.value &&
+    Validator.isValidNumber(areaQueimada.value.toString())
+  ) {
+    step.value = 2;
+  } else if (step.value === 2) {
+    submit();
+  } else {
+    NotifyError.error('Preencha todos os campos obrigatórios.');
+  }
+};
+const getButtonColor = () => {
+  if (
+    step.value === 1 &&
+    name.value &&
+    Validator.isValidNumber(areaQueimada.value.toString())
+  ) {
+    return 'primary';
+  } else if (step.value === 2) {
+    return 'primary';
+  } else {
+    return 'grey';
+  }
 };
 </script>
