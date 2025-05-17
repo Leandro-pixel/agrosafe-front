@@ -437,6 +437,8 @@ const login = async (email: string, password: string): Promise<void> => {
     // Process response data
     console.log(response.data.uuid);
     localStorage.setItem('accessToken', response.data.uuid);
+    localStorage.setItem('userName', response.data.userName);
+
 
   } catch (error: any) {
     if (error.response && error.response.status === 401) {

@@ -2,10 +2,10 @@
   "name": "agrosafe-front",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "AgroSafe",
+  "productName": "SniffinSmoke",
   "author": "leandro soares <leandro20002004@hotmail.com>",
   "private": true,
-  "homepage": "https://leandro-pixel.github.io/agrosafe-front", 
+  "homepage": "https://leandro-pixel.github.io/agrosafe-front/",
   "scripts": {
     "predeploy": "quasar build",
     "deploy": "gh-pages -d dist/spa",
@@ -29,6 +29,7 @@
     "pinia": "^2.2.4",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12",
+    "vue-the-mask": "^0.11.1",
     "vue3-apexcharts": "^1.7.0"
   },
   "devDependencies": {

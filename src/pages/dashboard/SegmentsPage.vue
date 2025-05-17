@@ -26,61 +26,67 @@
               label="Nome da cidade"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.hasMultipleWords(val) || 'Campo obrigatório']"
+              :rules="[(val:string) => Validator.isValidName(val) || 'Campo obrigatório']"
             />
             <q-input
               dense
               outlined
               v-model.trim="temperaturaMediaDiaria"
               label="Temperatura Média Diaria"
+              suffix="°C"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
             <q-input
               dense
               outlined
               v-model.trim="umidadeRelativaAr"
               label="Umidade Relativa do Ar"
+              suffix="%"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
             <q-input
               dense
               outlined
               v-model.trim="precipitacao"
               label="Precipitação"
+              suffix="mm"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
             <q-input
               dense
               outlined
               v-model.trim="indiceUmidadeSolo"
               label="Indice Umidade do Solo"
+              suffix="%"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
             <q-input
               dense
               outlined
               v-model.trim="indiceVegetacao"
               label="Indice de vegetação"
+              suffix="NDVI"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
             <q-input
               dense
               outlined
               v-model.trim="areaQueimada"
               label="Area Queimada"
+              suffix="ha"
               lazy-rules
               class="half-width"
-              :rules="[(val:string) => Validator.isValidNumber(val) || 'Número inválido']"
+              :rules="[(val:string) => Validator.isValidNumber(Formatter.clearSymbolsAndLetters(val)) || 'Número inválido']"
             />
           </div>
         </q-step>
@@ -89,13 +95,21 @@
           <p class="text-h6 text-bold q-mb-md">Conclusão</p>
           <div class="q-pa-md">
             <p><strong>Nome da cidade:</strong> {{ name }}</p>
-            <p><strong>Temperatura Média Diaria:</strong> {{ temperaturaMediaDiaria }}</p>
-            <p><strong>Umidade Relativa do Ar:</strong> {{ umidadeRelativaAr }}</p>
-            <p><strong>Precipitação:</strong> {{ precipitacao }}</p>
-            <p><strong>Indice Umidade do Solo:</strong> {{ indiceUmidadeSolo }}</p>
-            <p><strong>Indice de vegetação:</strong> {{ indiceVegetacao }}</p>
-            <p><strong>Area Queimada:</strong> {{ areaQueimada }}</p>
-
+            <p>
+              <strong>Temperatura Média Diária:</strong>
+              {{ temperaturaMediaDiaria }} °C
+            </p>
+            <p>
+              <strong>Umidade Relativa do Ar:</strong> {{ umidadeRelativaAr }} %
+            </p>
+            <p><strong>Precipitação:</strong> {{ precipitacao }} mm</p>
+            <p>
+              <strong>Índice Umidade do Solo:</strong> {{ indiceUmidadeSolo }} %
+            </p>
+            <p>
+              <strong>Índice de Vegetação:</strong> {{ indiceVegetacao }} NDVI
+            </p>
+            <p><strong>Área Queimada:</strong> {{ areaQueimada }} ha</p>
           </div>
           <div class="text-h6 text-center">
             Você confirma que todos os dados fornecidos estão corretos?
@@ -125,17 +139,19 @@ import { NotifyError, ShowDialog, ShowLoading } from 'src/utils/utils';
 //import { useRouter } from 'vue-router'
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 import { Validator } from 'src/utils/validator';
+import { Formatter } from 'src/utils/formatter';
 
 const step = ref(1);
 const name = ref('');
-const temperaturaMediaDiaria = ref(0);
-const umidadeRelativaAr = ref(0);
-const precipitacao = ref(0);
-const indiceUmidadeSolo = ref(0);
-const indiceVegetacao = ref(0);
-const areaQueimada = ref(0);
+const temperaturaMediaDiaria = ref();
+const umidadeRelativaAr = ref();
+const precipitacao = ref();
+const indiceUmidadeSolo = ref();
+const indiceVegetacao = ref();
+const areaQueimada = ref();
 const reportStore = useReportStore();
 const loading = ref(false);
+//const numberMask = ref('##,##');
 
 //const router = useRouter()
 
@@ -153,7 +169,7 @@ const submit = async () => {
       indiceVegetacao.value,
       name.value,
       null,
-      areaQueimada.value,
+      areaQueimada.value
     );
     const response = await reportStore.createReport(report);
     await ShowDialog.show('Sucesso', 'Relatório criado com sucesso!');
@@ -166,7 +182,7 @@ const submit = async () => {
   }
 };
 const checkFormValidation = () => {
-  console.log(Validator.isValidNumber(areaQueimada.value.toString()))
+  console.log(Validator.isValidNumber(areaQueimada.value.toString()));
   if (
     step.value === 1 &&
     name.value &&

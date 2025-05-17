@@ -3,7 +3,7 @@
     <q-page-container class="page_padding custom_center flex bg-page window-height relative-position">
 
       <div class="flex column  justify-center items-center custom_z "> <!-- div do box para logar-->
-          <span class="agro_text mt-lg">AgroSafe</span>
+          <span class="agro_text mt-lg">Sniffin'Smoke</span>
         <q-card class="login__cards default-box-shadow big-border-radius  ">
 
           <q-card-actions class="login__card flex-grow justify-center">
