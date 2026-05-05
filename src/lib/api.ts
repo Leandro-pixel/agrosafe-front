@@ -249,8 +249,6 @@ const requestGetCEP = async function (
   }
 };
 
-
-
 const requestGet = async function (
   path: string,
   params?: any,

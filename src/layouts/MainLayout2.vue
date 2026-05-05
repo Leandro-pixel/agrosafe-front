@@ -23,7 +23,11 @@
             <div class="row full-width flex-center q-ma-md q-pb-md">
               <q-img
                 fit="fill"
-                :src="leftDrawerOpen ? 'logos/icone_brands.png' : 'logos/logo_brands.png'"
+                :src="
+                  leftDrawerOpen
+                    ? 'logos/icone_brands.png'
+                    : 'logos/logo_brands.png'
+                "
                 class="logo__img"
               />
             </div>
@@ -31,47 +35,112 @@
               <q-separator class="separators" />
             </div>
 
-            <!-- Botão de Dashboard com opções expansíveis -->
-            <q-expansion-item
-              icon="query_stats"
-              label="Dashboard"
-              indicator-color="secondary"
-              expand-icon="null"
-              :class="{
-                'text-accent custom-icon-size': selectedItem === 'Dashboard',
-                'text-white custom-icon-size': selectedItem !== 'Dashboard',
-              }"
-              style="padding-left: 5%"
-            >
-              <q-list style="padding-left: 5%">
-                <q-item class="q-pl-xs" >
-                  <q-btn
-                    flat
-                    @click="
-                      handleButtonClick('/dashboard/segmentos', 'Dashboard')
-                    "
-                    class="full-width text-white no-wrap"
-                    style="text-transform: none"
-                  >
-                    <div class="items-start flex width-full">Relatórios</div>
-                  </q-btn>
-                </q-item>
+            <q-list padding>
+              <!-- Dashboard -->
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'dashboard'"
+                active-class="menu-active"
+                @click="handleButtonClick('/dashboard', 'dashboard')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="home" />
+                </q-item-section>
+                <q-item-section>Dashboard</q-item-section>
+              </q-item>
 
-                <q-item class="q-pl-xs" >
-                  <q-btn
-                    flat
-                    @click="
-                      handleButtonClick('/dashboard/movimentacoes/split', 'Dashboard')
-                    "
-                    class="full-width text-white no-wrap"
-                    style="text-transform: none"
-                  >
-                    <div class="items-start flex width-full">Previsões</div>
-                  </q-btn>
-                </q-item>
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'stations'"
+                active-class="menu-active"
+                @click="handleButtonClick('/stations', 'stations')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="ev_station" />
+                </q-item-section>
+                <q-item-section>Estações</q-item-section>
+              </q-item>
 
-              </q-list>
-            </q-expansion-item>
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'charges'"
+                active-class="menu-active"
+                @click="handleButtonClick('/charges', 'charges')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="bolt" />
+                </q-item-section>
+                <q-item-section>Carregamentos</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'users'"
+                active-class="menu-active"
+                @click="handleButtonClick('/users', 'users')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="group" />
+                </q-item-section>
+                <q-item-section>Usuários</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'reports'"
+                active-class="menu-active"
+                @click="handleButtonClick('/reports', 'reports')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="bar_chart" />
+                </q-item-section>
+                <q-item-section>Relatórios</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'finance'"
+                active-class="menu-active"
+                @click="handleButtonClick('/finance', 'finance')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="attach_money" />
+                </q-item-section>
+                <q-item-section>Financeiro</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'settings'"
+                active-class="menu-active"
+                @click="handleButtonClick('/settings', 'settings')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="settings" />
+                </q-item-section>
+                <q-item-section>Configurações</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'support'"
+                active-class="menu-active"
+                @click="handleButtonClick('/support', 'support')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="help_outline" />
+                </q-item-section>
+                <q-item-section>Suporte</q-item-section>
+              </q-item>
+            </q-list>
             <div class="row full-width flex-center q-ma-md">
               <q-separator class="separators" />
             </div>
@@ -146,12 +215,15 @@
 
 <script setup lang="ts">
 import api from 'src/lib/api';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import PrimaryButton from 'src/components/button/PrimaryButton.vue';
 //import { implementHierarchy, ShowDialog } from 'src/utils/utils';
-
-const pageName = ref('Dashboard');
+const route = useRoute();
+const pageName = computed(() => {
+  return (route.meta as any).title || 'Dashboard';
+});
 const leftDrawerOpen = ref(false);
 const selectedItem = ref<string | null>(null);
 const router = useRouter();
@@ -159,22 +231,33 @@ const name = ref('');
 const type = ref('');
 
 onMounted(() => {
-  console.log('foi montado');
   name.value = localStorage.getItem('userName');
 });
-
 
 const logout = () => {
   api.logout();
   router.push('/');
 };
 
-
 // Update button click handlers
 const handleButtonClick = (route: string, name: string) => {
-  console.log('polo');
   router.push(route);
   selectedItem.value = name; // Atualiza o item selecionado
 };
-
 </script>
+<style scoped>
+.menu-active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  border-radius: 10px;
+}
+
+.q-item {
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+.q-item:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+</style>
