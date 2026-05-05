@@ -80,7 +80,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-       publicPath: '/agrosafe-front',
+       publicPath: '/pluggo-backoffice',
       // analyze: true,
        env: {
         BASE_API_URL: process.env.BASE_API_URL,
@@ -88,8 +88,8 @@ module.exports = configure(function (/* ctx */) {
       },
 
       metaVariables: {
-        productName: 'AgroSafe',
-        productDescription: 'Front do app agrosafe',
+        productName: 'PlugGo',
+        productDescription: 'Front do app pluggo',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

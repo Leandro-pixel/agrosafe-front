@@ -24,10 +24,14 @@ export class Validator {
 		return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{":;'?/>.<,])(?=.*[a-zA-Z]).{8,}$/.test(value)
 	}
 
+  static isValidPassword2 = (value: string): boolean => {
+		return value != null;
+	}
+
 	static isValidCNPJ = (value: string): boolean => {
 		return cnpj.isValid(value)
 	}
-  
+
 
 	static isValidName = (name: string): boolean => {
 		return /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(name)

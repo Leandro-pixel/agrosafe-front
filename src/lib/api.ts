@@ -416,29 +416,23 @@ const login = async (email: string, password: string): Promise<void> => {
   console.log(BASE_URL);
 
   try {
-    // Prepare the payload with email and password
-    const loginPayload = {
-      email,
-      password
-    };
+    // Basic Auth -> base64(email:password)
+    const token = btoa(`${email}:${password}`);
 
-    // Send the POST request with the login data in the body
     const response = await axios.post(
-      `${BASE_URL}/users/login`,
-      loginPayload, // Pass email and password in the body
+      `${BASE_URL}/signin/employee`,
+      {}, // body vazio (ou pode remover o payload)
       {
         headers: {
-          // No need for Authorization header anymore
-          //'api-key': API_KEY // If needed, uncomment and use the API key header
+          Authorization: `Basic ${token}`,
         },
       }
     );
 
-    // Process response data
     console.log(response.data.uuid);
-    localStorage.setItem('accessToken', response.data.uuid);
-    localStorage.setItem('userName', response.data.userName);
 
+    localStorage.setItem('accessToken', response.data.accessToken);
+    localStorage.setItem('userName', response.data.name);
 
   } catch (error: any) {
     if (error.response && error.response.status === 401) {

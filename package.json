@@ -1,11 +1,11 @@
 {
-  "name": "agrosafe-front",
+  "name": "pluggo-backoffice",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "SniffinSmoke",
+  "productName": "PlugGo",
   "author": "leandro soares <leandro20002004@hotmail.com>",
   "private": true,
-  "homepage": "https://leandro-pixel.github.io/agrosafe-front/",
+  "homepage": "https://leandro-pixel.github.io/pluggo-backoffice/",
   "scripts": {
     "predeploy": "quasar build",
     "deploy": "gh-pages -d dist/spa",
