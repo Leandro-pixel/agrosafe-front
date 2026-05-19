@@ -4,7 +4,7 @@
 
       <!-- HEADER -->
       <div class="row items-center justify-between q-mb-md">
-        <div class="text-h6">Drivers</div>
+        <div class="text-h6">Hosts</div>
       </div>
 
       <!-- FILTROS -->
@@ -55,8 +55,8 @@
       <!-- TABELA -->
       <q-card>
         <q-table
-          title="Drivers"
-          :rows="drivers"
+          title="Hosts"
+          :rows="hosts"
           :columns="columns"
           row-key="id"
           :loading="loading"
@@ -67,13 +67,13 @@
           <!-- AÇÕES -->
           <template v-slot:body-cell-actions="props">
             <q-td align="right">
-              <q-btn icon="edit" flat @click="editDriver(props.row)" />
+              <q-btn icon="edit" flat @click="editHost(props.row)" />
 
               <q-btn
                 icon="delete"
                 flat
                 color="negative"
-                @click="deleteDriver(props.row.id)"
+                @click="deleteHost(props.row.id)"
               />
             </q-td>
           </template>
@@ -97,7 +97,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Cancelar" v-close-popup />
-            <q-btn color="primary" label="Salvar" @click="saveDriver" />
+            <q-btn color="primary" label="Salvar" @click="saveHost" />
           </q-card-actions>
 
         </q-card>
@@ -112,7 +112,7 @@ import { ref, onMounted } from 'vue';
 import api from 'src/lib/api';
 import type { QTableProps } from 'quasar';
 
-interface Driver {
+interface Host {
   id: number;
   name: string;
   email?: string;
@@ -120,13 +120,13 @@ interface Driver {
   createdAt: string;
 }
 
-const drivers = ref<Driver[]>([]);
+const hosts = ref<Host[]>([]);
 const loading = ref(false);
 
 const dialog = ref(false);
-const editingDriver = ref<Driver | null>(null);
+const editingHost = ref<Host | null>(null);
 
-const form = ref<Partial<Driver>>({});
+const form = ref<Partial<Host>>({});
 
 const filters = ref({
   name: '',
@@ -159,7 +159,7 @@ async function onRequest(props: any) {
   try {
 
     const response = await api.requestGet('/support/list-user', {
-      type: 'driver',
+      type: 'host',
 
       page,
       limit: rowsPerPage,
@@ -169,7 +169,7 @@ async function onRequest(props: any) {
       phone: filters.value.phone,
     });
 
-    drivers.value = response.data;
+    hosts.value = response.data;
 
     pagination.value.rowsNumber = response.totalItems;
     pagination.value.page = page;
@@ -190,14 +190,14 @@ function reloadTable() {
 
 // ===== EDIT =====
 
-function editDriver(driver: Driver) {
-  editingDriver.value = driver;
-  form.value = { ...driver };
+function editHost(host: Host) {
+  editingHost.value = host;
+  form.value = { ...host };
   dialog.value = true;
 }
 
-async function saveDriver() {
-  await api.requestPut('/driver/update', form.value);
+async function saveHost() {
+  await api.requestPut('/host/update', form.value);
 
   dialog.value = false;
 
@@ -206,8 +206,8 @@ async function saveDriver() {
 
 // ===== DELETE =====
 
-async function deleteDriver(id: number) {
-  await api.requestDelete(`/driver/delete?id=${id}`);
+async function deleteHost(id: number) {
+  await api.requestDelete(`/host/delete?id=${id}`);
 
   reloadTable();
 }

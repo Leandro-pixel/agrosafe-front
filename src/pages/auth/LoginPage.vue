@@ -84,7 +84,7 @@ const submit = async () => {
       rememberMe.value
         ? localStorage.setItem('email', btoa(email.value))
         : localStorage.removeItem('email');
-        router.push('/dashboard/segmentos');
+        router.push('/dashboard');
     })
     .catch((error: any) => {
       console.log(error.message);

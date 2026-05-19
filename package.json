@@ -1,11 +1,11 @@
 {
-  "name": "pluggo-backoffice",
+  "name": "agrosafe-front",
   "version": "0.0.1",
   "description": "A Quasar Project",
   "productName": "PlugGo",
   "author": "leandro soares <leandro20002004@hotmail.com>",
   "private": true,
-  "homepage": "https://leandro-pixel.github.io/pluggo-backoffice/",
+  "homepage": "https://leandro-pixel.github.io/agrosafe-front/",
   "scripts": {
     "predeploy": "quasar build",
     "deploy": "gh-pages -d dist/spa",

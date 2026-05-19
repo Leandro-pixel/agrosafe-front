@@ -112,6 +112,28 @@
         </q-card>
       </q-dialog>
 
+      <q-dialog v-model="createSpotDialog">
+        <q-card style="min-width: 400px">
+          <q-card-section>
+            <div class="text-h6">{{ 'Criar' }} Estação</div>
+          </q-card-section>
+
+          <q-card-section>
+            <q-input v-model="createFormSpot.hostId" label="id do Host" />
+            <q-input v-model="createFormSpot.name" label="Nome" />
+            <q-input v-model="createFormSpot.latitude" label="Latitude" />
+            <q-input v-model="createFormSpot.longitude" label="Longitude" />
+            <div id="create-spot-map" style="height: 300px" class="q-mt-md"></div>
+            <q-input v-model="createFormSpot.pricePerKwh" label="Preço kWh" />
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" v-close-popup />
+            <q-btn color="primary" label="Criar" @click="createSpot" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- MODAL REVIEW -->
       <q-dialog v-model="reviewDialog">
         <q-card style="min-width: 400px">
@@ -132,13 +154,41 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <!-- MODAL REVIEW -->
+      <q-dialog v-model="createReviewDialog">
+        <q-card style="min-width: 400px">
+          <q-card-section>
+            <div class="text-h6">{{ 'Criar' }} Avaliação</div>
+          </q-card-section>
+
+          <q-card-section>
+            <q-input
+              v-model="createFormReview.driverId"
+              label="id do Motorista"
+            />
+            <q-rating v-model="createFormReview.rating" />
+            <q-input
+              v-model="createFormReview.comment"
+              label="Comentário vazio"
+            />
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" v-close-popup />
+            <q-btn color="primary" label="Criar" @click="createReview" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, type Ref } from 'vue';
+import { ref, onMounted, type Ref , nextTick } from 'vue';
 import api from 'src/lib/api';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface SpotForm {
   id?: number;
@@ -148,7 +198,26 @@ interface SpotForm {
   pricePerKwh?: number | null;
 }
 
+interface CreateSpotForm {
+  hostId?: number;
+  name: string;
+  latitude: string;
+  longitude: string;
+  pricePerKwh?: number | null;
+}
+
+let createSpotMap: L.Map | null = null;
+let createSpotMarker: L.Marker | null = null;
+
 const formSpot: Ref<SpotForm> = ref({
+  name: '',
+  latitude: '',
+  longitude: '',
+  pricePerKwh: null,
+});
+
+const createFormSpot: Ref<CreateSpotForm> = ref({
+  hostId: null,
   name: '',
   latitude: '',
   longitude: '',
@@ -158,13 +227,20 @@ const formSpot: Ref<SpotForm> = ref({
 const spots = ref([]);
 
 const spotDialog = ref(false);
+const createSpotDialog = ref(false);
+
 const reviewDialog = ref(false);
+const createReviewDialog = ref(false);
 
 const editingSpot = ref(null);
+const creatingSpot = ref(null);
 const editingReview = ref(null);
+const creatingReview = ref(null);
+
 const selectedSpot = ref(null);
 
 const formReview = ref({ rating: 0, comment: '' });
+const createFormReview = ref({ spotId: 0, driverId: 0,   rating: 0 as number, comment: '' });
 
 onMounted(loadSpots);
 
@@ -195,10 +271,58 @@ function getEmptySpot(): SpotForm {
 
 // ===== SPOT =====
 
-function openCreateSpot() {
-  editingSpot.value = null;
-  formSpot.value = getEmptySpot();
-  spotDialog.value = true;
+async function openCreateSpot() {
+  creatingSpot.value = null;
+  createFormSpot.value = getEmptySpot();
+
+  createSpotDialog.value = true;
+
+  await nextTick();
+
+  // evita recriar mapa
+  if (createSpotMap) {
+    createSpotMap.remove();
+  }
+
+  createSpotMap = L.map('create-spot-map').setView([-23.55, -46.63], 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap',
+  }).addTo(createSpotMap);
+
+  // localização atual do usuário
+  navigator.geolocation.getCurrentPosition((position) => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    createSpotMap?.setView([lat, lng], 15);
+
+    createSpotMarker = L.marker([lat, lng])
+      .addTo(createSpotMap!)
+      .bindPopup('Local da estação');
+
+    createFormSpot.value.latitude = lat.toString();
+    createFormSpot.value.longitude = lng.toString();
+  });
+
+  // clique no mapa
+  createSpotMap.on('click', (e: any) => {
+    const { lat, lng } = e.latlng;
+
+    createFormSpot.value.latitude = lat.toString();
+    createFormSpot.value.longitude = lng.toString();
+
+    if (createSpotMarker) {
+      createSpotMap?.removeLayer(createSpotMarker);
+    }
+
+    createSpotMarker = L.marker([lat, lng]).addTo(createSpotMap!);
+  });
+
+  // 🔥 corrige bug visual do leaflet em dialog
+  setTimeout(() => {
+    createSpotMap?.invalidateSize();
+  }, 200);
 }
 
 function editSpot(spot: any) {
@@ -208,12 +332,22 @@ function editSpot(spot: any) {
 }
 
 async function saveSpot() {
+
   if (editingSpot.value) {
-    await api.requestPut('/support/update-spot', formSpot.value);
+    await api.requestPut('/support/update-spots', formSpot.value);
   } else {
     await api.requestPost('/spot/create', formSpot.value);
   }
   spotDialog.value = false;
+  loadSpots();
+}
+
+
+async function createSpot() {
+
+    await api.requestPost('/support/create-spots', createFormSpot.value);
+
+  createSpotDialog.value = false;
   loadSpots();
 }
 
@@ -226,9 +360,9 @@ async function deleteSpot(id: number) {
 
 function openCreateReview(spot: any) {
   selectedSpot.value = spot;
-  editingReview.value = null;
-  formReview.value = { rating: 0, comment: '' };
-  reviewDialog.value = true;
+  creatingReview.value = null;
+  createFormReview.value = { spotId: spot.id, driverId: 0, rating: 0, comment: '' };
+  createReviewDialog.value = true;
 }
 
 function editReview(spot: any, review: any) {
@@ -245,11 +379,22 @@ async function saveReview() {
     id: editingReview.value?.id,
   };
 
-  if (editingReview.value) {
-    await api.requestPut('support/update-review', payload);
-  } else {
-    await api.requestPost('/review/create', payload);
-  }
+    await api.requestPut('/support/update-review', payload);
+
+
+  reviewDialog.value = false;
+  loadSpots();
+}
+
+
+async function createReview() {
+  const payload = {
+    ...createFormReview.value,
+    spotId: selectedSpot.value.id,
+  };
+
+    await api.requestPost('/support/create-review', payload);
+
 
   reviewDialog.value = false;
   loadSpots();

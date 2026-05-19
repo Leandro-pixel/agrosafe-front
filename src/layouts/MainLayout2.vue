@@ -79,14 +79,27 @@
               <q-item
                 clickable
                 v-ripple
-                :active="selectedItem === 'users'"
+                :active="selectedItem === 'drivers'"
                 active-class="menu-active"
-                @click="handleButtonClick('/users', 'users')"
+                @click="handleButtonClick('/drivers', 'drivers')"
               >
                 <q-item-section avatar>
                   <q-icon name="group" />
                 </q-item-section>
-                <q-item-section>Usuários</q-item-section>
+                <q-item-section>Motoristas</q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                v-ripple
+                :active="selectedItem === 'hosts'"
+                active-class="menu-active"
+                @click="handleButtonClick('/hosts', 'hosts')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="group" />
+                </q-item-section>
+                <q-item-section>Hosts</q-item-section>
               </q-item>
 
               <q-item

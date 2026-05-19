@@ -59,28 +59,30 @@ module.exports = configure(function (/* ctx */) {
       target: {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
         node: 'node20',
-        chainWebpack (chain) {
-          chain.module
-            .rule('svg')
-            .use('file-loader')
-            .loader('file-loader')
-            .tap(options => {
-              options = {
-                name: 'img/[name].[hash:8].[ext]'
-              }
-              return options
-            })
-          }
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      chainWebpack (chain) {
+        chain.module
+          .rule('svg')
+          .use('file-loader')
+          .loader('file-loader')
+          .tap(options => {
+            options = {
+              name: 'img/[name].[hash:8].[ext]'
+            }
+            return options
+          })
+        },
+
+      vueRouterMode: 'hash',
+      vueRouterBase: '/agrosafe-front/',
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-       publicPath: '/pluggo-backoffice',
+       publicPath: '/agrosafe-front/',
       // analyze: true,
        env: {
         BASE_API_URL: process.env.BASE_API_URL,
@@ -180,18 +182,18 @@ module.exports = configure(function (/* ctx */) {
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
-    pwa: {
-      workboxMode: 'generateSW', // or 'injectManifest'
-      injectPwaMetaTags: true,
-      swFilename: 'sw.js',
-      manifestFilename: 'manifest.json',
-      useCredentialsForManifestTag: false,
-      // useFilenameHashes: true,
-      // extendGenerateSWOptions (cfg) {}
-      // extendInjectManifestOptions (cfg) {},
-      // extendManifestJson (json) {}
-      // extendPWACustomSWConf (esbuildConf) {}
-    },
+    // pwa: {
+    //   workboxMode: 'generateSW', // or 'injectManifest'
+    //   injectPwaMetaTags: true,
+    //   swFilename: 'sw.js',
+    //   manifestFilename: 'manifest.json',
+    //   useCredentialsForManifestTag: false,
+    //   // useFilenameHashes: true,
+    //   // extendGenerateSWOptions (cfg) {}
+    //   // extendInjectManifestOptions (cfg) {},
+    //   // extendManifestJson (json) {}
+    //   // extendPWACustomSWConf (esbuildConf) {}
+    // },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
     cordova: {
