@@ -1,0 +1,1 @@
+import{Q as o}from"./QLayout-CXVEGLQP.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{j as e,k as c}from"./index-8Y1CRtPa.js";const t={};function a(n,s){return c(),e(o)}const i=r(t,[["render",a]]);export{i as default};
